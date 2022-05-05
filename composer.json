@@ -1,0 +1,15 @@
+{
+    "name": "user/dontlaravel",
+    "autoload": {
+        "psr-4": {
+            "app\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "GXiang314",
+            "email": "akz232032@gmail.com"
+        }
+    ],
+    "require": {}
+}
