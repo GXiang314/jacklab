@@ -3,6 +3,7 @@
 namespace app\core;
 use app\controllers\api;
 use app\controllers;
+use app\controllers\BaseController;
 
 class Router{
     protected array $routes = [];
@@ -40,11 +41,12 @@ class Router{
         $method = $this->request->getMethod();
         $callback = $this->routes[$method][$path] ?? false;
         if($callback === false){
-            $this->response->setStatusCode(404);
-            return "Not Found.";
-            exit;
+            return BaseController::sendError("404 Not Found.");
         }
-        return (call_user_func($callback)) ;
+        if(is_array($callback)){
+            $callback[0] = new $callback[0]();
+        }
+        return (call_user_func($callback,$this->request)) ;
     }
 }
 // class route
