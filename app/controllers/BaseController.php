@@ -1,5 +1,8 @@
 <?php
 namespace app\controllers;
+
+use app\core\Response;
+
 class BaseController
 {
     
@@ -48,14 +51,14 @@ class BaseController
             505 => 'HTTP Version Not Supported');
         return ($httpStatus[$statusCode]) ? $httpStatus[$statusCode] : $httpStatus[500];
     }
-    public function sendResponse($result, $message)
+    public static function sendResponse($result, $message)
     {
         header('Content-type: application/json');
+        Response::setStatusCode(200);        
         $response = [
             'success' => true,
             'data'    => $result,
             'message' => $message,
-            'state' => 200
         ];
         return json_encode($response);
     }
@@ -64,14 +67,15 @@ class BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendError($error, $errorMessages = [], $code = 404)
+    public static function sendError($error, $errorMessages = [], $code = 404)
     {
         header('Content-type: application/json');
+        Response::setStatusCode($code);
         $response = [
             'success' => false,
             'message' => $error,
-            'state' => $code
         ];
+
 
         if(!empty($errorMessages)){
             $response['data'] = $errorMessages;
