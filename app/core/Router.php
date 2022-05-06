@@ -1,9 +1,6 @@
 <?php
 
 namespace app\core;
-use app\controllers\api;
-use app\controllers;
-use app\controllers\BaseController;
 
 class Router{
     protected array $routes = [];
@@ -38,10 +35,10 @@ class Router{
 
     public function resolve(){
         $path = $this->request->getPath();
-        $method = $this->request->getMethod();
+        $method = $this->request->method();
         $callback = $this->routes[$method][$path] ?? false;
         if($callback === false){
-            return BaseController::sendError("404 Not Found.");
+            return Controller::sendError("404 Not Found.");
         }
         if(is_array($callback)){
             $callback[0] = new $callback[0]();
