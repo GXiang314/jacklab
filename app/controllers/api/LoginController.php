@@ -1,9 +1,9 @@
 <?php
 namespace app\controllers\api;
 
-use app\controllers\BaseController;
+use app\core\Controller;
 
-class LoginController extends BaseController{
+class LoginController extends Controller{
     private $memberService;
     public function __construct()
     {
@@ -20,4 +20,3 @@ class LoginController extends BaseController{
 
 
 
-?>

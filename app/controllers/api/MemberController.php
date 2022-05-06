@@ -1,10 +1,10 @@
 <?php
 namespace app\controllers\api;
 
-use app\controllers\BaseController;
+use app\core\Controller;
 use app\services\MemberService;
 
-class MemberController extends BaseController{
+class MemberController extends Controller{
     private $memberService;
     public function __construct()
     {
@@ -105,7 +105,3 @@ class MemberController extends BaseController{
 
 
 
-
-
-
-?>
