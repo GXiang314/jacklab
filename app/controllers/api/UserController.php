@@ -1,12 +1,13 @@
 <?php
 namespace app\controllers\api;
 
-use app\controllers\BaseController;
+use app\core\Controller;
 use app\core\Request;
+use app\model\Useradd;
 use app\services\MemberService;
 use Exception;
 
-class UserController extends BaseController{
+class UserController extends Controller{
 
     private $memberService;
     public function __construct()
@@ -25,7 +26,17 @@ class UserController extends BaseController{
     public function useradd(Request $request)
     {
         try {
-            $result = $request->getBody();
+            $userAddModel = new Useradd();
+
+            if($request->isPost()){
+                $userAddModel->loadData($request->getJson());
+                if($userAddModel->validate()){
+
+                }else{
+                    var_dump($userAddModel->errors) ;
+                }
+               
+            }
             // $request['token'] = $this->memberService->generateAuthToken();
             // $request['password'] = $this->memberService->generatePassword();
             // $result = $this->memberService->studentAdd($request);
@@ -37,9 +48,9 @@ class UserController extends BaseController{
             //     ->subject("創建帳號通知");
             // });
         } catch (Exception $e) {
-            return $this->sendError($e->getMessage(), 'Registered failed.', 500);
+            return $this->sendError($e->getMessage(), 'Registered failed.');
         }
-        return $this->sendResponse($result,'success');
+        return $this->sendResponse($userAddModel,'success');
     }
 /*
     public function teacheradd(Request $request)
