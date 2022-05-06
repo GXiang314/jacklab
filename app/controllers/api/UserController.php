@@ -2,8 +2,9 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
+use app\model\member;
 use app\core\Request;
-use app\model\Useradd;
+use app\requestModel\Useradd;
 use app\services\MemberService;
 use Exception;
 
@@ -27,16 +28,29 @@ class UserController extends Controller{
     {
         try {
             $userAddModel = new Useradd();
+            $memberModel = new member();
+            $memberModel->loadData([
+                'Account'=>"123456",
+                'Password'=>"123156",
+                'AuthToken'=>"10202",
+                'CreateTime'=>date('Y-m-d h:i:s'),
+                'IsAdmin'=>0
+            ]);
+            $memberModel->save();
+            var_dump($memberModel);
+            var_dump($memberModel->validate());
+            // if($request->isPost()){
+            //     $userAddModel->loadData($request->getJson());
+            //     if($userAddModel->validate()){
 
-            if($request->isPost()){
-                $userAddModel->loadData($request->getJson());
-                if($userAddModel->validate()){
-
-                }else{
-                    var_dump($userAddModel->errors) ;
-                }
+            //     }else{
+            //         var_dump($userAddModel->errors) ;
+            //     }
                
-            }
+            // }
+
+
+
             // $request['token'] = $this->memberService->generateAuthToken();
             // $request['password'] = $this->memberService->generatePassword();
             // $result = $this->memberService->studentAdd($request);
@@ -50,7 +64,7 @@ class UserController extends Controller{
         } catch (Exception $e) {
             return $this->sendError($e->getMessage(), 'Registered failed.');
         }
-        return $this->sendResponse($userAddModel,'success');
+        return $this->sendResponse($memberModel,'success');
     }
 /*
     public function teacheradd(Request $request)
