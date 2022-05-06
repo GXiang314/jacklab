@@ -1,9 +1,9 @@
 <?php
-namespace app\controllers;
+namespace app\core;
 
 use app\core\Response;
 
-class BaseController
+class Controller
 {
     
     public function getHttpStatusMessage($statusCode){
