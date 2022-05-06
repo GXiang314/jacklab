@@ -33,16 +33,16 @@ abstract class Model
                 if (!is_string($ruleName)) {
                     $ruleName = $rule[0];
                 }
-                if ($ruleName === self::RULE_REQUIRED && !$value) {
+                if ($ruleName === self::RULE_REQUIRED && empty($value)||str_replace(' ','',$value)==='') {
                     $this->addError($attr, self::RULE_REQUIRED);
                 }
                 if ($ruleName === self::RULE_EMAIL && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
                     $this->addError($attr, self::RULE_EMAIL);
                 }
-                if ($ruleName === self::RULE_MIN && $value < $rule['min']) {
+                if ($ruleName === self::RULE_MIN && strlen($value) < $rule['min']) {
                     $this->addError($attr, self::RULE_MIN, $rule);
                 }
-                if ($ruleName === self::RULE_MAX && $value > $rule['max']) {
+                if ($ruleName === self::RULE_MAX && strlen($value) > $rule['max']) {
                     $this->addError($attr, self::RULE_MAX, $rule);
                 }
                 if ($ruleName === self::RULE_MATCH && $value !== $this->{$rule['match']}) {
