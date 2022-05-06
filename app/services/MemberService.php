@@ -11,11 +11,7 @@ class MemberService
     private $key;
     public function __construct()
     {
-        $documentRoot = $_SERVER['DOCUMENT_ROOT']."/salt.txt";
-        $documentRoot = str_replace('/public','',$documentRoot);
-        $file = fopen("$documentRoot", "r");
-        $this->key = fgets($file);
-        fclose($file);
+        $this->key = $_ENV['SALT_KEY'];
     }
     /* #region  雜湊 */
 
