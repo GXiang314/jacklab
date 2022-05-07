@@ -8,16 +8,16 @@ use PDOException;
 class MemberService
 {
     //after add password to hash
-    private $key;
+    private static $key;
     public function __construct()
     {
-        $this->key = $_ENV['SALT_KEY'];
+        self::$key = $_ENV['SALT_KEY'];
     }
     /* #region  雜湊 */
 
-    private function hash($password)
+    public static function hash($password)
     {
-        return hash('sha256', $password . $this->key);
+        return hash('sha256', $password . self::$key);
     }
 
     /* #endregion */
@@ -159,7 +159,7 @@ class MemberService
     /* #endregion */
 
     /* #region  產生學號 */
-    private function generateStudentId($class_Id)
+    public static function generateStudentId($class_Id)
     {
         $str = (intval(date("Y")) - 1911) . str_pad($class_Id, 2, '0', STR_PAD_LEFT);
         try {
@@ -178,7 +178,7 @@ class MemberService
     /* #endregion */
 
     /* #region  產生教師編號 */
-    private function generateTeacherId()
+    public static function generateTeacherId()
     {
         require_once("./config/conn.php");
         $str = str_pad('1', 8, '7', STR_PAD_RIGHT);
@@ -194,7 +194,7 @@ class MemberService
     /* #endregion */
 
     /* #region  產生信箱驗證碼 */
-    public function generateAuthToken($length = 10)
+    public static function generateAuthToken($length = 10)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
