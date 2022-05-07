@@ -26,9 +26,9 @@ class member extends DbModel{
     public function save()
     {
         $this->Password = MemberService::hash(MemberService::generatePassword());
-        $this->AuthToken = $this->AuthToken? '' :MemberService::generateAuthToken();
+        $this->AuthToken = (isset($this->AuthToken))? '' :MemberService::generateAuthToken();
         $this->CreateTime = date('Y-m-d h:i:s');
-        $this->IsAdmin = $this->AuthToken? $this->AuthToken : false;
+        $this->IsAdmin = (isset($this->IsAdmin))? $this->IsAdmin : false;
         return parent::save();
     }
 
