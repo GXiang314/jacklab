@@ -36,7 +36,7 @@ abstract class Model
                 if (!is_string($ruleName)) {
                     $ruleName = $rule[0];
                 }
-                if ($ruleName === self::RULE_REQUIRED && empty($value)||str_replace(' ','',$value)==='') {
+                if ($ruleName === self::RULE_REQUIRED && empty($value) || str_replace(' ', '', $value) === '') {
                     $this->addError($attr, self::RULE_REQUIRED);
                 }
                 if ($ruleName === self::RULE_EMAIL && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
@@ -56,10 +56,10 @@ abstract class Model
                     $uniqueAttr = $rule['attr'] ?? $attr;
                     $tableName = $className::table();
                     $statement = Application::$app->db->prepare("select * from $tableName where $uniqueAttr = :attr");
-                    $statement->bindValue(":attr",$value);
+                    $statement->bindValue(":attr", $value);
                     $statement->execute();
                     $result = $statement->fetchObject();
-                    if($result){
+                    if ($result) {
                         $this->addError($attr, self::RULE_UNIQUE, ['field' => $attr]);
                     }
                 }

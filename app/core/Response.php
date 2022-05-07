@@ -2,7 +2,8 @@
 
 namespace app\core;
 
-class Response{
+class Response
+{
 
     public static function setStatusCode(int $code)
     {
@@ -16,5 +17,4 @@ class Response{
 
         return json_encode($params);
     }
-
 }
