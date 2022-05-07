@@ -25,13 +25,10 @@ $config=[
 
 $app = new Application($config);
 
-$app->router->get('/api/manager/user',[MemberController::class,'index']);
-$app->router->post('/api/manager/useradd',[UserController::class,'useradd']);
+$app->router->get('/api/manager/user', [MemberController::class,'index']);
 
-$app->router->get('/user',[]);
+$app->router->get('/api/member', [MemberController::class,'show']);
 
-$app->router->post('/user',[]);
-
-// $app->db->applyMigrations();
+$app->router->post('/api/manager/useradd', [UserController::class,'useradd']);
 
 $app->run();
