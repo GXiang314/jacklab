@@ -2,6 +2,7 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
+use app\core\Request;
 use app\services\MemberService;
 
 class MemberController extends Controller{
@@ -12,7 +13,7 @@ class MemberController extends Controller{
         
     }
     /**
-     * Store a newly created resource in storage.
+     * Get all resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -24,22 +25,25 @@ class MemberController extends Controller{
     }
 
      /**
-     * Store a newly created resource in storage.
+     * Get one resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \app\core\Request
+     * @return \app\core\Response
      */
-    public function show($student_id)
-    {
-        $data = $this->memberService->getMemberData($student_id);
-        return ($data !=[])? $this->sendResponse($data,$student_id):$this->sendError('沒有資料');
+    public function show(Request $request)
+    {        
+        if($request->isGet()){
+            $sid = $request->getBody()['id'];
+            $data = $this->memberService->getMemberData($sid);
+        }        
+        return ($data !=[])? $this->sendResponse($data,$sid):$this->sendError('沒有資料');        
     }
     
     /**
-     * Store a newly created resource in storage.
+     * Update password with member in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \app\core\Request
+     * @return \app\core\Response
      *//*
     public function updatePassword(Request $request)
     {
@@ -61,10 +65,10 @@ class MemberController extends Controller{
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Update data in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \app\core\Request
+     * @return \app\core\Response
      *//*
     public function updateIntroduction(Request $request)
     {
@@ -86,9 +90,8 @@ class MemberController extends Controller{
     /**
      * Update the specified resource in storage.
      *
-     * @param
-     * @param  string $account,$authtoken
-     * @return \Illuminate\Http\Response
+     * @param  \app\core\Request
+     * @return \app\core\Response
      *//*
     public function emailvalidate(string $account,string $token)
     {
