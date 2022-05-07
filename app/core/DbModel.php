@@ -30,8 +30,85 @@ abstract class DbModel extends Model{
         return true;
     }
 
+    public function get(array $except = null) // not in ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
+    {
+        try{
+            $tableName = $this->table();            
+            $statement = self::prepare("select * from $tableName;");
+            if($except){
+                $attributes = array_keys($except);
+                $sql = implode(' and ',array_map(fn($attr)=>"$attr not in (:$attr)", $attributes));
+                $statement = self::prepare("select * from $tableName where $sql;");
+                foreach($except as $key => $value){
+                    $statement->bindValue(":$key", $value);
+                }
+            }
+                        
+            $statement->execute();
+        }catch(Exception $e){
+            return $e->getMessage();
+        }        
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function findOne(array $where) //where ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
+    {
+        try{
+            $tableName = $this->table();
+            $attributes = array_keys($where);
+            $sql = implode(' and ',array_map(fn($attr)=>"$attr = :$attr", $attributes));
+            $statement = self::prepare("select * from $tableName where $sql;");
+            foreach($where as $key => $value){
+                $statement->bindValue(":$key", $value);
+            }
+            $statement->execute();
+        }catch(Exception $e){
+            return $e->getMessage();
+        }        
+        return $statement->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function update(array $setColumn,array $where = []) //set['password'=>password] where ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
+    {
+        try{
+            $tableName = $this->table();
+            $updateKey = array_keys($setColumn);
+            $whereKey = array_keys($where);
+            $update_sql = implode(', ',array_map(fn($attr)=>"$attr = :$attr ", $updateKey));
+            $where_sql = ($where)? ' where '.implode(' and ',array_map(fn($attr)=>"$attr = :$attr", $whereKey)) : '';
+            $statement = self::prepare("update $tableName set $update_sql $where_sql;");
+            foreach($setColumn as $key => $value){
+                $statement->bindValue(":$key", $value);
+            }
+            foreach($where as $key => $value){
+                $statement->bindValue(":$key", $value);
+            }
+            $statement->execute();
+        }catch(Exception $e){
+            return false;
+        }        
+        return true;
+    }
+
+    public function delete(array $where = []) //where ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
+    {
+        try{
+            $tableName = $this->table();
+            $attributes = array_keys($where);
+            $sql = ($where)? ' where '.implode(' and ',array_map(fn($attr)=>"$attr = :$attr", $attributes)) : '';
+            $statement = self::prepare("delete from $tableName $sql;");
+            foreach($where as $key => $value){
+                $statement->bindValue(":$key", $value);
+            }
+            $statement->execute();
+        }catch(Exception $e){
+            return false;
+        }        
+        return true;
+    }
+
     public static function prepare($sql){
         return Application::$app->db->pdo->prepare($sql);
     }
-    
+
 }
