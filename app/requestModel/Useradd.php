@@ -7,25 +7,21 @@ use app\core\Model;
 
 class Useradd extends Model{
 
-    public string $account;
+    public string $Account;
 
-    public string $name;
+    public string $Name;
 
-    public int $class_Id;
+    public int $Class_Id;
 
-    public int $role_Id;
-
-    public function table(): string{
-        return 'member';
-    }
+    public int $Role_Id;
 
     public function rules(): array
     {
         return [
-            'account' => [self::RULE_REQUIRED,self::RULE_EMAIL,[self::RULE_MAX,'max'=>50]],
-            'name' => [self::RULE_REQUIRED],
-            'class_Id' => [self::RULE_REQUIRED],
-            'role_Id' => [self::RULE_REQUIRED]
+            'Account' => [self::RULE_REQUIRED,self::RULE_EMAIL,[self::RULE_MAX,'max'=>50]],
+            'Name' => [self::RULE_REQUIRED],
+            'Class_Id' => [self::RULE_REQUIRED],
+            'Role_Id' => [self::RULE_REQUIRED]
         ];
     }
 }
