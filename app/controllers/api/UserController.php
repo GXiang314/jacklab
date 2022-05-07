@@ -2,11 +2,9 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
-use app\model\member;
 use app\core\Request;
 use app\requestModel\Useradd;
 use app\services\MemberService;
-use Exception;
 
 class UserController extends Controller{
 
@@ -26,45 +24,26 @@ class UserController extends Controller{
 
     public function useradd(Request $request)
     {
-        try {
-            $userAddModel = new Useradd();
-            $memberModel = new member();
-            $memberModel->loadData([
-                'Account'=>"123456",
-                'Password'=>"123156",
-                'AuthToken'=>"10202",
-                'CreateTime'=>date('Y-m-d h:i:s'),
-                'IsAdmin'=>0
-            ]);
-            $memberModel->save();
-            var_dump($memberModel);
-            var_dump($memberModel->validate());
-            // if($request->isPost()){
-            //     $userAddModel->loadData($request->getJson());
-            //     if($userAddModel->validate()){
-
-            //     }else{
-            //         var_dump($userAddModel->errors) ;
-            //     }
-               
-            // }
-
-
-
-            // $request['token'] = $this->memberService->generateAuthToken();
-            // $request['password'] = $this->memberService->generatePassword();
-            // $result = $this->memberService->studentAdd($request);
-            // $url = action([MemberController::class,'emailvalidate'],['account' => $request['account'],'token' => $request['token']]);
-            // $content = "使用者「{$request['name']}」，您好：\r\n\r\n您的帳號是：{$request['account']}\r\n您的密碼是：{$request['password']}\r\n\r\n請點擊以下連結以完成驗證步驟：\r\n{$url}";
-            // Mail::raw($content, function ($message) use ($request) {
-            //     $message
-            //     ->to($request['account'])
-            //     ->subject("創建帳號通知");
-            // });
-        } catch (Exception $e) {
-            return $this->sendError($e->getMessage(), 'Registered failed.');
+        $userAddModel = new Useradd();
+        if($request->isPost()){
+            $userAddModel->loadData($request->getJson());
+            if($userAddModel->validate()){    
+                $result = $this->memberService->studentAdd($request->getJson());
+                return $this->sendResponse($result,'success');
+            }                            
         }
-        return $this->sendResponse($memberModel,'success');
+        // $request['token'] = $this->memberService->generateAuthToken();
+        // $request['password'] = $this->memberService->generatePassword();
+        // $result = $this->memberService->studentAdd($request);
+        // $url = action([MemberController::class,'emailvalidate'],['account' => $request['account'],'token' => $request['token']]);
+        // $content = "使用者「{$request['name']}」，您好：\r\n\r\n您的帳號是：{$request['account']}\r\n您的密碼是：{$request['password']}\r\n\r\n請點擊以下連結以完成驗證步驟：\r\n{$url}";
+        // Mail::raw($content, function ($message) use ($request) {
+        //     $message
+        //     ->to($request['account'])
+        //     ->subject("創建帳號通知");
+        // });
+        return $this->sendError($userAddModel->errors, 'Registered failed.');
+        
     }
 /*
     public function teacheradd(Request $request)
