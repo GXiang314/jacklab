@@ -8,7 +8,7 @@ class m0009_game_record{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `game_record`  (
+        CREATE TABLE if not exists `game_record`  (
             `Id` int NOT NULL COMMENT 'PK',
             `Name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '主題名稱',
             `Game_group` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '參賽組別，可省略',

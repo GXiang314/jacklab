@@ -8,7 +8,7 @@ class m0015_meeting_file{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `meeting_file`  (
+        CREATE TABLE if not exists `meeting_file`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '檔名',
             `Type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '類型',

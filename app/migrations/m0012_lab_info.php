@@ -8,7 +8,7 @@ class m0012_lab_info{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `lab_info`  (
+        CREATE TABLE if not exists `lab_info`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Title` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '標題',
             `Content` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '內文',

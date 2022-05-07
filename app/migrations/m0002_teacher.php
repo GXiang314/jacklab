@@ -8,7 +8,7 @@ class m0002_teacher{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `teacher`  (
+        CREATE TABLE if not exists `teacher`  (
             `Id` int NOT NULL COMMENT 'PK, 編號',
             `Name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '姓名',
             `Image` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '大頭照',

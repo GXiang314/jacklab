@@ -8,7 +8,7 @@ class m0022_role{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `role`  (
+        CREATE TABLE if not exists `role`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '角色名稱',
             PRIMARY KEY (`Id`) USING BTREE

@@ -8,7 +8,7 @@ class m0021_proj_tag{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `proj_tag`  (
+        CREATE TABLE if not exists `proj_tag`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '名稱',
             `Project_Id` int UNSIGNED NOT NULL COMMENT 'FK, project.Id',

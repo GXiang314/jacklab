@@ -8,7 +8,7 @@ class m0025_role_permission{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `role_permission`  (
+        CREATE TABLE if not exists `role_permission`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Role_Id` int UNSIGNED NOT NULL COMMENT 'FK, role.Id',
             `Permission_Id` int UNSIGNED NOT NULL COMMENT 'FK, permission.Id',

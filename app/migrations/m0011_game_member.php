@@ -8,7 +8,7 @@ class m0011_game_member{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `game_member`  (
+        CREATE TABLE if not exists `game_member`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Game_record` int NOT NULL COMMENT 'FK, game_record.Id',
             `Student_Id` int NOT NULL COMMENT 'FK, student.Id',

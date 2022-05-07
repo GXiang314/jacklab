@@ -8,7 +8,7 @@ class m0019_proj_record{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `proj_record`  (
+        CREATE TABLE if not exists `proj_record`  (
             `Id` int NOT NULL COMMENT 'PK',
             `Remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '備註',
             `CreateTime` datetime NOT NULL COMMENT '上傳時間',

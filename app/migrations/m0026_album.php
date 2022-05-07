@@ -8,7 +8,7 @@ class m0026_album{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `album`  (
+        CREATE TABLE if not exists `album`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Title` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '標題',
             `Image` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '圖片路徑',

@@ -8,7 +8,7 @@ class m0007_author{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `author`  (
+        CREATE TABLE if not exists `author`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Book_Id` int UNSIGNED NOT NULL COMMENT 'FK, books.Id',
             `Account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'FK, member.Account',

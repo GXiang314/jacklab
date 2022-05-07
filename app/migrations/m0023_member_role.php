@@ -8,7 +8,7 @@ class m0023_member_role{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `member_role`  (
+        CREATE TABLE if not exists `member_role`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'FK, member.Account',
             `Role_Id` int UNSIGNED NOT NULL COMMENT 'FK, role.Id',

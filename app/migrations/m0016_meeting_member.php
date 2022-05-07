@@ -8,7 +8,7 @@ class m0016_meeting_member{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `meeting_member`  (
+        CREATE TABLE if not exists `meeting_member`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Meet_Id` int NOT NULL COMMENT 'FK, meeting.Id',
             `Account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'FK, member.Account',

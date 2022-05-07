@@ -8,7 +8,7 @@ class m0014_meeting_tag{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `meeting_tag`  (
+        CREATE TABLE if not exists `meeting_tag`  (
             `Id` int UNSIGNED NOT NULL COMMENT 'PK',
             `Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '名稱',
             `Meet_Id` int NOT NULL COMMENT 'FK, meeting.Id',

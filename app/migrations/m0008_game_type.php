@@ -8,7 +8,7 @@ class m0008_game_type{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `game_type`  (
+        CREATE TABLE if not exists `game_type`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '比賽性質',
             PRIMARY KEY (`Id`) USING BTREE

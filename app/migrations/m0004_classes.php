@@ -8,7 +8,7 @@ class m0004_classes{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `classes`  (
+        CREATE TABLE if not exists `classes`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '班級名稱',
             `Academic_Id` int UNSIGNED NOT NULL COMMENT 'FK, academic.Id',

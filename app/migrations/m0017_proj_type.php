@@ -8,7 +8,7 @@ class m0017_proj_type{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `proj_type`  (
+        CREATE TABLE if not exists `proj_type`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '專案性質',
             PRIMARY KEY (`Id`) USING BTREE

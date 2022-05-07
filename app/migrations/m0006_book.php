@@ -8,7 +8,7 @@ class m0006_book{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `book`  (
+        CREATE TABLE if not exists `book`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '書名',
             `Publisher` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '出版社',

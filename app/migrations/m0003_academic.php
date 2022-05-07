@@ -8,7 +8,7 @@ class m0003_academic{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `academic`  (
+        CREATE TABLE if not exists `academic`  (
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
             PRIMARY KEY (`Id`) USING BTREE

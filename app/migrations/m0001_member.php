@@ -8,7 +8,7 @@ class m0001_member{
     {
         $db = Application::$app->db;
         $sql = "
-        CREATE TABLE `member`  (
+        CREATE TABLE if not exists `member`  (
             `Account` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'PK, 電子信箱',
             `Password` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密碼',
             `AuthToken` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '信箱驗證Token',
