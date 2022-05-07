@@ -1,8 +1,12 @@
 <?php
+
 namespace app\services;
 
+use app\model\member;
+use app\model\member_role;
+use app\model\student;
+use app\model\teacher;
 use Exception;
-use PDO;
 use PDOException;
 
 class MemberService
@@ -23,86 +27,43 @@ class MemberService
     /* #endregion */
 
     /* #region  加入學生 */
-    public function studentAdd($member, $role)
+    public function studentAdd($request)
     {
-
         try {
-            require_once("./config/conn.php");
-            $image = 'member/man.png';
-            $time = date('Y-m-d H:i:s', time());
-            $sql = "
-            insert into member(Account,Password,AuthToken,CreateTime) 
-            values(
-                '{$member['account']}',
-                '{$this->hash($member['password'])}',
-                '{$member['token']}',
-                '{$time}')
-                ;";
-            if ($pdo->exec($sql)) {
-                $sql = "
-                insert into student(Id,Account,Name,Image,Class_Id) 
-                values(
-                    '{$this->generateStudentId($member['class_Id'])}',
-                    '{$member['account']}',
-                    '{$member['name']}',
-                    '{$image}',
-                    '{$member['class_Id']}')
-                    ;";
-                $sql .= "
-                insert into member_rold(Account,Role_Id) 
-                values(
-                    '{$member['account']}',
-                    '{$role}'                   
-                    ;";
-                $pdo->exec($sql);
+            $member = new member();
+            $student = new student();
+            $member_rold = new member_role();
+            $member->loadData($request);
+            $student->loadData($request);
+            $member_rold->loadData($request);
+            if ($res = $member->save()) {
+                $student->save();
+                $member_rold->save();
             }
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        $pdo = null;
-        return 'success';
+        return $res ? 'success' : false;
     }
     /* #endregion */
 
     /* #region  加入教師 */
-    public function teacherAdd($member, $role)
+    public function teacherAdd($request)
     {
-
         try {
-            require_once("./config/conn.php");
-            $image = 'member/man.png';
-            $time = date('Y-m-d H:i:s', time());
-            $sql = "
-            insert into member(Account,Password,AuthToken,CreateTime) 
-            values(
-                '{$member['account']}',
-                '{$this->hash($member['password'])}',
-                '{$member['token']}',
-                '{$time}')
-                ;";
-            $res = $pdo->exec($sql);
-            if ($res) {
-                $sql = "
-                insert into teacher(Id,Account,Name,Title,Image) 
-                values(
-                    '{$this->generateTeacherId()}',
-                    '{$member['account']}',
-                    '{$member['name']}',
-                    '{$member['title']}',
-                    '{$image}')
-                    ;";
-                $sql .= "
-                insert into member_rold(Account,Role_Id) 
-                values(
-                    '{$member['account']}',
-                    '{$role}'                   
-                    ;";
-                $pdo->exec($sql);
+            $member = new member();
+            $teacher = new teacher();
+            $member_rold = new member_role();
+            $member->loadData($request);
+            $teacher->loadData($request);
+            $member_rold->loadData($request);
+            if ($res = $member->save()) {
+                $teacher->save();
+                $member_rold->save();
             }
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        $pdo = null;
         return $res ? 'success' : 'error';
     }
     /* #endregion */
@@ -111,13 +72,11 @@ class MemberService
     public function updateIntroduction(string $account, string $text)
     {
         try {
-            require_once("./config/conn.php");
-            $sql = "update student set Introduction = '$text' where Account = '$account';";
-            $res = $pdo->exec($sql);
+            $student = new student();
+            $res = $student->update(['Introduction' => $text], ['Account' => $account]);
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        $pdo = null;
         return $res ? 'success' : 'error';
     }
     /* #endregion */
@@ -126,27 +85,32 @@ class MemberService
     public function delete($idList)
     {
         $idList = explode(',', $idList);
-        require_once("./config/conn.php");        
-        foreach($idList as $id){
-            $data = $this->getMemberData($id);
-            if (isset($data['Account'])) {
-                $sql = "delete from game_member where Student_Id = '{$id}';";
-                $sql .= "delete from meeting_member where Account = '{$data['Account']}';";
-                $sql .= "delete from proj_group_member where Student_Id = '{$id}';";
-                $sql .= "delete from member_role where Account = '{$data['Account']}';";
-                $sql .= "delete from student where Account = '{$data['Account']}';";
-                $sql .= "delete from teacher where Account = '{$data['Account']}';";
-                $sql .= "delete from member where Account = '{$data['Account']}';";
-                $res = $pdo->exec($sql);
+        try {
+            foreach ($idList as $id) {
+                $data = $this->getMemberData($id);
+                if (isset($data['Account'])) {
+                    $member = new member();
+                    $statement = $member->prepare("
+                        delete from game_member where Student_Id = '{$id}';
+                        delete from meeting_member where Account = '{$data['Account']}';
+                        delete from proj_group_member where Student_Id = '{$id}';
+                        delete from member_role where Account = '{$data['Account']}';
+                        delete from student where Account = '{$data['Account']}';
+                        delete from teacher where Account = '{$data['Account']}';
+                        delete from member where Account = '{$data['Account']}';
+                    ");
+                    $statement->execute();
+                }
             }
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
-        $pdo = null;
-        return $res ? 'success' : 'error';
+        return 'success';
     }
     /* #endregion */
 
     /* #region  產生密碼 */
-    public function generatePassword($length = 10)
+    public static function generatePassword($length = 10)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -163,16 +127,19 @@ class MemberService
     {
         $str = (intval(date("Y")) - 1911) . str_pad($class_Id, 2, '0', STR_PAD_LEFT);
         try {
-            require_once("./config/conn.php");
-            $sql = "select Id from student where Id like '%$str%' order by Id desc limit 1;";
-            $data = $pdo->query($sql);
+            $student = new student();
+            $statement = $student->prepare(
+                "
+                select Id from student where Id like '%$str%' order by Id desc limit 1;"
+            );
+            $statement->execute();
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
             if (isset($data)) {
                 return intval($data['Id']) + 1;
             }
         } catch (PDOException $e) {
             return $e->getMessage();
         }
-        $pdo = null;
         return intval($str . str_pad('0', 3, STR_PAD_LEFT)) + 1;
     }
     /* #endregion */
@@ -180,15 +147,17 @@ class MemberService
     /* #region  產生教師編號 */
     public static function generateTeacherId()
     {
-        require_once("./config/conn.php");
         $str = str_pad('1', 8, '7', STR_PAD_RIGHT);
-        $sql = "select Id from teacher where Id like '%$str%' order by Id desc limit 1;";
-        $data = $pdo->query($sql);
-
+        $teacher = new teacher();
+        $statement = $teacher->prepare(
+            "
+            select Id from teacher where Id like '%$str%' order by Id desc limit 1;"
+        );
+        $statement->execute();
+        $data = $statement->fetch(\PDO::FETCH_ASSOC);
         if (isset($data)) {
             return intval($data['Id']) + 1;
         }
-        $pdo = null;
         return intval($str) + 1;
     }
     /* #endregion */
@@ -211,18 +180,17 @@ class MemberService
     public function emailTokenCheck($account, $token)
     {
         try {
-            require_once("./config/conn.php");
-            $sql = "
-            update member 
-            set Authtoken = '' 
-            where Account = '$account';
-            ";
-            $res = $pdo->exec($sql);
-            $pdo = null;
-        } catch (PDOException $e) {
+            $data = $this->getAccountData($account);
+            if (!empty($data)) {
+                if ($data['AuthToken'] === $token) {
+                    $member = new member();
+                    $member->update(['AuthToken' => ''], ['Account' => $account]);
+                }
+            }
+        } catch (Exception) {
             return false;
         }
-        return $res;
+        return true;
     }
     /* #endregion */
 
@@ -231,36 +199,36 @@ class MemberService
     public function getMemberData($student_id)
     {
         try {
-            require_once("./config/conn.php");
-            $sql = "
+            $member = new Member();
+            $statement = $member->prepare("
             select * from student as s, member as m 
             where 
                 s.Account = m.Account and
                 s.Id = $student_id 
-            limit 1;";
-            $data =  $pdo->query($sql);
+            limit 1;");
+            $statement->execute();
+            $data =  $statement->fetch(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        $pdo = null;
         return $data;
     }
 
     public function getAccountData($account)
     {
         try {
-            require_once("./config/conn.php");
-            $sql = "
+            $member = new Member();
+            $statement = $member->prepare("         
             select * from member as m, student as s 
             where 
                 s.Account = m.Account and
                 m.Account = $account 
-            limit 1;";
-            $data =  $pdo->query($sql);
+            limit 1;");
+            $statement->execute();
+            $data =  $statement->fetch(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        $pdo = null;
         return $data;
     }
 
@@ -269,29 +237,17 @@ class MemberService
     /* #region  取得所有會員資料 */
     public function getAllMember()
     {
-        require_once("../config/conn.php");
-        $sql = "
+        $member = new Member();
+        $statement = $member->prepare("
         select s.*, m.CreateTime as CreateTime, r.Id as Role_Id,r.`Name` as Role_Name 
         from member as m, student as s, member_role as mr, role as r
         where
             s.Account = m.Account and
             m.Account = mr.Account and 
             mr.Role_Id = r.Id;            
-        ";
-        $datalist = [];
-        foreach( $pdo->query($sql) as $row){
-            $data['Id'] = $row['Id'];
-            $data['Name'] = $row['Name'];
-            $data['Image'] = $row['Image'];
-            $data['Introduction'] = $row['Introduction'];
-            $data['Class_Id'] = $row['Class_Id'];
-            $data['Account'] = $row['Account'];
-            $data['CreateTime'] = $row['CreateTime'];
-            $data['Role_Id'] = $row['Role_Id'];
-            $data['Role_Name'] = $row['Role_Name'];
-            $datalist[] = $data;
-        }
-        $pdo = null;
+        ");
+        $statement->execute();
+        $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $datalist;
     }
     /* #endregion */
@@ -327,21 +283,17 @@ class MemberService
     /* #region  修改密碼 */
     public function updateUserPassword(string $account, string $new)
     {
-        require_once("./config/conn.php");
-        $sql = "update member set Password = '{$this->hash($new)}' where Account = $account;";
-        $res = $pdo->exec($sql);
-        $pdo = null;
+        $member = new Member();
+        $res = $member->update(['Password' => $this->hash($new)], ['Account' => $account]);
         return $res;
     }
 
     public function updatePassword(string $account, string $old, string $new)
     {
         if ($this->passwordCheck($account, $old)) {
-            require_once("./config/conn.php");
-            $sql = "update member set Password = '{$this->hash($new)}' where Account = $account;";
-            $res = $pdo->exec($sql);
-            $pdo = null;
-            return $res;
+            $member = new Member();
+            $res = $member->update(['Password' => $this->hash($new)], ['Account' => $account]);
+            return ($res) ? 'success' : 'error';
         }
         return '舊密碼輸入錯誤';
     }
@@ -349,27 +301,29 @@ class MemberService
 
     /* #region  載入管理員帳號 */
     private function install()
-    {   
-        require_once("./config/conn.php");
-        $sql = "select count(*) from memebr;";
-        $res = false;
-        if($pdo->query($sql) == 0){
-            $image = 'member/man.png';
-            $time = date("Y-m-d H:i:s", time());
-            $acc = 'jacklab';
-            $pwd = '0921730662';
-            $sql = "insert into member(Account,Password,AuthCode,CreateTime) 
-            values('{$acc}','{$this->hash($pwd)}','','$time');";
-            if($pdo->exec($sql)){
-                $sql = "insert into teacher(Id,Account,Name,Title,Introduction,Image) 
-                values('{$this->generateTeacherId()}','{$acc}','姜琇森','教授','','{$image}');";
-                $sql .= "insert into member_role(Account,Role_Id) 
-                values('{$acc}','1');";
-                $res = $pdo->exec($sql);
-            }            
+    {
+        $member = new member();
+        $data = [
+            'Account' => 'jacklab',
+            'Password' => '0921730662',
+            'AuthToken' => '',
+            'IsAdmin' => true,
+            'Name' => '姜琇森',
+            'Title' => '教授',
+            'Role_Id' => 1
+        ];
+        if ($member->count() == 0) {
+            $member->loadData($data);
+            if ($member->save()) {
+                $teacher = new teacher();
+                $member_rold = new member_role();
+                $teacher->loadData($data);
+                $member_rold->loadData($data);
+                $teacher->save();
+                $res = $member_rold->save();
+            }
         }
-        $pdo = null;
-        return $res;
+        return $res ?? false;
     }
     /* #endregion */
 }
