@@ -11,6 +11,9 @@ abstract class Model
     const RULE_MATCH = 'match';
     const RULE_MIN = 'min';
     const RULE_MAX = 'max';
+    const RULE_UNIQUE = 'unique';
+
+
     public function loadData($data)
     {
         foreach ($data as $key => $value) {
@@ -48,6 +51,18 @@ abstract class Model
                 if ($ruleName === self::RULE_MATCH && $value !== $this->{$rule['match']}) {
                     $this->addError($attr, self::RULE_MATCH);
                 }
+                if ($ruleName === self::RULE_UNIQUE) {
+                    $className = $rule['class'];
+                    $uniqueAttr = $rule['attr'] ?? $attr;
+                    $tableName = $className::table();
+                    $statement = Application::$app->db->prepare("select * from $tableName where $uniqueAttr = :attr");
+                    $statement->bindValue(":attr",$value);
+                    $statement->execute();
+                    $result = $statement->fetchObject();
+                    if($result){
+                        $this->addError($attr, self::RULE_UNIQUE, ['field' => $attr]);
+                    }
+                }
             }
         }
         return empty($this->errors);
@@ -68,9 +83,10 @@ abstract class Model
         return [
             self::RULE_REQUIRED => 'This field is required.',
             self::RULE_EMAIL => 'This field must be valid email address.',
-            self::RULE_MATCH => 'This field must be the same as {match}',
-            self::RULE_MIN => 'Min length of thie field must be {min}',
-            self::RULE_MAX => 'Max length of thie field must be {max}',
+            self::RULE_MATCH => 'This field must be the same as {match}.',
+            self::RULE_MIN => 'Min length of thie field must be {min}.',
+            self::RULE_MAX => 'Max length of thie field must be {max}.',
+            self::RULE_UNIQUE => 'Record with this {field} already exists.',
         ];
     }
 
