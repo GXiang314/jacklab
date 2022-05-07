@@ -98,6 +98,6 @@ class Database{
 
     public function log($message)
     {
-        echo '[' . date("Y-m-d h:i:s") . '] - '. $message . PHP_EOL;
+        echo '[' . date("Y-m-d h:i:s",time()) . '] - '. $message . PHP_EOL;
     }
 }
