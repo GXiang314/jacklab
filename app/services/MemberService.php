@@ -215,16 +215,17 @@ class MemberService
             limit 1;");
             $statement->execute();
             $data = $statement->fetch(\PDO::FETCH_ASSOC);
-
-            $roldSelect = DbModel::prepare("         
-            select r.* from role as r, member_role as mr, student as s
-            where 
-                r.Id = mr.Role_ID and
-                mr.Account = s.Account;
-                s.Id = '$student_id';
-            ");
-            $roldSelect->execute();
-            $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC);//role
+            if(!empty($data)){
+                $roldSelect = DbModel::prepare("         
+                select r.* from role as r, member_role as mr, student as s
+                where 
+                    r.Id = mr.Role_ID and
+                    mr.Account = s.Account;
+                    s.Id = '$student_id';
+                ");
+                $roldSelect->execute();
+                $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC);//role
+            }            
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -242,15 +243,16 @@ class MemberService
             limit 1;");
             $statement->execute();
             $data =  $statement->fetch(\PDO::FETCH_ASSOC);//member
-
-            $roldSelect = DbModel::prepare("         
-            select r.* from role as r, member_role as mr 
-            where 
-                r.Id = mr.Role_ID and
-                mr.Account = '$account';
-            ");
-            $roldSelect->execute();
-            $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC);//role
+            if(!empty($data)){
+                $roldSelect = DbModel::prepare("         
+                select r.* from role as r, member_role as mr 
+                where 
+                    r.Id = mr.Role_ID and
+                    mr.Account = '$account';
+                ");
+                $roldSelect->execute();
+                $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC);//role
+            }            
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -302,7 +304,7 @@ class MemberService
     public function passwordCheck(string $account, string $password)
     {
         $data = $this->getAccountData($account);
-        if (isset($data)) {
+        if (!empty($data)) {
             if ($data['Password'] == $this->hash($password)) {
                 return true;
             } else {
