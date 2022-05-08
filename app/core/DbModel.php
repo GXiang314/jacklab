@@ -3,12 +3,11 @@
 namespace app\core;
 
 use Exception;
-use PDO;
 
 abstract class DbModel extends Model
 {
 
-    abstract public static function table(): string;
+    abstract public function table(): string;
 
     abstract public function attributes(): array;
 
@@ -32,10 +31,24 @@ abstract class DbModel extends Model
         return true;
     }
 
-    public function get(array $except = null) // not in ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
+    public static function create($tableName, array $inserData = []){
+        try{
+            $insertKey = implode(',', array_keys($inserData));
+            $insertValue = implode(',', array_map(fn($attr) => ":$attr", $inserData));
+            $statement = self::prepare("insert into $tableName($insertKey) values($insertValue);");
+            foreach ($inserData as $key => $value) {
+                $statement->bindValue(":$key", $value);
+            }       
+            $statement->execute();
+        }catch(Exception){
+            return false;
+        }
+        return true;
+    }
+
+    public static function get($tableName, array $except = null) // not in ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
     {
         try {
-            $tableName = $this->table();
             $statement = self::prepare("select * from $tableName;");
             if ($except) {
                 $attributes = array_keys($except);
@@ -53,10 +66,9 @@ abstract class DbModel extends Model
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function findOne(array $where) //where ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
+    public static function findOne($tableName, array $where) //where ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
     {
         try {
-            $tableName = $this->table();
             $attributes = array_keys($where);
             $sql = implode(' and ', array_map(fn ($attr) => "$attr = :$attr", $attributes));
             $statement = self::prepare("select * from $tableName where $sql;");
@@ -70,10 +82,9 @@ abstract class DbModel extends Model
         return $statement->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function update(array $setColumn, array $where = []) //set['password'=>password] where ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
+    public static function update($tableName, array $setColumn, array $where = []) //set['password'=>password] where ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
     {
         try {
-            $tableName = $this->table();
             $updateKey = array_keys($setColumn);
             $whereKey = array_keys($where);
             $update_sql = implode(', ', array_map(fn ($attr) => "$attr = :$attr ", $updateKey));
@@ -86,16 +97,15 @@ abstract class DbModel extends Model
                 $statement->bindValue(":$key", $value);
             }
             $statement->execute();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
         return true;
     }
 
-    public function delete(array $where = []) //where ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
+    public static function delete($tableName, array $where = []) //where ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
     {
         try {
-            $tableName = $this->table();
             $attributes = array_keys($where);
             $sql = ($where) ? ' where ' . implode(' and ', array_map(fn ($attr) => "$attr = :$attr", $attributes)) : '';
             $statement = self::prepare("delete from $tableName $sql;");
@@ -103,14 +113,13 @@ abstract class DbModel extends Model
                 $statement->bindValue(":$key", $value);
             }
             $statement->execute();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
         return true;
     }
 
-    public function count(){
-        $tableName = $this->table();
+    public static function count($tableName){
         $statement = self::prepare("select count(*) as c from $tableName;");
         $statement->execute();
         return $statement->fetch(\PDO::FETCH_ASSOC)['c'];
