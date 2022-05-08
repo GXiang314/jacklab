@@ -3,6 +3,7 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\Request;
+use app\requestModel\ChangePassword;
 use app\services\MemberService;
 
 class MemberController extends Controller{
@@ -33,10 +34,10 @@ class MemberController extends Controller{
     public function show(Request $request)
     {        
         if($request->isGet()){
-            $sid = $request->getBody()['id'];
-            $data = $this->memberService->getMemberData($sid);
+            $sid = $request->getBody()['id'] ?? 0;
+            $data = $this->memberService->getPublicMember($sid);
         }        
-        return ($data !=[])? $this->sendResponse($data,$sid):$this->sendError('沒有資料');        
+        return ($data !=[])? $this->sendResponse($data,'success'):$this->sendError('沒有資料');        
     }
     
     /**
@@ -44,24 +45,19 @@ class MemberController extends Controller{
      *
      * @param  \app\core\Request
      * @return \app\core\Response
-     *//*
+     */
     public function updatePassword(Request $request)
     {
-        try {
-            $request->validate([ //這邊會驗證註冊的資料是否符合格式
-                'USER' => 'required',
-                'oldpassword' => ['required', 'string'],
-                'password' => ['required', 'string'],
-                'password_confirmation' => ['required', 'string','same:password'],
-            ]);
-            $result = $this->memberService->updatePassword($request['USER'],$request['oldpassword'],$request['password']);
-        } catch (Exception $e) {
-            return $this->sendError($e->getMessage(), 'Updating failed.');
+
+        if($request->isPut()){
+            $requestModel = new ChangePassword();
+            $data = $request->getJson();
+            $requestModel->loadData($data);
+            if($requestModel->validate()){
+                $result = $this->memberService->updatePassword($data['USER'],$requestModel->old,$requestModel->new);
+            }            
         }
-        if($result=='success'){
-            return $this->sendResponse($result,'success');
-        }
-        return $this->sendError($result);
+        return $result=='success' ? $this->sendResponse($result,'success') : $this->sendError($result);
     }
 
     /**
@@ -69,39 +65,29 @@ class MemberController extends Controller{
      *
      * @param  \app\core\Request
      * @return \app\core\Response
-     *//*
+     */
     public function updateIntroduction(Request $request)
     {
-        try{
-            $request->validate([
-                'USER' =>'required'
-            ]);
-            if(isset($request['text'])){
-                $result = $this->memberService->updateIntroduction($request['USER'],$request['text']);
-                if($result == 'success'){
-                    return $this->sendResponse($result,'success');
-                }
-            }
-        }catch(Exception $e){
-            return $this->sendError('Updating failed');
+        if($request->isPut()){
+            $data = $request->getJson();
+            $result = $this->memberService->updateIntroduction($data['USER'],$data['text']);            
         }
-        return $this->sendError($result);
+        return $result=='success' ? $this->sendResponse($result,'success') : $this->sendError($result);       
     }
     /**
      * Update the specified resource in storage.
      *
      * @param  \app\core\Request
      * @return \app\core\Response
-     *//*
-    public function emailvalidate(string $account,string $token)
+     */
+    public function emailvalidate(Request $request)
     {
-        $result = $this->memberService->emailTokenCheck($account,$token);
-        if($result == 'success'){
-            return $this->sendResponse($result,'信箱驗證成功');
-        }else{
-            return $this->sendError($result,'信箱驗證失敗，請聯絡系統管理員');
+        if($request->isGet()){
+            $data = $request->getBody();
+            $result = $this->memberService->emailTokenCheck($data['email'],$data['token']);
         }
-    }*/
+        return $result=='success' ? $this->sendResponse($result,'success') : $this->sendError($result);
+    }
 }
 
 
