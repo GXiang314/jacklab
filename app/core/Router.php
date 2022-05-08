@@ -35,14 +35,24 @@ class Router
 
     public function resolve()
     {
-        $path = $this->request->getPath();
         $method = $this->request->method();
+        $path = $this->request->getPath();
         $callback = $this->routes[$method][$path] ?? false;
         if ($callback === false) {
             return Controller::sendError("404 Not Found.");
         }
         if (is_array($callback)) {
-            $callback[0] = new $callback[0]();
+            /**
+             * @var Controller $controller
+             */
+            $controller = new $callback[0]();
+            $controller->action = $callback[1];
+            Application::$app->controller = $controller;
+            $callback[0] = Application::$app->controller;
+
+            foreach($controller->getMiddleware() as $middleware){
+                $this->request = $middleware->execute($this->request);
+            }
         }
         return (call_user_func($callback, $this->request));
     }
