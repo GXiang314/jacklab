@@ -12,14 +12,14 @@ class ChangePassword extends Model{
 
     public string $password;
 
-    public string $password_confirmation;
+    public string $password_confirm;
 
     public function rules(): array
     {
         return [            
             'oldpassword' => [self::RULE_REQUIRED],
             'password' => [self::RULE_REQUIRED],
-            'password_confirmation' => [
+            'password_confirm' => [
                 self::RULE_REQUIRED,
                 [self::RULE_MATCH,'match' => 'password']
             ]
