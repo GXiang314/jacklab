@@ -208,29 +208,49 @@ class MemberService
     {
         try {
             $statement = DbModel::prepare("
-            select * from student as s, member as m 
+            select s.*, m.* from student as s, member as m 
             where 
                 s.Account = m.Account and
-                s.Id = '$student_id'
+                s.Id = '$student_id' 
             limit 1;");
             $statement->execute();
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
+
+            $roldSelect = DbModel::prepare("         
+            select r.* from role as r, member_role as mr, student as s
+            where 
+                r.Id = mr.Role_ID and
+                mr.Account = s.Account;
+                s.Id = '$student_id';
+            ");
+            $roldSelect->execute();
+            $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC);//role
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return $statement->fetch(\PDO::FETCH_ASSOC);
+        return $data;
     }
 
     public function getAccountData($account)
     {
         try {
             $statement = DbModel::prepare("         
-            select * from member as m, student as s 
+            select s.*, m.* from member as m, student as s 
             where 
                 s.Account = m.Account and
-                m.Account = '$account'
+                m.Account = '$account' 
             limit 1;");
             $statement->execute();
-            $data =  $statement->fetch(\PDO::FETCH_ASSOC);
+            $data =  $statement->fetch(\PDO::FETCH_ASSOC);//member
+
+            $roldSelect = DbModel::prepare("         
+            select r.* from role as r, member_role as mr 
+            where 
+                r.Id = mr.Role_ID and
+                mr.Account = '$account';
+            ");
+            $roldSelect->execute();
+            $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC);//role
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -358,4 +378,6 @@ class MemberService
         return $res ?? false;
     }
     /* #endregion */
+
+
 }
