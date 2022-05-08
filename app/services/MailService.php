@@ -22,7 +22,7 @@ class MailService{
     public function sendForgetPasswordMail($name, $email, $code)
     {
         $subject = "{$code} 是你的 Jacklab 驗證碼";
-        $content = "使用者「{$name}」，你好：\r\n\r\n我們已收到你的重設密碼要求。\r\n請輸入下方驗證碼重設密碼(30分鐘內有效)：\r\n{$code}";
+        $content = "使用者「{$name}」，你好：\r\n\r\n我們已收到你的重設密碼要求。\r\n請輸入下方驗證碼重設密碼(30分鐘內有效)：\r\n\r\n{$code}";
         mail($email, $subject, $content, $this->header);
         
     }
