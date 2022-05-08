@@ -39,8 +39,7 @@ class student extends DbModel{
     }
 
     public function save()
-    {
-        
+    {        
         return parent::save();
     }
 
