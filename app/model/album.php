@@ -12,7 +12,7 @@ class album extends DbModel{
     public string $CreateTime;
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'academic';
     }
@@ -22,9 +22,18 @@ class album extends DbModel{
         return ['Name', 'Image', 'CreateTime'];
     }
 
+    public function loadData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }        
+        $this->CreateTime = date('Y-m-d h:i:s');   
+    }
+
     public function save()
     {     
-        $this->CreateTime = date('Y-m-d h:i:s');   
         return parent::save();
     }
 

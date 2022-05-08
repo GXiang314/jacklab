@@ -11,7 +11,7 @@ class member_role extends DbModel{
     public int $Role_Id;
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'member_role';
     }

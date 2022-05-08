@@ -15,9 +15,21 @@ class teacher extends DbModel{
     public string $Account;
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'teacher';
+    }
+
+    public function loadData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }
+        $this->Id = MemberService::generateStudentId($this->Class_Id);
+        $this->Image = 'member/man.png';
+        $this->Introduction = '';
     }
 
     public function attributes(): array

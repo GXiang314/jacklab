@@ -11,7 +11,7 @@ class game_member extends DbModel{
     public int $Student_Id;    
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'game_member';
     }

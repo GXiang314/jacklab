@@ -13,7 +13,7 @@ class member extends DbModel{
     public string $CreateTime;
     public bool $IsAdmin;
 
-    public function table(): string
+    public static function table(): string
     {
         return 'member';
     }
@@ -23,12 +23,21 @@ class member extends DbModel{
         return ['Account', 'Password', 'AuthToken', 'CreateTime', 'IsAdmin'];
     }
 
-    public function save()
+    public function loadData($data)
     {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }
         $this->Password = MemberService::hash(MemberService::generatePassword());
         $this->AuthToken = (isset($this->AuthToken))? '' :MemberService::generateAuthToken();
         $this->CreateTime = date('Y-m-d h:i:s');
         $this->IsAdmin = (isset($this->IsAdmin))? $this->IsAdmin : false;
+    }
+
+    public function save()
+    {        
         return parent::save();
     }
 

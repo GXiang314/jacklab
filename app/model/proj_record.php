@@ -16,7 +16,7 @@ class proj_record extends DbModel{
 
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'proj_record';
     }
@@ -24,6 +24,15 @@ class proj_record extends DbModel{
     public function attributes(): array
     {
         return ['Id', 'Remark', 'CreateTime', 'Uploader', 'Project_Id'];
+    }
+
+    public function loadData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }        
     }
 
     public function save()

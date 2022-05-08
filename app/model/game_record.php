@@ -17,7 +17,7 @@ class game_record extends DbModel{
 
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'game_record';
     }
@@ -25,6 +25,15 @@ class game_record extends DbModel{
     public function attributes(): array
     {
         return ['Id', 'Name', 'Game_group', 'Ranking', 'Game_time', 'Uploader', 'Game_type'];
+    }
+
+    public function loadData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }        
     }
 
     public function save()

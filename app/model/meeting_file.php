@@ -15,7 +15,7 @@ class meeting_file extends DbModel{
 
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'meeting_file';
     }
@@ -25,6 +25,15 @@ class meeting_file extends DbModel{
         return ['Name', 'Type', 'Url', 'Meet_Id'];
     }
 
+    public function loadData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }        
+    }
+    
     public function save()
     {        
         //get extension

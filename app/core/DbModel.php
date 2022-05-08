@@ -8,7 +8,7 @@ use PDO;
 abstract class DbModel extends Model
 {
 
-    abstract public function table(): string;
+    abstract public static function table(): string;
 
     abstract public function attributes(): array;
 

@@ -10,7 +10,7 @@ class game_type extends DbModel{
     public string $Name;    
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'game_type';
     }

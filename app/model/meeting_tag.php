@@ -11,7 +11,7 @@ class meeting_tag extends DbModel{
     public int $Meet_Id;
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'meeting_tag';
     }

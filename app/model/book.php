@@ -14,7 +14,7 @@ class book extends DbModel{
     public string $Image;
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'book';
     }
@@ -24,9 +24,18 @@ class book extends DbModel{
         return ['Title', 'Publisher', 'Time', 'ISBN', 'Image'];
     }
 
+    public function loadData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }        
+        $this->Time = date('Y-m-d h:i:s');   
+    }
+
     public function save()
     {     
-        $this->Time = date('Y-m-d h:i:s');   
         return parent::save();
     }
 

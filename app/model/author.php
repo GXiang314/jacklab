@@ -11,7 +11,7 @@ class author extends DbModel{
     public string $Account;    
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'author';
     }

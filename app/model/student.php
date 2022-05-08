@@ -16,7 +16,7 @@ class student extends DbModel{
 
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'student';
     }
@@ -26,11 +26,21 @@ class student extends DbModel{
         return ['Id', 'Name', 'Image', 'Introduction', 'Class_Id', 'Account'];
     }
 
-    public function save()
+    public function loadData($data)
     {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }
         $this->Id = MemberService::generateStudentId($this->Class_Id);
         $this->Image = 'member/man.png';
         $this->Introduction = '';
+    }
+
+    public function save()
+    {
+        
         return parent::save();
     }
 

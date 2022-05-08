@@ -15,7 +15,7 @@ class game_file extends DbModel{
 
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'game_file';
     }
@@ -23,6 +23,15 @@ class game_file extends DbModel{
     public function attributes(): array
     {
         return ['Name', 'Type', 'Url', 'Game_record'];
+    }
+
+    public function loadData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }        
     }
 
     public function save()

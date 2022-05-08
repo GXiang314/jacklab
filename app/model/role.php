@@ -10,7 +10,7 @@ class role extends DbModel{
     public string $Name;    
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'role';
     }

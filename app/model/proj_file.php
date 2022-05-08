@@ -14,7 +14,7 @@ class proj_file extends DbModel{
 
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'proj_file';
     }
@@ -22,6 +22,15 @@ class proj_file extends DbModel{
     public function attributes(): array
     {
         return ['Name', 'Type', 'Url', 'Proj_record'];
+    }
+
+    public function loadData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }        
     }
 
     public function save()

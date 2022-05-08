@@ -11,7 +11,7 @@ class classes extends DbModel{
     public int $Academic_Id;
 
 
-    public function table(): string
+    public static function table(): string
     {
         return 'academic';
     }
