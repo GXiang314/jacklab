@@ -3,7 +3,6 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\middlewares\isLoginMiddleware;
-use app\core\middlewares\Middleware;
 use app\core\Request;
 use app\requestModel\Useradd;
 use app\services\MailService;
