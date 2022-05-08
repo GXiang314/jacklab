@@ -2,8 +2,8 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
-use app\core\middlewares\isLoginMiddleware;
 use app\core\Request;
+use app\middlewares\isLoginMiddleware;
 use app\requestModel\Useradd;
 use app\services\MailService;
 use app\services\MemberService;
