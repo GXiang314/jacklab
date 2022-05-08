@@ -4,6 +4,14 @@ namespace app\core;
 
 class Request
 {
+    public array $body =[];
+
+    public function addKeys($array = []){
+        foreach($array as $key => $value){
+            $this->body[$key] = $value;
+        }
+    }
+
     public function getPath()
     {
         $path = $_SERVER['REQUEST_URI'] ?? '/';
@@ -25,20 +33,29 @@ class Request
      */
     public function getBody()
     {
-        $body = [];
         if ($this->isGet()) {
             foreach ($_GET as $key => $value) {
-                // $body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
-                $body[$key] = $value;
+                // $this->body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->body[$key] = $value;
             }
-        }
-        if ($this->isPost()) {
+        }else if ($this->isPost()) {
             foreach ($_POST as $key => $value) {
-                // $body[$key] = filter_input(INPUT_POST, $key, FILTER_DEFAULT);
-                $body[$key] = $value;
+                // $this->body[$key] = filter_input(INPUT_POST, $key, FILTER_DEFAULT);
+                $this->body[$key] = $value;
+            }
+        }else if ($this->isPut()) {
+            foreach ($_POST as $key => $value) {
+                // $this->body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                if(empty($_POST)) break;
+                $this->body[$key] = $value;
+            }
+        }else if ($this->isDelete()) {
+            foreach ($_GET as $key => $value) {
+                // $this->body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->body[$key] = $value;
             }
         }
-        return $body;
+        return $this->body;
     }
 
     /**
@@ -48,23 +65,15 @@ class Request
      */
     public function getJson()
     {
-        $body = [];
-        $data = json_decode(file_get_contents('php://input')) ?? [];
-
-        if ($this->isPost()) {
-            foreach ($data as $key => $value) {
-                // $body[$key] = filter_input(INPUT_POST, $value, FILTER_DEFAULT);
-                $body[$key] = $value;
-            }
+        $data = json_decode(file_get_contents('php://input')) ?? [];       
+        foreach ($data as $key => $value) {
+            // $this->body[$key] = filter_input(INPUT_POST, $value, FILTER_DEFAULT);
+            $this->body[$key] = $value;
         }
-        if ($this->isPut()) {
-            foreach ($data as $key => $value) {
-                // $body[$key] = filter_input(INPUT_POST, $value, FILTER_DEFAULT);
-                $body[$key] = $value;
-            }
-        }
-        return $body;
+        return $this->body;
     }
+
+
 
     public function isGet()
     {
@@ -78,11 +87,19 @@ class Request
 
     public function isPut()
     {
-        return $this->method() === 'PUT';
+        return $this->method() === 'PUT' || $this->getBody()['_method'] ?? '' === 'PUT';
     }
 
     public function isDelete()
     {
         return $this->method() === 'DELETE';
+    }
+
+    /**
+     * get HTTP Header from request.
+     */
+    public function header($httpHeader){
+        $httpHeader = "HTTP_".strtoupper($httpHeader);
+        return $_SERVER[$httpHeader] ?? null;
     }
 }
