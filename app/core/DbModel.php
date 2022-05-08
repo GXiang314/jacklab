@@ -31,7 +31,7 @@ abstract class DbModel extends Model
         return true;
     }
 
-    public static function create($tableName, array $inserData = []){
+    public static function create($tableName, array $inserData){
         try{
             $insertKey = implode(',', array_keys($inserData));
             $insertValue = implode(',', array_map(fn($attr) => "'$attr'", $inserData));
@@ -42,11 +42,20 @@ abstract class DbModel extends Model
         }
         return true;
     }
-
-    public static function get($tableName, array $except = null) // not in ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
+   
+    public static function get($tableName, array $where = null, array $except = null) // not in ['account'=>'123456789@gmail.com','name'=>'asdasdasd'] ...
     {
         try {
             $statement = self::prepare("select * from $tableName;");
+            if ($where) {
+                $attributes = array_keys($where);
+                $sql = implode(' and ', array_map(fn ($attr) => "$attr in (:$attr)", $attributes));
+                $statement = self::prepare("select * from $tableName where $sql;");
+                foreach ($except as $key => $value) {
+                    $statement->bindValue(":$key", $value);
+                }
+            }
+
             if ($except) {
                 $attributes = array_keys($except);
                 $sql = implode(' and ', array_map(fn ($attr) => "$attr not in (:$attr)", $attributes));
