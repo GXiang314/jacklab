@@ -15,7 +15,7 @@ class teacher extends DbModel{
     public string $Account;
 
 
-    public static function table(): string
+    public function table(): string
     {
         return 'teacher';
     }

@@ -16,7 +16,7 @@ class proj_record extends DbModel{
 
 
 
-    public static function table(): string
+    public function table(): string
     {
         return 'proj_record';
     }

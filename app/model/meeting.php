@@ -16,7 +16,7 @@ class meeting extends DbModel{
 
 
 
-    public static function table(): string
+    public function table(): string
     {
         return 'meeting';
     }

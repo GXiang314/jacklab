@@ -11,7 +11,7 @@ class permission extends DbModel{
     public string $Url;    
 
 
-    public static function table(): string
+    public function table(): string
     {
         return 'permission';
     }

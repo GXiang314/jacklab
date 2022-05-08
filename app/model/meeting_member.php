@@ -11,7 +11,7 @@ class meeting_member extends DbModel{
     public string $Account;    
 
 
-    public static function table(): string
+    public function table(): string
     {
         return 'meeting_member';
     }

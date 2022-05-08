@@ -14,7 +14,7 @@ class proj_file extends DbModel{
 
 
 
-    public static function table(): string
+    public function table(): string
     {
         return 'proj_file';
     }

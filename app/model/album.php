@@ -12,7 +12,7 @@ class album extends DbModel{
     public string $CreateTime;
 
 
-    public static function table(): string
+    public function table(): string
     {
         return 'academic';
     }

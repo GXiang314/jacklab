@@ -11,7 +11,7 @@ class lab_info extends DbModel{
     public string $Content;
 
 
-    public static function table(): string
+    public function table(): string
     {
         return 'lab_info';
     }

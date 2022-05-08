@@ -14,7 +14,7 @@ class book extends DbModel{
     public string $Image;
 
 
-    public static function table(): string
+    public function table(): string
     {
         return 'book';
     }

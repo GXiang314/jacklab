@@ -11,7 +11,7 @@ class proj_tag extends DbModel{
     public int $Project_Id;
 
 
-    public static function table(): string
+    public function table(): string
     {
         return 'proj_tag';
     }

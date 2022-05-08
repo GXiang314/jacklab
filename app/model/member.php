@@ -13,7 +13,7 @@ class member extends DbModel{
     public string $CreateTime;
     public bool $IsAdmin;
 
-    public static function table(): string
+    public function table(): string
     {
         return 'member';
     }
@@ -30,7 +30,7 @@ class member extends DbModel{
                 $this->{$key} = $value;
             }            
         }
-        $this->Password = MemberService::hash(MemberService::generatePassword());
+        $this->Password = MemberService::generatePassword();
         $this->AuthToken = (isset($this->AuthToken))? '' :MemberService::generateAuthToken();
         $this->CreateTime = date('Y-m-d h:i:s');
         $this->IsAdmin = (isset($this->IsAdmin))? $this->IsAdmin : false;
@@ -38,6 +38,7 @@ class member extends DbModel{
 
     public function save()
     {        
+        $this->Password = MemberService::hash($this->Password);
         return parent::save();
     }
 
