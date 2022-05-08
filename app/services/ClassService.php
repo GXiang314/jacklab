@@ -16,7 +16,7 @@ class ClassService{
     }
     public function getAll()
     {
-        $data = classes::get('academic');
+        $data = classes::get('classes');
         return $data;
     }
 
