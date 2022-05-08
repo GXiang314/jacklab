@@ -2,6 +2,8 @@
 
 namespace app\services;
 
+use app\core\Application;
+use app\core\DbModel;
 use app\model\member;
 use app\model\member_role;
 use app\model\student;
@@ -16,6 +18,7 @@ class MemberService
     public function __construct()
     {
         self::$key = $_ENV['SALT_KEY'];
+        $this->install();
     }
     /* #region  雜湊 */
 
@@ -36,9 +39,17 @@ class MemberService
             $member->loadData($request);
             $student->loadData($request);
             $member_rold->loadData($request);
+
+            $name = $student->Name;
+            $acc = $member->Account;
+            $pwd = $member->Password;
+            $token = $member->AuthToken;
+
             if ($res = $member->save()) {
+                $mailService = new MailService();
                 $student->save();
                 $member_rold->save();
+                $mailService->sendRegisterMail($name, $acc, $pwd, $token);
             }
         } catch (Exception $e) {
             return $e->getMessage();
@@ -72,8 +83,7 @@ class MemberService
     public function updateIntroduction(string $account, string $text)
     {
         try {
-            $student = new student();
-            $res = $student->update(['Introduction' => $text], ['Account' => $account]);
+            $res = DbModel::update('student', ['Introduction' => $text], ['Account' => $account]);
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -89,17 +99,14 @@ class MemberService
             foreach ($idList as $id) {
                 $data = $this->getMemberData($id);
                 if (isset($data['Account'])) {
-                    $member = new member();
-                    $statement = $member->prepare("
+                    Application::$app->db->pdo->exec("
                         delete from game_member where Student_Id = '{$id}';
                         delete from meeting_member where Account = '{$data['Account']}';
-                        delete from proj_group_member where Student_Id = '{$id}';
                         delete from member_role where Account = '{$data['Account']}';
                         delete from student where Account = '{$data['Account']}';
                         delete from teacher where Account = '{$data['Account']}';
                         delete from member where Account = '{$data['Account']}';
                     ");
-                    $statement->execute();
                 }
             }
         } catch (Exception $e) {
@@ -134,7 +141,7 @@ class MemberService
             );
             $statement->execute();
             $data = $statement->fetch(\PDO::FETCH_ASSOC);
-            if (isset($data)) {
+            if (!empty($data)) {
                 return intval($data['Id']) + 1;
             }
         } catch (PDOException $e) {
@@ -182,15 +189,16 @@ class MemberService
         try {
             $data = $this->getAccountData($account);
             if (!empty($data)) {
-                if ($data['AuthToken'] === $token) {
-                    $member = new member();
-                    $member->update(['AuthToken' => ''], ['Account' => $account]);
+                if ($data['AuthToken'] == $token) {
+                    DbModel::update('member', ['AuthToken' => ''], ['Account' => $account]);
+                } else {
+                    return '驗證碼錯誤，請重新驗證';
                 }
             }
-        } catch (Exception) {
-            return false;
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
-        return true;
+        return 'success';
     }
     /* #endregion */
 
@@ -199,30 +207,27 @@ class MemberService
     public function getMemberData($student_id)
     {
         try {
-            $member = new Member();
-            $statement = $member->prepare("
+            $statement = DbModel::prepare("
             select * from student as s, member as m 
             where 
                 s.Account = m.Account and
-                s.Id = $student_id 
+                s.Id = '$student_id'
             limit 1;");
             $statement->execute();
-            $data =  $statement->fetch(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return $data;
+        return $statement->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function getAccountData($account)
     {
         try {
-            $member = new Member();
-            $statement = $member->prepare("         
+            $statement = DbModel::prepare("         
             select * from member as m, student as s 
             where 
                 s.Account = m.Account and
-                m.Account = $account 
+                m.Account = '$account'
             limit 1;");
             $statement->execute();
             $data =  $statement->fetch(\PDO::FETCH_ASSOC);
@@ -250,6 +255,27 @@ class MemberService
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $datalist;
     }
+    /* #endregion */
+
+    /* #region  取得公開個人資料 */
+
+    public function getPublicMember($student_id)
+    {
+        try {
+            $statement = DbModel::prepare("
+            select s.Id, s.Name,s.Introduction, s.Image, s.Account, m.CreateTime, c.Name as ClassName from student as s, member as m, classes as c
+            where 
+                s.Account = m.Account and
+                s.Id = '$student_id' and
+                s.Class_Id = c.Id 
+            limit 1;");
+            $statement->execute();
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return $statement->fetch(\PDO::FETCH_ASSOC);
+    }
+    
     /* #endregion */
 
     /* #region  登入密碼確認 */
@@ -283,16 +309,22 @@ class MemberService
     /* #region  修改密碼 */
     public function updateUserPassword(string $account, string $new)
     {
-        $member = new Member();
-        $res = $member->update(['Password' => $this->hash($new)], ['Account' => $account]);
+        $res = DbModel::update('member', [
+            'Password' => $this->hash($new)
+        ], [
+            'Account' => $account
+        ]);
         return $res;
     }
 
     public function updatePassword(string $account, string $old, string $new)
     {
         if ($this->passwordCheck($account, $old)) {
-            $member = new Member();
-            $res = $member->update(['Password' => $this->hash($new)], ['Account' => $account]);
+            $res = DbModel::update('member', [
+                'Password' => $this->hash($new)
+            ], [
+                'Account' => $account
+            ]);
             return ($res) ? 'success' : 'error';
         }
         return '舊密碼輸入錯誤';
@@ -312,7 +344,7 @@ class MemberService
             'Title' => '教授',
             'Role_Id' => 1
         ];
-        if ($member->count() == 0) {
+        if ($member->count('member') == 0) {
             $member->loadData($data);
             if ($member->save()) {
                 $teacher = new teacher();
