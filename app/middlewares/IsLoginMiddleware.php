@@ -1,12 +1,12 @@
 <?php 
 
-namespace app\core\middlewares;
+namespace app\middlewares;
 
 use app\core\Application;
 use app\core\DbModel;
+use app\core\Middleware;
 use app\core\Request;
 use app\core\Response;
-use app\model\member;
 use app\services\JwtService;
 
 class isLoginMiddleware extends Middleware{
