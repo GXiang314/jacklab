@@ -9,6 +9,7 @@ class Application
 {
     public static Application $app;
     public static string $ROOT_DIR;
+    public Controller $controller;
     public Router $router;
     public Request $request;
     public Response $response;
@@ -18,6 +19,7 @@ class Application
     {
         self::$app = $this;
         self::$ROOT_DIR = dirname(__DIR__);
+        $this->controller = new Controller();
         $this->response = new Response();
         $this->request = new Request();
         $this->router = new Router($this->request, $this->response);
