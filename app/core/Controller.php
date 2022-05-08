@@ -2,10 +2,14 @@
 
 namespace app\core;
 
+use app\core\middlewares\Middleware;
 use app\core\Response;
 
 class Controller
 {
+
+    protected array $middlewares = [];
+    public string $action = '';
     /**
      * return success response.
      *
@@ -36,6 +40,16 @@ class Controller
             $response['data'] = $errorMessages;
         }
         return Response::json($response, $code);
+    }
+
+    public function registerMiddleware(Middleware $middleware)
+    {
+        $this->middlewares[] = $middleware;
+    }
+
+    public function getMiddleware()
+    {
+        return $this->middlewares;
     }
 
 }
