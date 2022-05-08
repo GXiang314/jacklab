@@ -2,8 +2,11 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
+use app\core\middlewares\isLoginMiddleware;
+use app\core\middlewares\Middleware;
 use app\core\Request;
 use app\requestModel\Useradd;
+use app\services\MailService;
 use app\services\MemberService;
 
 class UserController extends Controller{
@@ -12,7 +15,8 @@ class UserController extends Controller{
     public function __construct()
     {
         $this->memberService = new MemberService();
-        
+        $this->mailService = new MailService();
+        $this->registerMiddleware(new isLoginMiddleware(['index', 'useradd', 'destroy']));
     }
 
 
@@ -26,22 +30,13 @@ class UserController extends Controller{
     {
         $userAddModel = new Useradd();
         if($request->isPost()){
-            $userAddModel->loadData($request->getJson());
-            if($userAddModel->validate()){    
-                $result = $this->memberService->studentAdd($request->getJson());
-                return $this->sendResponse($result,'success');
+            $data = $request->getJson();
+            $userAddModel->loadData($data);
+            if($userAddModel->validate()){ 
+                $this->memberService->studentAdd($data);
+                return $this->sendResponse([],'加入成功');
             }                            
-        }
-        // $request['token'] = $this->memberService->generateAuthToken();
-        // $request['password'] = $this->memberService->generatePassword();
-        // $result = $this->memberService->studentAdd($request);
-        // $url = action([MemberController::class,'emailvalidate'],['account' => $request['account'],'token' => $request['token']]);
-        // $content = "使用者「{$request['name']}」，您好：\r\n\r\n您的帳號是：{$request['account']}\r\n您的密碼是：{$request['password']}\r\n\r\n請點擊以下連結以完成驗證步驟：\r\n{$url}";
-        // Mail::raw($content, function ($message) use ($request) {
-        //     $message
-        //     ->to($request['account'])
-        //     ->subject("創建帳號通知");
-        // });
+        }        
         return $this->sendError($userAddModel->errors, 'Registered failed.');
         
     }
@@ -83,27 +78,18 @@ class UserController extends Controller{
             return $this->sendResponse($result,'success');
         }
         return $this->sendError($result);
-    }
-
-
-    public function show($id)
-    {
-        //
-    }
-
-
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-
-    public function destroy($student_id)
-    {
-        $result = $this->memberService->delete($student_id);
-        if($result == 'success'){
-            return $this->sendResponse($result,'刪除成功');
-        }
-        return $this->sendError($result,'刪除失敗，請稍後再試');
     }*/
+
+    public function destroy(Request $request)
+    {
+        if($request->isDelete()){
+            var_dump($request->getbody()['id']);
+            $result = $this->memberService->delete($request->getBody()['id']??'0');
+            if($result == 'success'){
+                return $this->sendResponse($result,'刪除成功');
+            }
+        }
+        
+        return $this->sendError($result,'刪除失敗，請稍後再試');
+    }
 }
