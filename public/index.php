@@ -1,6 +1,8 @@
 <?php
 namespace app\public;
 
+use app\controllers\api\AcademicController;
+use app\controllers\api\ClassesController;
 use app\controllers\api\LoginController;
 use app\core\Application;
 use app\controllers\api\MemberController;
@@ -26,20 +28,33 @@ $config=[
 
 $app = new Application($config);
 
-$app->router->get('/api/emailvalidate', [MemberController::class,'emailvalidate']); //信箱驗證
+$app->router->get('/api/emailvalidate?', [MemberController::class,'emailvalidate']); //信箱驗證
 $app->router->post('/api/login', [LoginController::class,'login']); //登入
 $app->router->post('/api/forgetPassword', [MemberController::class,'forgetPassword']); //發送重設密碼請求
 $app->router->post('/api/resetCodeValidate', [MemberController::class,'resetCodeValidate']); //重設密碼驗證
 $app->router->post('/api/resetPassword', [MemberController::class,'resetPassword']); //重設密碼
 
 
-$app->router->get('/api/member', [MemberController::class,'show']);
-$app->router->put('/api/member/pwd', [MemberController::class,'updatePassword']);
-$app->router->put('/api/member/info', [MemberController::class,'updateIntroduction']);
+$app->router->get('/api/member?', [MemberController::class,'show']); //取得該會員公開資料
+$app->router->put('/api/member/pwd', [MemberController::class,'updatePassword']); //會員更改密碼
+$app->router->put('/api/member/info', [MemberController::class,'updateIntroduction']); //會員更改個人簡介
 
 
-$app->router->get('/api/manager/user', [UserController::class,'index']);
-$app->router->post('/api/manager/useradd', [UserController::class,'useradd']);
-$app->router->delete('/api/manager/user', [UserController::class,'destroy']);
+$app->router->get('/api/manager/user', [UserController::class,'index']); //取得所有會員資料
+$app->router->post('/api/manager/useradd', [UserController::class,'useradd']); //加入學生
+$app->router->delete('/api/manager/user', [UserController::class,'destroy']); //刪除使用者
+
+
+$app->router->get('/api/academic', [AcademicController::class,'index']); //取得所有學制
+$app->router->get('/api/academic?', [AcademicController::class,'show']); //取得該學制班級
+$app->router->post('/api/academic', [AcademicController::class,'store']); //新增學制
+$app->router->put('/api/academic', [AcademicController::class,'update']); //修改學制
+$app->router->delete('/api/academic?', [AcademicController::class,'destroy']); //刪除學制
+
+$app->router->get('/api/class', [ClassesController::class,'index']); //取得所有班級
+$app->router->get('/api/class?', [ClassesController::class,'show']); //取得該班級學生
+$app->router->post('/api/class', [ClassesController::class,'store']); //新增班級
+$app->router->put('/api/class', [ClassesController::class,'update']); //修改班級
+$app->router->delete('/api/class?', [ClassesController::class,'destroy']); //刪除班級
 
 $app->run();
