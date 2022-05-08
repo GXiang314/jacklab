@@ -34,11 +34,8 @@ abstract class DbModel extends Model
     public static function create($tableName, array $inserData = []){
         try{
             $insertKey = implode(',', array_keys($inserData));
-            $insertValue = implode(',', array_map(fn($attr) => ":$attr", $inserData));
+            $insertValue = implode(',', array_map(fn($attr) => "'$attr'", $inserData));
             $statement = self::prepare("insert into $tableName($insertKey) values($insertValue);");
-            foreach ($inserData as $key => $value) {
-                $statement->bindValue(":$key", $value);
-            }       
             $statement->execute();
         }catch(Exception){
             return false;
