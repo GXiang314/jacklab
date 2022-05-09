@@ -27,7 +27,7 @@ $config=[
         'password' => $_ENV['DB_PASSWORD'],
     ]
 ];
-
+header('Access-Control-Allow-Origin:*'); 
 $app = new Application($config);
 
 $app->router->get('/api/emailvalidate?', [MemberController::class,'emailvalidate']); //信箱驗證
