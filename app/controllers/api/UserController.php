@@ -22,7 +22,7 @@ class UserController extends Controller{
     public function index()
     {
         $data = $this->memberService->getAllMember();
-        return ($data !=[])? $this->sendResponse($data,'所有成員'):$this->sendError('沒有資料');
+        return ($data != []) ? $this->sendResponse($data,'所有成員') : $this->sendResponse('', '沒有資料');
     }
 
     public function useradd(Request $request)

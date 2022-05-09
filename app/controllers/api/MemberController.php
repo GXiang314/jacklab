@@ -1,4 +1,5 @@
 <?php
+
 namespace app\controllers\api;
 
 use app\core\Controller;
@@ -9,7 +10,8 @@ use app\requestModel\ResetPassword;
 use app\services\MailService;
 use app\services\MemberService;
 
-class MemberController extends Controller{
+class MemberController extends Controller
+{
     private $memberService;
     private $mailService;
     public function __construct()
@@ -26,24 +28,24 @@ class MemberController extends Controller{
     public function index()
     {
         $data = $this->memberService->getAllMember();
-        return ($data !=[])? $this->sendResponse($data,'所有成員'):$this->sendError('沒有資料');
+        return ($data != []) ? $this->sendResponse($data, '所有成員') : $this->sendResponse('', '沒有資料');
     }
 
-     /**
+    /**
      * Get one resource in storage.
      *
      * @param  \app\core\Request
      * @return \app\core\Response
      */
     public function show(Request $request)
-    {        
-        if($request->isGet()){
+    {
+        if ($request->isGet()) {
             $sid = $request->getBody()['id'] ?? 0;
             $data = $this->memberService->getPublicMember($sid);
-        }        
-        return ($data !=[])? $this->sendResponse($data,'success'):$this->sendError('沒有資料');        
+        }
+        return ($data != []) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
     }
-    
+
     /**
      * Update password with member in storage.
      *
@@ -53,15 +55,15 @@ class MemberController extends Controller{
     public function updatePassword(Request $request)
     {
 
-        if($request->isPut()){
+        if ($request->isPut()) {
             $requestModel = new ChangePassword();
             $data = $request->getJson();
             $requestModel->loadData($data);
-            if($requestModel->validate()){
-                $result = $this->memberService->updatePassword($data['USER'],$requestModel->old,$requestModel->new);
-            }            
+            if ($requestModel->validate()) {
+                $result = $this->memberService->updatePassword($data['USER'], $requestModel->old, $requestModel->new);
+            }
         }
-        return $result=='success' ? $this->sendResponse($result,'success') : $this->sendError($result);
+        return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
     }
 
     /**
@@ -72,11 +74,11 @@ class MemberController extends Controller{
      */
     public function updateIntroduction(Request $request)
     {
-        if($request->isPut()){
+        if ($request->isPut()) {
             $data = $request->getJson();
-            $result = $this->memberService->updateIntroduction($data['USER'],$data['text']);            
+            $result = $this->memberService->updateIntroduction($data['USER'], $data['text']);
         }
-        return $result=='success' ? $this->sendResponse($result,'success') : $this->sendError($result);       
+        return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
     }
     /**
      * Update the specified resource in storage.
@@ -86,11 +88,11 @@ class MemberController extends Controller{
      */
     public function emailvalidate(Request $request)
     {
-        if($request->isGet()){
+        if ($request->isGet()) {
             $data = $request->getBody();
-            $result = $this->memberService->emailTokenCheck($data['email'],$data['token']);
+            $result = $this->memberService->emailTokenCheck($data['email'], $data['token']);
         }
-        return $result=='success' ? $this->sendResponse($result,'success') : $this->sendError($result);
+        return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
     }
 
 
@@ -102,27 +104,27 @@ class MemberController extends Controller{
      */
     public function forgetPassword(Request $request)
     {
-        if($request->isPost()){
+        if ($request->isPost()) {
             $account = $request->getJson()['Account'] ?? '';
             $data = $this->memberService->getAccountData($account);
-            if(!empty($data)){
+            if (!empty($data)) {
                 $checkdata = DbModel::findOne('reset_password', [
                     'Account' => $data['Account'],
                 ]);
-                if($checkdata){
-                    if(strtotime($checkdata['Update_at'])-strtotime(time()) < 1740){
+                if ($checkdata) {
+                    if (strtotime($checkdata['Update_at']) - strtotime(time()) < 1740) {
                         return $this->sendError('請稍後再試');
                     }
                 }
                 $code = $this->memberService->generateAuthToken(6);
                 $this->mailService->sendForgetPasswordMail($data['Name'], $data['Account'], $code);
-                DbModel::create('reset_password',[
+                DbModel::create('reset_password', [
                     'Account' => $data['Account'],
-                    'Update_at' => date('Y-m-d h:i:s',time() + 1800),
+                    'Update_at' => date('Y-m-d h:i:s', time() + 1800),
                     'Code' => $code
                 ]);
-                
-                return $this->sendResponse("success","已發送驗證碼至您的信箱，請查收");
+
+                return $this->sendResponse("success", "已發送驗證碼至您的信箱，請查收");
             }
             return $this->sendError('無此會員帳號');
         }
@@ -137,22 +139,22 @@ class MemberController extends Controller{
      */
     public function resetCodeValidate(Request $request)
     {
-        if($request->isPost()){
-            $data = $request->getJson()?? '';
-            if(!empty($data)){
+        if ($request->isPost()) {
+            $data = $request->getJson() ?? '';
+            if (!empty($data)) {
                 $checkdata = DbModel::findOne('reset_password', [
                     'Account' => $data['Account'],
                     'Code' => $data['Code'],
                 ]);
-                if(!empty($checkdata)){
-                    if(strtotime($checkdata['Update_at']) > strtotime(time())){
+                if (!empty($checkdata)) {
+                    if (strtotime($checkdata['Update_at']) > strtotime(time())) {
                         return $this->sendResponse('success', '驗證成功');
                     }
                     return $this->sendError('此驗證碼已過期');
                 }
                 return $this->sendError('驗證碼錯誤');
             }
-            return $this->sendError('驗證失敗');        
+            return $this->sendError('驗證失敗');
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -165,33 +167,32 @@ class MemberController extends Controller{
      */
     public function resetPassword(Request $request)
     {
-        if($request->isPost()){
-            $data = $request->getJson()?? ''; 
+        if ($request->isPost()) {
+            $data = $request->getJson() ?? '';
             $checkdata = DbModel::findOne('reset_password', [
                 'Account' => $data['account'],
                 'Code' => $data['code'],
             ]);
-            if(!empty($checkdata)){
-                if(strtotime($checkdata['Update_at']) > strtotime(time())){
+            if (!empty($checkdata)) {
+                if (strtotime($checkdata['Update_at']) > strtotime(time())) {
                     $requestModel = new ResetPassword();
                     $requestModel->loadData($data);
-                    if($requestModel->validate()){
-                        $res = $this->memberService->updateUserPassword($requestModel->account,$requestModel->password);
+                    if ($requestModel->validate()) {
+                        $res = $this->memberService->updateUserPassword($requestModel->account, $requestModel->password);
                         DbModel::delete('reset_password', [
                             'Account' => $requestModel->account,
                         ]);
-                        return $res? $this->sendResponse($res, "修改成功！") : $this->sendError("Error");
-                    }  
-                    return $this->sendError('兩次密碼輸入不一致');   
+                        return $res ? $this->sendResponse($res, "修改成功！") : $this->sendError("Error");
+                    }
+                    return $this->sendError('兩次密碼輸入不一致');
                 }
                 DbModel::delete('reset_password', [
                     'Account' => $data['Account'],
                     'Code' => $data['Code']
                 ]);
-                return $this->sendError('請重新驗證');                 
-            }                
+                return $this->sendError('請重新驗證');
+            }
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
-
 }
