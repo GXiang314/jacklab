@@ -20,7 +20,7 @@ class ClassesController extends Controller{
     public function index()
     {
         $data = $this->classService->getAll();
-        return isset($data) ? $this->sendResponse($data, 'success') : $this->sendError('沒有資料');
+        return isset($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
     }
         
     public function show(Request $request)
@@ -28,7 +28,7 @@ class ClassesController extends Controller{
         if($request->isGet()){
             $id = $request->getBody()['Id'] ?? '';
             $data = $this->classService->getStudent($id);
-            return isset($data) ? $this->sendResponse($data, 'success') : $this->sendError('沒有資料');
+            return isset($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
