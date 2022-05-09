@@ -106,6 +106,14 @@ class MemberController extends Controller{
             $account = $request->getJson()['Account'] ?? '';
             $data = $this->memberService->getAccountData($account);
             if(!empty($data)){
+                $checkdata = DbModel::findOne('reset_password', [
+                    'Account' => $data['Account'],
+                ]);
+                if($checkdata){
+                    if(strtotime($checkdata['Update_at'])-strtotime(time()) < 1740){
+                        return $this->sendError('請稍後再試');
+                    }
+                }
                 $code = $this->memberService->generateAuthToken(6);
                 $this->mailService->sendForgetPasswordMail($data['Name'], $data['Account'], $code);
                 DbModel::create('reset_password',[
@@ -137,7 +145,10 @@ class MemberController extends Controller{
                     'Code' => $data['Code'],
                 ]);
                 if(!empty($checkdata)){
-                    return $this->sendResponse('success', '驗證成功');
+                    if(strtotime($checkdata['Update_at']) > strtotime(time())){
+                        return $this->sendResponse('success', '驗證成功');
+                    }
+                    return $this->sendError('此驗證碼已過期');
                 }
                 return $this->sendError('驗證碼錯誤');
             }
@@ -168,7 +179,6 @@ class MemberController extends Controller{
                         $res = $this->memberService->updateUserPassword($requestModel->account,$requestModel->password);
                         DbModel::delete('reset_password', [
                             'Account' => $requestModel->account,
-                            'Code' => $requestModel->code
                         ]);
                         return $res? $this->sendResponse($res, "修改成功！") : $this->sendError("Error");
                     }  
@@ -178,7 +188,7 @@ class MemberController extends Controller{
                     'Account' => $data['Account'],
                     'Code' => $data['Code']
                 ]);
-                return $this->sendError('此驗證碼已過期');                 
+                return $this->sendError('請重新驗證');                 
             }                
         }
         return $this->sendError('Method Not Allow', [], 405);
