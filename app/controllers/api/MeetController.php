@@ -42,7 +42,7 @@ class MeetController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->meetService->add($data, $requestModel->Files ?? null, $requestModel->Tag ?? null);
-                return ($res == 'success') ? $this->sendResponse($requestModel, 'success') : $this->sendError($res ?? '新增失敗');
+                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '新增失敗');
             }else{
                 return $this->sendError($requestModel->errors);
             }
