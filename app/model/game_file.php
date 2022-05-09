@@ -10,6 +10,7 @@ class game_file extends DbModel{
     public int $Id;
     public string $Name;
     public string $Type;
+    public $Size;
     public string $Url;
     public int $Game_record;
 
@@ -22,7 +23,7 @@ class game_file extends DbModel{
 
     public function attributes(): array
     {
-        return ['Name', 'Type', 'Url', 'Game_record'];
+        return ['Name', 'Type', 'Size', 'Url', 'Game_record'];
     }
 
     public function loadData($data)

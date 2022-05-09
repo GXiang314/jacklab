@@ -12,6 +12,7 @@ class m0015_meeting_file{
             `Id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
             `Name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '檔名',
             `Type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '類型',
+            `Size` bigint UNSIGNED NOT NULL COMMENT '大小',
             `Url` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '路徑',
             `Meet_Id` int NOT NULL COMMENT 'FK, meeting.Id',
             PRIMARY KEY (`Id`) USING BTREE,

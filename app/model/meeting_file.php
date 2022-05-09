@@ -10,6 +10,7 @@ class meeting_file extends DbModel{
     public int $Id;
     public string $Name;
     public string $Type;
+    public $Size;
     public string $Url;
     public int $Meet_Id;
 
@@ -22,7 +23,7 @@ class meeting_file extends DbModel{
 
     public function attributes(): array
     {
-        return ['Name', 'Type', 'Url', 'Meet_Id'];
+        return ['Name', 'Type', 'Size', 'Url', 'Meet_Id'];
     }
 
     public function loadData($data)

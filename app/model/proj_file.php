@@ -9,6 +9,7 @@ class proj_file extends DbModel{
     public int $Id;
     public string $Name;
     public string $Type;
+    public $Size;
     public string $Url;
     public int $Proj_record;
 
@@ -21,7 +22,7 @@ class proj_file extends DbModel{
 
     public function attributes(): array
     {
-        return ['Name', 'Type', 'Url', 'Proj_record'];
+        return ['Name', 'Type', 'Size', 'Url', 'Proj_record'];
     }
 
     public function loadData($data)
