@@ -27,7 +27,7 @@ class MeetController extends Controller
     public function show(Request $request)
     {
         if ($request->isGet()) {
-            $id = $request->getBody()['Id'] ?? '';
+            $id = $request->getBody()['id'] ?? '';
             $data = $this->meetService->getOne($id);
             return (!empty($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
@@ -75,7 +75,7 @@ class MeetController extends Controller
     public function destroy(Request $request)
     {
         if($request->isDelete()){
-            $id = $request->getBody()['Id'] ?? '';
+            $id = $request->getBody()['id'] ?? '';
             $result = $this->meetService->delete($id);
             return $result == 'success'? $this->sendResponse($result, 'success') : $this->sendError($result);
         }

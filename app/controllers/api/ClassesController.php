@@ -26,7 +26,7 @@ class ClassesController extends Controller{
     public function show(Request $request)
     {
         if($request->isGet()){
-            $id = $request->getBody()['Id'] ?? '';
+            $id = $request->getBody()['id'] ?? '';
             $data = $this->classService->getStudent($id);
             return isset($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
@@ -62,7 +62,7 @@ class ClassesController extends Controller{
     public function destroy(Request $request)
     {
         if($request->isDelete()){
-            $id = $request->getBody()['Id'] ?? '';
+            $id = $request->getBody()['id'] ?? '';
             $result = $this->classService->delete($id);
             return $result == 'success'? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
