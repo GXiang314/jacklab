@@ -14,16 +14,19 @@ class Application
     public Request $request;
     public Response $response;
     public Database $db;
+    public Cors $cors;
     
     public function __construct(array $config)
     {
         self::$app = $this;
         self::$ROOT_DIR = dirname(__DIR__);
+        $this->cors = new Cors();
         $this->controller = new Controller();
         $this->response = new Response();
         $this->request = new Request();
         $this->router = new Router($this->request, $this->response);
         $this->db = new Database($config['db']);
+        
     }
 
     public function run()

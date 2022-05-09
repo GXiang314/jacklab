@@ -28,12 +28,7 @@ $config=[
     ]
 ];
 $app = new Application($config);
-// 设置允许其他域名访问
-header('Access-Control-Allow-Origin:*');  
-// 设置允许的响应类型 
-header('Access-Control-Allow-Methods:POST, GET', 'PUT', 'DELETE');  
-// 设置允许的响应头 
-header('Access-Control-Allow-Headers:x-requested-with,content-type'); 
+
 
 $app->router->get('/api/emailvalidate?', [MemberController::class,'emailvalidate']); //信箱驗證
 $app->router->post('/api/login', [LoginController::class,'login']); //登入
