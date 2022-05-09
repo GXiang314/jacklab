@@ -42,7 +42,7 @@ $app->router->put('/api/member/info', [MemberController::class,'updateIntroducti
 
 $app->router->get('/api/manager/user', [UserController::class,'index']); //取得所有會員資料
 $app->router->post('/api/manager/useradd', [UserController::class,'useradd']); //加入學生
-$app->router->delete('/api/manager/user', [UserController::class,'destroy']); //刪除使用者
+$app->router->delete('/api/manager/user?', [UserController::class,'destroy']); //刪除使用者
 
 
 $app->router->get('/api/academic', [AcademicController::class,'index']); //取得所有學制
