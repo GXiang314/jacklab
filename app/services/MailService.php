@@ -19,7 +19,7 @@ class MailService{
         $subject = "創建帳號通知";
         $url = $_ENV['HOST']."/api/emailvalidate?email=$account&token=$token";
         $content = "使用者「{$name}」，你好：\r\n\r\n您的帳號是：{$account}\r\n您的密碼是：{$password}\r\n\r\n請點擊下方連結以完成驗證步驟\r\n{$url}";
-        mail($account, $subject, $content, $this->header);
+        mail($account, $subject, $content, $this->headers);
     }
 
     public function sendForgetPasswordMail($name, $email, $code)
