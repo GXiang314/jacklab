@@ -33,25 +33,14 @@ class Request
      */
     public function getBody()
     {
-        if ($this->isGet()) {
+        if ($this->isGet()||$this->isDelete()) {
             foreach ($_GET as $key => $value) {
                 // $this->body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
                 $this->body[$key] = $value;
             }
-        }else if ($this->isPost()) {
+        }else if ($this->isPost() || $this->isPut()) {
             foreach ($_POST as $key => $value) {
                 // $this->body[$key] = filter_input(INPUT_POST, $key, FILTER_DEFAULT);
-                $this->body[$key] = $value;
-            }
-        }else if ($this->isPut()) {
-            foreach ($_POST as $key => $value) {
-                // $this->body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
-                if(empty($_POST)) break;
-                $this->body[$key] = $value;
-            }
-        }else if ($this->isDelete()) {
-            foreach ($_GET as $key => $value) {
-                // $this->body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
                 $this->body[$key] = $value;
             }
         }
