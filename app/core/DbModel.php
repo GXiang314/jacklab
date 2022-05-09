@@ -47,16 +47,16 @@ abstract class DbModel extends Model
     {
         try {
             $statement = self::prepare("select * from $tableName;");
-            if ($where) {
+            if (!empty($where)) {
                 $attributes = array_keys($where);
-                $sql = implode(' and ', array_map(fn ($attr) => "$attr in (:$attr)", $attributes));
+                $sql = implode(' and ', array_map(fn ($attr) => "$attr = :$attr", $attributes));
                 $statement = self::prepare("select * from $tableName where $sql;");
-                foreach ($except as $key => $value) {
+                foreach ($where as $key => $value) {
                     $statement->bindValue(":$key", $value);
                 }
             }
 
-            if ($except) {
+            if (!empty($except)) {
                 $attributes = array_keys($except);
                 $sql = implode(' and ', array_map(fn ($attr) => "$attr not in (:$attr)", $attributes));
                 $statement = self::prepare("select * from $tableName where $sql;");
