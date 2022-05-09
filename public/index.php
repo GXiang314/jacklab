@@ -4,6 +4,7 @@ namespace app\public;
 use app\controllers\api\AcademicController;
 use app\controllers\api\ClassesController;
 use app\controllers\api\LoginController;
+use app\controllers\api\MeetController;
 use app\core\Application;
 use app\controllers\api\MemberController;
 use app\controllers\api\UserController;
@@ -56,5 +57,12 @@ $app->router->get('/api/class?', [ClassesController::class,'show']); //取得該
 $app->router->post('/api/class', [ClassesController::class,'store']); //新增班級
 $app->router->put('/api/class', [ClassesController::class,'update']); //修改班級
 $app->router->delete('/api/class?', [ClassesController::class,'destroy']); //刪除班級
+
+$app->router->get('/api/meeting', [MeetController::class,'index']); //取得會議列表
+$app->router->get('/api/meeting?', [MeetController::class,'show']); //取得該會議記錄
+$app->router->post('/api/meeting', [MeetController::class,'store']); //新增會議記錄
+$app->router->put('/api/meeting', [MeetController::class,'update']); //修改會議記錄
+$app->router->delete('/api/meeting?', [MeetController::class,'delete']); //刪除會議記錄(軟刪除)
+
 
 $app->run();
