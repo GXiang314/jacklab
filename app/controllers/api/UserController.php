@@ -82,7 +82,6 @@ class UserController extends Controller{
     public function destroy(Request $request)
     {
         if($request->isDelete()){
-            var_dump($request->getbody()['id']);
             $result = $this->memberService->delete($request->getBody()['id']??'0');
             if($result == 'success'){
                 return $this->sendResponse($result,'刪除成功');
