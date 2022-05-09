@@ -63,7 +63,7 @@ $app->router->get('/api/meeting', [MeetController::class,'index']); //取得會�
 $app->router->get('/api/meeting?', [MeetController::class,'show']); //取得該會議記錄
 $app->router->post('/api/meeting', [MeetController::class,'store']); //新增會議記錄
 $app->router->put('/api/meeting', [MeetController::class,'update']); //修改會議記錄
-$app->router->delete('/api/meeting?', [MeetController::class,'delete']); //刪除會議記錄(軟刪除)
+$app->router->delete('/api/meeting?', [MeetController::class,'destroy']); //刪除會議記錄(軟刪除)
 $app->router->get('/api/download/meeting?', [DownloadController::class,'download_Meet']); //下載會議記錄檔案
 
 
