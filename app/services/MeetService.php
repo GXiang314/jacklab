@@ -310,10 +310,11 @@ class MeetService
         return (isset($id['Id'])) ? $id['Id'] + 1 : 1;
     }
 
-    public function getFile($fileName)
+    public function getFile($fileName, $id)
     {
         $file = meeting_file::findOne('meeting_file', [
-            'Name' => $fileName
+            'Name' => $fileName,
+            'Meet_Id' => $id
         ]);
         return $file;
     }
