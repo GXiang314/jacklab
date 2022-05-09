@@ -5,7 +5,6 @@ namespace app\controllers\api;
 use app\core\Controller;
 use app\core\Request;
 use app\requestModel\AddClassName;
-use app\requestModel\AddName;
 use app\requestModel\UpdateName;
 use app\services\ClassService;
 
