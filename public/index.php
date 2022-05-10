@@ -8,6 +8,8 @@ use app\controllers\api\LoginController;
 use app\controllers\api\MeetController;
 use app\core\Application;
 use app\controllers\api\MemberController;
+use app\controllers\api\PermissionController;
+use app\controllers\api\RoleController;
 use app\controllers\api\UserController;
 use Dotenv\Dotenv;
 
@@ -41,6 +43,18 @@ $app->router->get('/api/member', [MemberController::class,'index']); //取得所
 $app->router->get('/api/member?', [MemberController::class,'show']); //取得該會員公開資料
 $app->router->put('/api/member/pwd', [MemberController::class,'updatePassword']); //會員更改密碼
 $app->router->put('/api/member/info', [MemberController::class,'updateIntroduction']); //會員更改個人簡介
+
+
+$app->router->get('/api/manager/permission', [PermissionController::class,'index']); //取得所有權限資料
+
+$app->router->get('/api/manager/role', [RoleController::class,'index']); //取得所有角色資料
+$app->router->get('/api/manager/role?', [RoleController::class,'show']); //取得該角色權限
+$app->router->get('/api/manager/role/user?', [RoleController::class,'getMember_Role']); //取得該帳號角色
+$app->router->post('/api/manager/role', [RoleController::class,'store']); //新增角色權限
+$app->router->put('/api/manager/role/user', [RoleController::class,'updateMemberRole']); //修改角色權限
+$app->router->put('/api/manager/role', [RoleController::class,'update']); //修改角色權限
+$app->router->delete('/api/manager/role?', [RoleController::class,'destroy']); //刪除角色資料
+
 
 
 $app->router->get('/api/manager/user', [UserController::class,'index']); //取得所有會員資料
