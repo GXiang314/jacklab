@@ -51,7 +51,7 @@ $app->router->get('/api/manager/role', [RoleController::class,'index']); //取�
 $app->router->get('/api/manager/role?', [RoleController::class,'show']); //取得該角色權限
 $app->router->get('/api/manager/role/user?', [RoleController::class,'getMember_Role']); //取得該帳號角色
 $app->router->post('/api/manager/role', [RoleController::class,'store']); //新增角色權限
-$app->router->put('/api/manager/role/user', [RoleController::class,'updateMemberRole']); //修改角色權限
+$app->router->put('/api/manager/role/user', [RoleController::class,'updateMemberRole']); //修改使用者角色
 $app->router->put('/api/manager/role', [RoleController::class,'update']); //修改角色權限
 $app->router->delete('/api/manager/role?', [RoleController::class,'destroy']); //刪除角色資料
 
