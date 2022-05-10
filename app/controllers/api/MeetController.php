@@ -4,6 +4,7 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\Request;
+use app\middlewares\isLoginMiddleware;
 use app\requestModel\AddMeeting;
 use app\requestModel\UpdateMeeting;
 use app\requestModel\UpdateName;
@@ -16,6 +17,7 @@ class MeetController extends Controller
     public function __construct()
     {
         $this->meetService = new MeetService();
+        $this->registerMiddleware(new isLoginMiddleware(['index', 'store', 'show', 'update', 'destroy']));
     }
 
     public function index()
@@ -81,4 +83,6 @@ class MeetController extends Controller
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
+
+
 }
