@@ -162,7 +162,7 @@ class MemberService
         );
         $statement->execute();
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
-        if (isset($data)) {
+        if (!empty($data)) {
             return intval($data['Id']) + 1;
         }
         return intval($str) + 1;
@@ -226,6 +226,42 @@ class MemberService
                 $roldSelect->execute();
                 $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC);//role
             }            
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return $data;
+    }
+
+    public function getAccount($account)
+    {
+        try {
+            $statement = DbModel::prepare("         
+            SELECT
+                m.*,
+                CASE s.`Name` WHEN s.`Name` THEN s.`Name` ELSE t.NAME END as Name		
+            FROM
+                member AS m 
+                LEFT JOIN student AS s ON s.Account = m.Account
+                LEFT JOIN teacher AS t ON t.Account = m.Account 
+            WHERE
+                m.Account = '{$account}';");
+            $statement->execute();
+            $data =  $statement->fetch(\PDO::FETCH_ASSOC);//member
+            if(!empty($data)){
+                $statement = DbModel::prepare("         
+                SELECT
+                    r.Id,
+                    r.Name
+                FROM
+                    member AS m 
+                    INNER JOIN member_role AS mr ON mr.Account = m.Account
+                    INNER JOIN role AS r ON r.Id = mr.Role_Id 
+                WHERE
+                    m.Account = 'jacklab';");
+                $statement->execute();
+                $role =  $statement->fetchAll(\PDO::FETCH_ASSOC);//member
+                $data['Role'] = $role;
+            }  
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -332,7 +368,7 @@ class MemberService
     /* #region  登入密碼確認 */
     public function passwordCheck(string $account, string $password)
     {
-        $data = $this->getAccountData($account);
+        $data = $this->getAccount($account);
         if (!empty($data)) {
             if ($data['Password'] == $this->hash($password)) {
                 return true;
@@ -347,9 +383,9 @@ class MemberService
     /* #region  信箱是否驗證 */
     public function isEmailValidate($account)
     {
-        $data = $this->getAccountData($account);
+        $data = $this->getAccount($account);
         if ($data) {
-            if ($data['AuthToken'] == '') {
+            if (empty($data['AuthToken'])) {
                 return true;
             }
         }
