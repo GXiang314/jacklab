@@ -30,14 +30,15 @@ class LoginController extends Controller{
             if($requestModel->validate()){                
                 if($this->memberService->passwordCheck($data['Account'],$data['Password'])){
                     if($this->memberService->isEmailValidate($data['Account'])){
-                        $member = $this->memberService->getAccountData($data['Account']);
-                        $token = $this->jwtService->Jwt_user_encode($member['Account'],$member['role']);
+                        $member = $this->memberService->getAccount($data['Account']);
+                        $token = $this->jwtService->Jwt_user_encode($member['Account'],$member['Role']);
                         return $this->sendResponse($token,"登入成功");
                     }else{
                         return $this->sendError('信箱未完成驗證，請查看信箱', [], 401);
                     }
+                }else{
+                    return $this->sendError('帳號或密碼輸入錯誤', [], 404);
                 }
-                return $this->sendError('帳號或密碼輸入錯誤', [], 401);
             }else{
                 return $this->sendError($requestModel->errors);
             }
