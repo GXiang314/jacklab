@@ -18,7 +18,7 @@ class Response
         header("Access-Control-Allow-Headers:Origin,Content-Type, access-control-allow-origin, Authorization, X-Requested-With");
             if($_SERVER['REQUEST_METHOD'] == 'OPTIONS'){
                 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-            
+                exit();
         }
         http_response_code($status);
         return json_encode($params);
