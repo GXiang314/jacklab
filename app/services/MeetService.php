@@ -77,9 +77,8 @@ class MeetService
             (meet.Deleted LIKE '' 
             OR isnull( meet.Deleted ));");
         $statement->execute();
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data = $statement->fetch(\PDO::FETCH_ASSOC);
         if (!empty($data)) {
-            $data = $data['0'];
             $statement = meeting::prepare("
             SELECT
                 * 
@@ -193,7 +192,7 @@ class MeetService
         try {
             if ($this->checkExtensions($files)) {
                 $meeting = meeting::findOne('meeting', [
-                    'Meet_Id' => $id
+                    'Id' => $id
                 ]);
                 $member = member::findOne('member', [
                     'Account' => $request->USER
@@ -222,10 +221,10 @@ class MeetService
                     ]);
 
                     meeting::update('meeting', [
-                        'Title' => $meeting['title'],
-                        'Content' => $meeting['content'],
-                        'Time' => $meeting['time'],
-                        'Place' => $meeting['place'],
+                        'Title' => $request['Title'],
+                        'Content' => $request['Content'],
+                        'Time' => $request['Time'],
+                        'Place' => $request['Place'],
                     ], [
                         'Id' => $id
                     ]);
