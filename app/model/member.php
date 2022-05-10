@@ -30,7 +30,7 @@ class member extends DbModel{
                 $this->{$key} = $value;
             }            
         }
-        $this->Password = MemberService::generatePassword();
+        $this->Password = $this->Password ?? MemberService::generatePassword();
         $this->AuthToken = (isset($this->AuthToken))? '' :MemberService::generateAuthToken();
         $this->CreateTime = date('Y-m-d h:i:s');
         $this->IsAdmin = (isset($this->IsAdmin))? $this->IsAdmin : false;

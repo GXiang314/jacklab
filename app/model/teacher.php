@@ -27,7 +27,7 @@ class teacher extends DbModel{
                 $this->{$key} = $value;
             }            
         }
-        $this->Id = MemberService::generateStudentId($this->Class_Id);
+        $this->Id = MemberService::generateTeacherId();
         $this->Image = 'member/man.png';
         $this->Introduction = '';
     }
