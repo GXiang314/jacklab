@@ -30,7 +30,10 @@ class AcademicService{
     public function add($name)
     {
         try{
-            academic::create('academic', ['Name' => $name]);
+            academic::create('academic', [
+                'Id' => $this->newId(),
+                'Name' => $name
+            ]);
         }
         catch(Exception $e){
             return $e->getMessage();
@@ -76,8 +79,20 @@ class AcademicService{
             '五專部'
             ];
             foreach($acadmicArray as $value){
-                academic::create('academic', ['Name' => $value]);
+                academic::create('academic', [
+                    'Id' => $this->newId(),
+                    'Name' => $value
+                ]);
             }
         }
+    }
+    private function newId()
+    {
+        $statement = academic::prepare("
+            select Id from academic order by Id desc limit 1;
+        ");
+        $statement->execute();
+        $id = $statement->fetch();
+        return (isset($id['Id'])) ? $id['Id'] + 1 : 1;
     }
 }

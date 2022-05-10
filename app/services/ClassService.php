@@ -32,6 +32,7 @@ class ClassService{
     {
         try{
             classes::create('classes', [
+                'Id' => $this->newId(),
                 'Name' => $name,
                 'Academic' => $academic,
             ]);
@@ -88,10 +89,21 @@ class ClassService{
             ];
             foreach($classArray as $key=>$value){
                 classes::create('classes', [
+                    'Id' => $this->newId(),
                     'Name' => $key,
                     'Academic_Id' => $value,
             ]);
             }
         }
+    }
+
+    private function newId()
+    {
+        $statement = academic::prepare("
+            select Id from classes order by Id desc limit 1;
+        ");
+        $statement->execute();
+        $id = $statement->fetch();
+        return (isset($id['Id'])) ? $id['Id'] + 1 : 1;
     }
 }
