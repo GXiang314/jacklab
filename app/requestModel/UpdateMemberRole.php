@@ -10,7 +10,7 @@ class UpdateMemberRole extends Model{
 
     public string $Account;
 
-    public array $Role;
+    public int $Role;
 
     public function rules(): array
     {

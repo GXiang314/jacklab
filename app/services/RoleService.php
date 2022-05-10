@@ -76,7 +76,7 @@ class RoleService
     /* #endregion */
 
     /* #region  修改使用者權限角色*/
-    public function updateMemberRole($account, $roleList)
+    public function updateMemberRole($account, $role)
     {
         try {
             $data = member::findOne('member', [
@@ -86,12 +86,13 @@ class RoleService
                 member_role::delete('member_role', [
                     'Account' => $account
                 ]);
-                foreach ($roleList as $r) {
-                    member_role::create('member_role', [
-                        'Account' => $account,
-                        'Role_Id' => $r,
-                    ]);
-                }
+                member_role::create('member_role', [
+                    'Account' => $account,
+                    'Role_Id' => $role,
+                ]);
+                // foreach ($role as $r) {
+                    
+                // }
             }else{
                 return "該會員帳號不存在";
             }
