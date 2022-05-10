@@ -32,7 +32,8 @@ class isLoginMiddleware extends Middleware{
                     if($data != json_encode([]) && strtotime(date('Y-m-d h:i:s'))-$result['exp'] < 0 ){
                         $request->addKeys([
                             'ROLE' => $result['roles'],
-                            'USER' => $result['account']
+                            'USER' => $result['account'],
+                            'ADMIN' => $data['IsAdmin']
                         ]);
                     }
                     return $request;
