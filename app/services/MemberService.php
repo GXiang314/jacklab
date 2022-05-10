@@ -278,6 +278,35 @@ class MemberService
         return $datalist;
     }
     /* #endregion */
+    
+    public function getPublicAllMember(){
+        $member = new Member();
+        $statement = $member->prepare("
+        SELECT
+            m.Account,
+        CASE
+                s.`Name` 
+                WHEN s.`Name` THEN
+                s.`Name` ELSE t.NAME 
+            END AS `Name`,
+            role.NAME AS Role_Name,
+            m.CreateTime AS CreateTime,
+        CASE
+                s.`Image` 
+                WHEN s.`Image` THEN
+                s.`Image` ELSE t.`Image` 
+            END AS Image 
+        FROM
+            member AS m
+            INNER JOIN member_role AS mr ON mr.Account = m.Account
+            INNER JOIN role ON role.Id = mr.Role_Id
+            LEFT JOIN student AS s ON s.Account = m.Account
+            LEFT JOIN teacher AS t ON t.Account = m.Account      
+        ");
+        $statement->execute();
+        $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        return $datalist;
+    }
 
     /* #region  取得公開個人資料 */
 

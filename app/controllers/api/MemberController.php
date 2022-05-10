@@ -27,7 +27,7 @@ class MemberController extends Controller
      */
     public function index()
     {
-        $data = $this->memberService->getAllMember();
+        $data = $this->memberService->getPublicAllMember();
         return ($data != []) ? $this->sendResponse($data, '所有成員') : $this->sendResponse('', '沒有資料');
     }
 
