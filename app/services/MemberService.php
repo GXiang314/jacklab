@@ -302,13 +302,23 @@ class MemberService
     {
         $member = new Member();
         $statement = $member->prepare("
-        select s.*, m.CreateTime as CreateTime, r.Id as Role_Id,r.`Name` as Role_Name 
-        from member as m, student as s, member_role as mr, role as r
-        where
-            s.Account = m.Account and
-            m.Account = mr.Account and 
-            mr.Role_Id = r.Id;            
-        ");
+        SELECT
+            s.*,
+            m.CreateTime AS CreateTime,
+            r.Id AS Role_Id,
+            r.`Name` AS Role_Name,
+            c.Name as Class_Name
+        FROM
+            member AS m,
+            student AS s,
+            member_role AS mr,
+            role AS r,
+            classes as c
+        WHERE
+            s.Account = m.Account 
+            AND m.Account = mr.Account 
+            AND mr.Role_Id = r.Id
+            AND s.Class_Id = c.Id;");
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $datalist;
