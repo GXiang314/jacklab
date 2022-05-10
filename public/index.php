@@ -37,6 +37,7 @@ $app->router->post('/api/resetCodeValidate', [MemberController::class,'resetCode
 $app->router->post('/api/resetPassword', [MemberController::class,'resetPassword']); //重設密碼
 
 
+$app->router->get('/api/member', [MemberController::class,'index']); //取得該會員公開資料
 $app->router->get('/api/member?', [MemberController::class,'show']); //取得該會員公開資料
 $app->router->put('/api/member/pwd', [MemberController::class,'updatePassword']); //會員更改密碼
 $app->router->put('/api/member/info', [MemberController::class,'updateIntroduction']); //會員更改個人簡介
