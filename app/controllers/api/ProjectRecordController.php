@@ -53,7 +53,7 @@ class ProjectRecordController extends Controller
             $requestModel = new AddProject();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                $res = $this->projectRecordService->create($data);
+                $res = $this->projectRecordService->create($data, $requestModel->Tag ?? null);
                 return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '新增失敗');
             } else {
                 return $this->sendError($requestModel->errors);
