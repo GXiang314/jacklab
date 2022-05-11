@@ -5,8 +5,10 @@ namespace app\controllers\api;
 use app\core\Controller;
 use app\core\DbModel;
 use app\core\Request;
+use app\middlewares\isLoginMiddleware;
 use app\requestModel\ChangePassword;
 use app\requestModel\ResetPassword;
+use app\requestModel\UpdateMemberPhoto;
 use app\services\MailService;
 use app\services\MemberService;
 
@@ -18,6 +20,7 @@ class MemberController extends Controller
     {
         $this->memberService = new MemberService();
         $this->mailService = new MailService();
+        $this->registerMiddleware(new isLoginMiddleware(['updatePassword', 'updateIntroduction', 'updateMemberPhoto']));
     }
     /**
      * Get all resource in storage.
@@ -54,16 +57,17 @@ class MemberController extends Controller
      */
     public function updatePassword(Request $request)
     {
-
         if ($request->isPut()) {
             $requestModel = new ChangePassword();
             $data = $request->getJson();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                $result = $this->memberService->updatePassword($data['USER'], $requestModel->old, $requestModel->new);
+                $result = $this->memberService->updatePassword($data['USER'], $requestModel->oldpassword, $requestModel->password);
+                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
             }
+            return $this->sendError($requestModel->errors);
         }
-        return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+        return $this->sendError('Method Not Allow', [], 405);
     }
 
     /**
@@ -77,9 +81,32 @@ class MemberController extends Controller
         if ($request->isPut()) {
             $data = $request->getJson();
             $result = $this->memberService->updateIntroduction($data['USER'], $data['text']);
+            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
-        return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+        return $this->sendError('Method Not Allow', [], 405);
     }
+
+    /**
+     * Update data in storage.
+     *
+     * @param  \app\core\Request
+     * @return \app\core\Response
+     */
+    public function updateMemberPhoto(Request $request)
+    {
+        if ($request->isPut()) {
+            $data = $request->getBody();
+            $requestModel = new UpdateMemberPhoto();
+            $requestModel->loadData($data);
+            if($requestModel->validate()){
+                $result = $this->memberService->updatePhoto($requestModel->USER, $requestModel->File);
+                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            }
+            return $this->sendError($requestModel->errors);
+        }
+        return $this->sendError('Method Not Allow', [], 405);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -91,8 +118,9 @@ class MemberController extends Controller
         if ($request->isGet()) {
             $data = $request->getBody();
             $result = $this->memberService->emailTokenCheck($data['email'], $data['token']);
+            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
-        return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+        return $this->sendError('Method Not Allow', [], 405);
     }
 
 

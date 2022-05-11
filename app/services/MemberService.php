@@ -91,6 +91,77 @@ class MemberService
     }
     /* #endregion */
 
+    /* #region  修改學生個人大頭貼 */
+    public function updatePhoto(string $account, $file)
+    {
+        try {
+            if ($this->checkExtensions($file)) {
+                $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $fileName = md5($file['name'] . time()) . '.' . $extension;
+                /*
+                    temp= explode('.',$file_name);
+                    $extension = end($temp);
+                */
+                $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName);
+                move_uploaded_file($file['tmp_name'], $path); //upload files
+                $res = DbModel::update('student', ['Image' => $path], ['Account' => $account]);
+            }
+
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return $res ? 'success' : 'error';
+    }
+    /* #endregion */
+
+    /* #region  修改教師大頭貼 */
+    public function updateTeacherPhoto(string $account, $file)
+    {
+        try {
+            if ($this->checkExtensions($file)) {
+                $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $fileName = md5($file['name'] . time()) . '.' . $extension;
+                /*
+                    temp= explode('.',$file_name);
+                    $extension = end($temp);
+                */
+                $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName);
+                move_uploaded_file($file['tmp_name'], $path); //upload files
+                $res = DbModel::update('teacher', ['Image' => $path], ['Account' => $account]);
+            }
+
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return $res ? 'success' : 'error';
+    }
+    /* #endregion */
+
+    /* #region  修改密碼 */
+    public function updateUserPassword(string $account, string $new)
+    {
+        $res = DbModel::update('member', [
+            'Password' => $this->hash($new)
+        ], [
+            'Account' => $account
+        ]);
+        return $res;
+    }
+
+    public function updatePassword(string $account, string $old, string $new)
+    {
+        if ($this->passwordCheck($account, $old)) {
+            $res = DbModel::update('member', [
+                'Password' => $this->hash($new)
+            ], [
+                'Account' => $account
+            ]);
+            return ($res) ? 'success' : 'error';
+        }
+        return '舊密碼輸入錯誤';
+    }
+    /* #endregion */
+
     /* #region  刪除會員帳號 */
     public function delete($idList)
     {
@@ -215,7 +286,7 @@ class MemberService
             limit 1;");
             $statement->execute();
             $data = $statement->fetch(\PDO::FETCH_ASSOC);
-            if(!empty($data)){
+            if (!empty($data)) {
                 $roldSelect = DbModel::prepare("         
                 select r.* from role as r, member_role as mr, student as s
                 where 
@@ -224,8 +295,8 @@ class MemberService
                     s.Id = '$student_id';
                 ");
                 $roldSelect->execute();
-                $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC);//role
-            }            
+                $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC); //role
+            }
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -246,8 +317,8 @@ class MemberService
             WHERE
                 m.Account = '{$account}';");
             $statement->execute();
-            $data =  $statement->fetch(\PDO::FETCH_ASSOC);//member
-            if(!empty($data)){
+            $data =  $statement->fetch(\PDO::FETCH_ASSOC); //member
+            if (!empty($data)) {
                 $statement = DbModel::prepare("         
                 SELECT
                     r.Id,
@@ -259,9 +330,9 @@ class MemberService
                 WHERE
                     m.Account = 'jacklab';");
                 $statement->execute();
-                $role =  $statement->fetchAll(\PDO::FETCH_ASSOC);//member
+                $role =  $statement->fetchAll(\PDO::FETCH_ASSOC); //member
                 $data['Role'] = $role;
-            }  
+            }
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -278,8 +349,8 @@ class MemberService
                 m.Account = '$account' 
             limit 1;");
             $statement->execute();
-            $data =  $statement->fetch(\PDO::FETCH_ASSOC);//member
-            if(!empty($data)){
+            $data =  $statement->fetch(\PDO::FETCH_ASSOC); //member
+            if (!empty($data)) {
                 $roldSelect = DbModel::prepare("         
                 select r.* from role as r, member_role as mr 
                 where 
@@ -287,8 +358,8 @@ class MemberService
                     mr.Account = '$account';
                 ");
                 $roldSelect->execute();
-                $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC);//role
-            }            
+                $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC); //role
+            }
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -324,8 +395,10 @@ class MemberService
         return $datalist;
     }
     /* #endregion */
-    
-    public function getPublicAllMember(){
+
+    /* #region  取得所有會員公開資料 */
+    public function getPublicAllMember()
+    {
         $member = new Member();
         $statement = $member->prepare("
         SELECT
@@ -353,6 +426,7 @@ class MemberService
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $datalist;
     }
+    /* #endregion */
 
     /* #region  取得公開個人資料 */
 
@@ -372,7 +446,7 @@ class MemberService
         }
         return $statement->fetch(\PDO::FETCH_ASSOC);
     }
-    
+
     /* #endregion */
 
     /* #region  登入密碼確認 */
@@ -403,28 +477,15 @@ class MemberService
     }
     /* #endregion */
 
-    /* #region  修改密碼 */
-    public function updateUserPassword(string $account, string $new)
+    /* #region  驗證副檔名 */
+    public function checkExtensions($file = null)
     {
-        $res = DbModel::update('member', [
-            'Password' => $this->hash($new)
-        ], [
-            'Account' => $account
-        ]);
-        return $res;
-    }
-
-    public function updatePassword(string $account, string $old, string $new)
-    {
-        if ($this->passwordCheck($account, $old)) {
-            $res = DbModel::update('member', [
-                'Password' => $this->hash($new)
-            ], [
-                'Account' => $account
-            ]);
-            return ($res) ? 'success' : 'error';
-        }
-        return '舊密碼輸入錯誤';
+        if ($file == null) return false;
+        $allow_extensions = explode(',', "png,jpeg,jpg");
+        $check_Array = [];
+        $check_Array[] = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $diff = array_diff($check_Array, $allow_extensions);
+        return empty($diff);
     }
     /* #endregion */
 
@@ -455,6 +516,4 @@ class MemberService
         return $res ?? false;
     }
     /* #endregion */
-
-
 }

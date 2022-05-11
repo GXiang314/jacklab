@@ -47,6 +47,7 @@ $app->router->get('/api/member', [MemberController::class,'index']); //取得所
 $app->router->get('/api/member?', [MemberController::class,'show']); //取得該會員公開資料
 $app->router->put('/api/member/pwd', [MemberController::class,'updatePassword']); //會員更改密碼
 $app->router->put('/api/member/info', [MemberController::class,'updateIntroduction']); //會員更改個人簡介
+$app->router->put('/api/member/photo', [MemberController::class,'updateMemberPhoto']); //會員更改個人大頭貼
 
 
 $app->router->get('/api/manager/permission', [PermissionController::class,'index']); //取得所有權限資料
