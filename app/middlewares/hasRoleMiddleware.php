@@ -21,7 +21,7 @@ class hasRoleMiddleware extends Middleware
     public function execute(Request $request)
     {
         if (in_array(Application::$app->controller->action, $this->actions)) {
-            $role = $request->getBody()['ROLE'][0];
+            $role = $request->getBody()['ROLE'];
             $className = pathinfo(Application::$app->controller::class, PATHINFO_FILENAME);
 
             $nowUrl = $className . "@" . Application::$app->controller->action;
@@ -35,7 +35,7 @@ class hasRoleMiddleware extends Middleware
             WHERE
                 r.Id = rp.Role_Id 
                 AND rp.Permission_Id = p.Id 
-                AND r.Id = {$role}
+                AND r.Id = '{$role}';
             ");
             $statement->execute();
             $userPrm = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -44,10 +44,7 @@ class hasRoleMiddleware extends Middleware
                 $userPrmUrl[] = $val['Url'];
             }
             // in_array($nowUrl,$userPrmUrl)
-            if (in_array($nowUrl, $userPrmUrl)) {
-                var_dump($role);
-                var_dump($nowUrl);
-                var_dump($userPrmUrl);
+            if (in_array($nowUrl, $userPrmUrl)) {               
                 return $request;
             } else {
                 echo Response::json([
