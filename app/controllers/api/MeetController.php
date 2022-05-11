@@ -20,10 +20,15 @@ class MeetController extends Controller
         $this->registerMiddleware(new isLoginMiddleware(['index', 'store', 'show', 'update', 'destroy']));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = $this->meetService->getAll();
-        return (isset($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
+        if($request->isGet()){
+            $page = $request->getBody()['page'] ?? '';
+            $search = $request->getBody()['search'] ?? '';
+            $data = $this->meetService->getAll($page, $search);
+            return (isset($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
+        }
+        return $this->sendError('Method Not Allow.', [], 405);        
     }
 
     public function show(Request $request)

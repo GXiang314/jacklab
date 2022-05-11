@@ -13,7 +13,7 @@ use Exception;
 class MeetService
 {
 
-    public function getAll()
+    public function getAll($page = 1, $search = null)
     {
         $statement = meeting::prepare("
         SELECT
@@ -34,7 +34,19 @@ class MeetService
             LEFT JOIN teacher AS t ON t.Account = m.Account 
         WHERE
             (meet.Deleted LIKE '' 
-            OR isnull( meet.Deleted ));");
+            OR isnull( meet.Deleted ))             
+            ".            
+            (($search != null)
+            ? 
+            "and (meet.Title like '%$search%'
+             or meet.Place like '%$search%'
+             or meet.Time like '%$search%'
+             or s.Name like '%$search%'
+             or t.Name like '%$search%'
+             or meet.Content like '%$search%')"
+             :' ').
+            " limit ".(($page-1)*10).", ".($page*10).";"
+        );
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
         if (!empty($data)) {
