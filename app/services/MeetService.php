@@ -195,8 +195,7 @@ class MeetService
                 'Account' => $request['USER']
             ]);
             if (!$request['USER'] == $meeting['Uploader'] ?? '' || !$member['IsAdmin']) return "unauthorized.";
-            if ($this->checkExtensions($files)) {
-                
+            if ($this->checkExtensions($files)) {                
                 foreach ($isClearOldList as $fileName) {
                     if (empty($fileName)) break;
                     $data = meeting_file::findOne('meeting_file', [
