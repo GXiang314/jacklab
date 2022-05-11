@@ -24,7 +24,7 @@ class Request
 
     public function method()
     {
-        return strtoupper($_SERVER['REQUEST_METHOD']);
+        return $this->return_method() ?? strtoupper($_SERVER['REQUEST_METHOD']);
     }
     /**
      * 
@@ -62,6 +62,11 @@ class Request
         return $this->body;
     }
 
+    public function return_method()
+    {
+        return $_POST['_method'] ?? null;
+    }
+
 
 
     public function isGet()
@@ -76,7 +81,7 @@ class Request
 
     public function isPut()
     {
-        return $this->method() === 'PUT' || $this->getBody()['_method'] ?? '' === 'PUT';
+        return $this->method() === 'PUT';
     }
 
     public function isDelete()
