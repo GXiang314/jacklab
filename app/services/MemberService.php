@@ -340,7 +340,7 @@ class MemberService
                     INNER JOIN member_role AS mr ON mr.Account = m.Account
                     INNER JOIN role AS r ON r.Id = mr.Role_Id 
                 WHERE
-                    m.Account = 'jacklab';");
+                    m.Account = '{$account}';");
                 $statement->execute();
                 $role =  $statement->fetchAll(\PDO::FETCH_ASSOC); //member
                 $data['Role'] = $role;
