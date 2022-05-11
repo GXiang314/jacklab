@@ -106,7 +106,6 @@ class MemberService
                 move_uploaded_file($file['tmp_name'], $path); //upload files
                 $res = DbModel::update('student', ['Image' => $path], ['Account' => $account]);
             }
-
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -129,7 +128,6 @@ class MemberService
                 move_uploaded_file($file['tmp_name'], $path); //upload files
                 $res = DbModel::update('teacher', ['Image' => $path], ['Account' => $account]);
             }
-
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -159,6 +157,18 @@ class MemberService
             return ($res) ? 'success' : 'error';
         }
         return '舊密碼輸入錯誤';
+    }
+    /* #endregion */
+
+    /* #region  修改學生班級 */
+    public function updateStudentClass(string $account, string $class_Id)
+    {
+        $res = DbModel::update('student', [
+            'Class_Id' => $class_Id
+        ], [
+            'Account' => $account
+        ]);
+        return $res;
     }
     /* #endregion */
 
