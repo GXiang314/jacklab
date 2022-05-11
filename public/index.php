@@ -81,6 +81,7 @@ $app->router->post('/api/class', [ClassesController::class,'store']); //新增�
 $app->router->put('/api/class', [ClassesController::class,'update']); //修改班級
 $app->router->delete('/api/class?', [ClassesController::class,'destroy']); //刪除班級
 
+$app->router->get('/api/meeting/list', [MeetController::class,'index']); //取得會議列表
 $app->router->get('/api/meeting/list?', [MeetController::class,'index']); //取得會議列表
 $app->router->get('/api/meeting?', [MeetController::class,'show']); //取得該會議記錄
 $app->router->post('/api/meeting', [MeetController::class,'store']); //新增會議記錄
@@ -102,7 +103,7 @@ $app->router->delete('/api/game?', [GameRecordController::class,'destroy']); //�
 $app->router->get('/api/download/game?', [DownloadController::class,'download_Game']); //下載競賽記錄檔案
 
 $app->router->get('/api/project/type', [ProjectManagerController::class,'index']); //取得所有專案性質
-$app->router->get('/api/project/type?', [ProjectManagerController::class,'show']); //取得該專案性質所有專案
+$app->router->get('/api/project/list?', [ProjectManagerController::class,'show']); //取得該專案性質所有專案
 $app->router->post('/api/project/type', [ProjectManagerController::class,'store']); //新增專案性質
 $app->router->put('/api/project/type', [ProjectManagerController::class,'update']); //修改專案性質
 $app->router->delete('/api/project/type?', [ProjectManagerController::class,'destroy']); //刪除專案性質
