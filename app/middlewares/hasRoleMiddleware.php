@@ -22,7 +22,6 @@ class hasRoleMiddleware extends Middleware
     {
         if (in_array(Application::$app->controller->action, $this->actions)) {
             $role = $request->getBody()['ROLE'][0];
-            var_dump($request->getBody()['ROLE']);
             $className = pathinfo(Application::$app->controller::class, PATHINFO_FILENAME);
 
             $nowUrl = $className . "@" . Application::$app->controller->action;
