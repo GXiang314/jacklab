@@ -4,6 +4,7 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\Request;
+use app\middlewares\hasRoleMiddleware;
 use app\middlewares\isLoginMiddleware;
 use app\requestModel\UpdateStudentClass;
 use app\requestModel\UpdateUserPassword;
@@ -20,6 +21,7 @@ class UserController extends Controller
         $this->memberService = new MemberService();
         $this->mailService = new MailService();
         $this->registerMiddleware(new isLoginMiddleware(['index', 'useradd', 'destroy']));
+        // $this->registerMiddleware(new hasRoleMiddleware(['index', 'useradd', 'destroy']));
     }
 
 
@@ -90,7 +92,7 @@ class UserController extends Controller
             $requestModel = new UpdateStudentClass();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                $result = $this->memberService->updateStudentClass($request['account'], $request['password']);
+                $result = $this->memberService->updateStudentClass($request['Account'], $request['Class']);
                 return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError($result ?? '修改失敗', [], 401);
             }
             return $this->sendError($requestModel->errors);
