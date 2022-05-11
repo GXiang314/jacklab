@@ -29,14 +29,18 @@ class isLoginMiddleware extends Middleware{
                 $result = $jwt->Jwt_user_decode($token);
                 if($result != 'error'){
                     $data = DbModel::findOne('member', ['Account' => $result['account']]);
-                    if($data != json_encode([]) && strtotime(date('Y-m-d h:i:s'))-$result['exp'] < 0 ){
+                    $roledata = DbModel::findOne('member_role', [
+                        'Account' => $result['account'],
+                        'Role_Id' => $result['roles'][0],
+                    ]);
+                    if(!empty($data) &&  !empty($roledata) && strtotime(date('Y-m-d h:i:s'))-$result['exp'] < 0 ){
                         $request->addKeys([
                             'ROLE' => $result['roles'],
                             'USER' => $result['account'],
                             'ADMIN' => $data['IsAdmin'] ?? false
                         ]);
+                        return $request;
                     }
-                    return $request;
                 }                  
             }
             echo Response::json([
