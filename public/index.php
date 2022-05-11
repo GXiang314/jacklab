@@ -81,7 +81,7 @@ $app->router->post('/api/class', [ClassesController::class,'store']); //新增�
 $app->router->put('/api/class', [ClassesController::class,'update']); //修改班級
 $app->router->delete('/api/class?', [ClassesController::class,'destroy']); //刪除班級
 
-$app->router->get('/api/meeting', [MeetController::class,'index']); //取得會議列表
+$app->router->get('/api/meeting/list?', [MeetController::class,'index']); //取得會議列表
 $app->router->get('/api/meeting?', [MeetController::class,'show']); //取得該會議記錄
 $app->router->post('/api/meeting', [MeetController::class,'store']); //新增會議記錄
 $app->router->put('/api/meeting', [MeetController::class,'update']); //修改會議記錄
