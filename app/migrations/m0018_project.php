@@ -15,6 +15,7 @@ class m0018_project{
             `CreateTime` datetime NOT NULL COMMENT '建立時間',
             `Proj_type` int UNSIGNED NOT NULL COMMENT 'FK, proj_type.Id',
             `Creater` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'FK, member.Account',
+            `Deleted` datetime NULL DEFAULT NULL COMMENT '軟刪除',
             PRIMARY KEY (`Id`) USING BTREE,
             INDEX `project_creater_foreign`(`Creater`) USING BTREE,
             INDEX `project_proj_type`(`Proj_type`) USING BTREE
