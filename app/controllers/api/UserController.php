@@ -92,7 +92,7 @@ class UserController extends Controller
             $requestModel = new UpdateStudentClass();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                $result = $this->memberService->updateStudentClass($request['Account'], $request['Class']);
+                $result = $this->memberService->updateStudentClass($requestModel->Account, $requestModel->Class);
                 return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError($result ?? '修改失敗', [], 401);
             }
             return $this->sendError($requestModel->errors);
