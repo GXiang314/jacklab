@@ -33,7 +33,7 @@ class isLoginMiddleware extends Middleware{
                         $request->addKeys([
                             'ROLE' => $result['roles'],
                             'USER' => $result['account'],
-                            'ADMIN' => $data['IsAdmin']
+                            'ADMIN' => $data['IsAdmin'] ?? false
                         ]);
                     }
                     return $request;
