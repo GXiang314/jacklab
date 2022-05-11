@@ -4,6 +4,7 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\Request;
+use app\middlewares\hasRoleMiddleware;
 use app\middlewares\isLoginMiddleware;
 use app\requestModel\AddMeeting;
 use app\requestModel\UpdateMeeting;
@@ -18,6 +19,7 @@ class MeetController extends Controller
     {
         $this->meetService = new MeetService();
         $this->registerMiddleware(new isLoginMiddleware(['index', 'store', 'show', 'update', 'destroy']));
+        $this->registerMiddleware(new hasRoleMiddleware(['index', 'store', 'show', 'update', 'destroy']));
     }
 
     public function index(Request $request)
