@@ -105,6 +105,8 @@ class MemberService
                 $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName);
                 move_uploaded_file($file['tmp_name'], $path); //upload files
                 $res = DbModel::update('student', ['Image' => $path], ['Account' => $account]);
+            }else{
+                return "不支援該檔案格式";
             }
         } catch (Exception $e) {
             return $e->getMessage();
