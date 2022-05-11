@@ -13,6 +13,7 @@ class AddGame_record extends Model{
     public string $Ranking;
     public string $Game_time;
     public string $USER;
+    public string $Deleted;
     public int $Game_type;
     public array $Member;
     public $Files;

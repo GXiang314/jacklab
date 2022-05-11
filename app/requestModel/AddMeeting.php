@@ -13,6 +13,7 @@ class AddMeeting extends Model{
     public string $Time;
     public string $Place;
     public string $USER;
+    public string $Deleted;
     public array $Member;
     public array $Tag;
     public $Files;
