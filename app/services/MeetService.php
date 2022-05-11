@@ -3,8 +3,6 @@
 namespace app\services;
 
 use app\core\DbModel;
-use app\model\academic;
-use app\model\classes;
 use app\model\meeting;
 use app\model\meeting_file;
 use app\model\meeting_member;
