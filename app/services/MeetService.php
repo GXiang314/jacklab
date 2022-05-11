@@ -188,20 +188,22 @@ class MeetService
     public function update($id, $request, $files = null, $tags = null, $isClearOldList = [])
     {
         try {
+            $meeting = meeting::findOne('meeting', [
+                'Id' => $id
+            ]);
+            $member = member::findOne('member', [
+                'Account' => $request['USER']
+            ]);
+            if (!$request['USER'] == $meeting['Uploader'] ?? '' || !$member['IsAdmin']) return "unauthorized.";
             if ($this->checkExtensions($files)) {
-                $meeting = meeting::findOne('meeting', [
-                    'Id' => $id
-                ]);
-                $member = member::findOne('member', [
-                    'Account' => $request['USER']
-                ]);
-                if (!$request['USER'] == $meeting['Uploader'] ?? '' || !$member['IsAdmin']) return "unauthorized.";
+                
                 foreach ($isClearOldList as $fileName) {
                     if (empty($fileName)) break;
                     $data = meeting_file::findOne('meeting_file', [
                         'Meet_Id' => $id,
                         'Name' => $fileName
                     ]);
+
                     if (!empty($data)) {
                         $directory = $data['Url'];
                         unlink($directory);
