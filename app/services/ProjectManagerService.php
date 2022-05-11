@@ -3,7 +3,7 @@
 namespace app\services;
 
 use app\core\DbModel;
-
+use app\model\proj_tag;
 use app\model\proj_type;
 use app\model\project;
 use Exception;
@@ -20,30 +20,66 @@ class ProjectManagerService{
         return $data;
     }
 
-    public function getProject($id)
+    public function getProject($id, $page = 1, $search = null)
     {
         $statement = project::prepare("
-        SELECT
+        SELECT DISTINCT
             p.Id,
-            p.NAME,
+            p.Name,
             p.Description,
             p.Creater,
             p.CreateTime,
         CASE
-                s.`Name` 
-                WHEN s.`Name` THEN
-                s.`Name` ELSE t.NAME 
-            END AS Creater_name 
+            s.`Name` 
+            WHEN s.`Name` THEN
+            s.`Name` ELSE t.NAME 
+        END AS Creater_name 
         FROM
             project AS p
             LEFT JOIN student AS s ON s.Account = p.Creater
             LEFT JOIN teacher AS t ON t.Account = p.Creater 
+        	LEFT JOIN proj_tag AS pt ON pt.Project_Id = p.Id 
         WHERE
-            p.Proj_type = '{$id}' 
+            p.Proj_type = '{$id}'".
+            ((!empty($search))
+            ? 
+            "and (p.NAME like '%$search%'
+             or p.Description like '%$search%'
+             or p.Creater like '%$search%'
+             or p.CreateTime like '%$search%'
+             or s.Name like '%$search%'
+             or t.Name like '%$search%'
+             or pt.Name like '%$search%'
+             )"
+             :' ')            
+            ." 
         ORDER BY
-            p.CreateTime DESC;");
+            p.CreateTime DESC "
+            . 
+        " limit ".(($page-1)*10).", ".($page*10).";");
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        if (!empty($data)) {
+            $index = 0;
+            foreach ($data as $row) {
+                $statement = proj_tag::prepare("
+                SELECT
+                    * 
+                FROM
+                    proj_tag AS pt 
+                WHERE
+                    pt.Project_Id = '{$row['Id']}';");
+                $statement->execute();
+                $tag = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                if (!empty($tag)) {
+                    $data[$index]['Tag'] = $tag;
+                } else {
+                    $data[$index]['Tag'] = [];
+                }
+                $index++;
+            }
+        }
+        return $data;
         return $data;
     }
 

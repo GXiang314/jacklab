@@ -16,7 +16,7 @@ class MeetService
     public function getAll($page = 1, $search = null)
     {
         $statement = meeting::prepare("
-        SELECT
+        SELECT DISTINCT
             meet.Id,
             meet.Title,
             meet.Place,
@@ -32,6 +32,7 @@ class MeetService
             INNER JOIN member AS m ON m.Account = meet.Uploader
             LEFT JOIN student AS s ON s.Account = m.Account
             LEFT JOIN teacher AS t ON t.Account = m.Account 
+            LEFT JOIN meeting_tag AS mt ON mt.Meet_Id = meet.Id 
         WHERE
             (meet.Deleted LIKE '' 
             OR isnull( meet.Deleted ))             
@@ -43,7 +44,9 @@ class MeetService
              or meet.Time like '%$search%'
              or s.Name like '%$search%'
              or t.Name like '%$search%'
-             or meet.Content like '%$search%')"
+             or meet.Content like '%$search%'
+             or mt.Name like '%$search%'
+             )"
              :' ').
             " limit ".(($page-1)*10).", ".($page*10).";"
         );
