@@ -7,12 +7,14 @@ use app\core\DbModel;
 use app\model\member;
 use app\model\proj_file;
 use app\model\proj_record;
+use app\model\proj_tag;
 use app\model\project;
 use Exception;
 
-class ProjectRecordService{
+class ProjectRecordService
+{
 
-    public function getAll($project_Id)
+    public function getAll($project_Id, $page = 1, $search = null)
     {
         $statement = project::prepare("
         SELECT
@@ -34,7 +36,7 @@ class ProjectRecordService{
             p.Id = '{$project_Id}';");
         $statement->execute();
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
-        if(empty($data)) return "not found";
+        if (empty($data)) return "not found";
         $statement = proj_record::prepare("
         SELECT
             pr.Id AS Id,
@@ -57,7 +59,16 @@ class ProjectRecordService{
             pr.Project_Id = '{$project_Id}' 
             AND (
             pr.Deleted LIKE '' 
-            OR isnull( pr.Deleted ));");
+            OR isnull( pr.Deleted )) "
+            .
+            ((!empty($search))
+            ?
+            "and (pr.Remark like '%$search%'
+             or pr.CreateTime like '%$search%'
+             or s.Name like '%$search%'
+             or t.Name like '%$search%')"
+            : ' ')
+            . " limit ".(($page-1)*10).", ".($page*10).";");
         $statement->execute();
         $data['Record'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         if (!empty($data['Record'])) {
@@ -80,21 +91,35 @@ class ProjectRecordService{
                     $data['Record'][$index]['File'] = [];
                 }
                 $index++;
-            }            
+            }
         }
         return $data;
-    }    
+    }
 
-    public function create($request)
+    public function create($request, $tags = null)
     {
         try {
+            $now = date("Y-m-d h:i:s", time());
             project::create('project', [
                 'Name' => $request['Name'],
                 'Description' => $request['Description'],
-                'CreateTime' => date("Y-m-d h:i:s"),
+                'CreateTime' => $now,
                 'Proj_type' => $request['Proj_type'],
                 'Creater' => $request['USER'],
-            ]);            
+            ]);
+            $id = project::findOne('project', [
+                'CreateTime' => $now,
+                'Creater' => $request['USER'],
+            ])['Id'] ?? '';
+
+            if ($tags != null) {
+                foreach ($tags as $tag) {
+                    proj_tag::create('proj_tag', [
+                        'Name' => $tag,
+                        'Project_Id' => $id
+                    ]);
+                }
+            }
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -113,7 +138,7 @@ class ProjectRecordService{
                     'Project_Id' => $request['Project_Id'],
                     'Uploader' => $request['USER'],
                 ]);
-                if(!empty(DbModel::findOne('proj_record', ['Id' => $id]))){
+                if (!empty(DbModel::findOne('proj_record', ['Id' => $id]))) {
                     if ($file != null) {
                         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
                         $fileName = md5($file['name'] . time()) . '.' . $extension;
@@ -131,10 +156,9 @@ class ProjectRecordService{
                             'Url' => $path,
                             'Proj_record' => $id
                         ]);
-                        
                     }
                 }
-            }                
+            }
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -167,16 +191,16 @@ class ProjectRecordService{
             ], [
                 'Id' => $id
             ]);
-            if($file != null){
+            if ($file != null) {
                 $data = proj_file::findOne('proj_file', [
                     'Proj_record' => $id
                 ]);
-                if(!empty($data)){
+                if (!empty($data)) {
                     unlink($data['Url']);
                     proj_file::delete('proj_file', [
                         'Proj_record' => $id
-                    ]);                    
-                }                
+                    ]);
+                }
                 $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $fileName = md5($file['name'] . time()) . '.' . $extension;
                 /*
@@ -193,7 +217,7 @@ class ProjectRecordService{
                     'Url' => $path,
                     'Proj_record' => $id
                 ]);
-            }            
+            }
         } catch (Exception $e) {
             return $e->getMessage();
         }

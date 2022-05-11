@@ -36,7 +36,7 @@ class MeetService
             (meet.Deleted LIKE '' 
             OR isnull( meet.Deleted ))             
             ".            
-            (($search != null)
+            ((!empty($search))
             ? 
             "and (meet.Title like '%$search%'
              or meet.Place like '%$search%'
