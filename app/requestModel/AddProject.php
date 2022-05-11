@@ -14,6 +14,7 @@ class AddProject extends Model{
     public string $USER;
     public string $Deleted;
     public int $Proj_type;
+    public array $Tag;
 
 
     public function loadData($data)
