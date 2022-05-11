@@ -1,14 +1,18 @@
 <?php
+
 namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\Request;
 use app\middlewares\isLoginMiddleware;
+use app\requestModel\UpdateStudentClass;
+use app\requestModel\UpdateUserPassword;
 use app\requestModel\Useradd;
 use app\services\MailService;
 use app\services\MemberService;
 
-class UserController extends Controller{
+class UserController extends Controller
+{
 
     private $memberService;
     public function __construct()
@@ -22,24 +26,23 @@ class UserController extends Controller{
     public function index()
     {
         $data = $this->memberService->getAllMember();
-        return ($data != []) ? $this->sendResponse($data,'所有成員') : $this->sendResponse('', '沒有資料');
+        return ($data != []) ? $this->sendResponse($data, '所有成員') : $this->sendResponse('', '沒有資料');
     }
 
     public function useradd(Request $request)
     {
         $userAddModel = new Useradd();
-        if($request->isPost()){
+        if ($request->isPost()) {
             $data = $request->getJson();
             $userAddModel->loadData($data);
-            if($userAddModel->validate()){ 
+            if ($userAddModel->validate()) {
                 $this->memberService->studentAdd($data);
-                return $this->sendResponse([],'加入成功');
-            }                            
-        }        
+                return $this->sendResponse([], '加入成功');
+            }
+        }
         return $this->sendError($userAddModel->errors, 'Registered failed.');
-        
     }
-/*
+    /*
     public function teacheradd(Request $request)
     {
         try {
@@ -63,31 +66,47 @@ class UserController extends Controller{
             return $this->sendError($e->getMessage(), 'Registered failed.');
         }
         return $this->sendResponse($result,'success');
-    }
+    }*/
 
     public function changeUserPassword(Request $request)
     {
-        try {
+        if ($request->isPut()) {
+            $data = $request->getJson();
+            $requestModel = new UpdateUserPassword();
+            $requestModel->loadData($data);
+            if ($requestModel->validate()) {
+                $result = $this->memberService->updateUserPassword($request['account'], $request['password']);
+                return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError($result ?? '修改失敗', [], 401);
+            }
+            return $this->sendError($requestModel->errors);
+        }
+        return $this->sendError('Method Not Allow', [], 405);
+    }
 
-            $result = $this->memberService->updateUserPassword($request['account'],$request['password']);
-        } catch (Exception $e) {
-            return $this->sendError($e->getMessage(), 'Updating failed.');
+    public function updateUserClass(Request $request)
+    {
+        if ($request->isPut()) {
+            $data = $request->getJson();
+            $requestModel = new UpdateStudentClass();
+            $requestModel->loadData($data);
+            if ($requestModel->validate()) {
+                $result = $this->memberService->updateStudentClass($request['account'], $request['password']);
+                return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError($result ?? '修改失敗', [], 401);
+            }
+            return $this->sendError($requestModel->errors);
         }
-        if($result=='success'){
-            return $this->sendResponse($result,'success');
-        }
-        return $this->sendError($result);
-    }*/
+        return $this->sendError('Method Not Allow', [], 405);
+    }
 
     public function destroy(Request $request)
     {
-        if($request->isDelete()){
-            $result = $this->memberService->delete($request->getBody()['id']??'0');
-            if($result == 'success'){
-                return $this->sendResponse($result,'刪除成功');
+        if ($request->isDelete()) {
+            $result = $this->memberService->delete($request->getBody()['id'] ?? '0');
+            if ($result == 'success') {
+                return $this->sendResponse($result, '刪除成功');
             }
         }
-        
-        return $this->sendError($result,'刪除失敗，請稍後再試');
+
+        return $this->sendError($result, '刪除失敗，請稍後再試');
     }
 }
