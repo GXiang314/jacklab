@@ -26,7 +26,7 @@ class JwtService{
         ];
         $this->secureKey = $_ENV['SECURE_KEY'];
     }
-    public function Jwt_user_encode($account,$roles){
+    public function Jwt_user_encode($account,$role){
         // process header
         $header = json_encode($this->header);
         $header = base64_encode($header);
@@ -35,9 +35,9 @@ class JwtService{
         $payload = $this->payload;
         $payload['account'] = $account;
         // return $roles;
-        foreach($roles as $role){
-            $payload['roles'][] = $role['Id'];
-        }
+        
+        $payload['roles'] = $role['Id'];
+        
         $payload['exp'] = strtotime("+ 1 day");
         $payload = base64_encode(json_encode($payload));
 

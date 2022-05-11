@@ -31,7 +31,7 @@ class isLoginMiddleware extends Middleware{
                     $data = DbModel::findOne('member', ['Account' => $result['account']]);
                     $roledata = DbModel::findOne('member_role', [
                         'Account' => $result['account'],
-                        'Role_Id' => $result['roles'][0],
+                        'Role_Id' => $result['roles'],
                     ]);
                     if(!empty($data) &&  !empty($roledata) && strtotime(date('Y-m-d h:i:s'))-$result['exp'] < 0 ){
                         $request->addKeys([

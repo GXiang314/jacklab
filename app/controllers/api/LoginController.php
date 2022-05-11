@@ -31,7 +31,8 @@ class LoginController extends Controller{
                 if($this->memberService->passwordCheck($data['Account'],$data['Password'])){
                     if($this->memberService->isEmailValidate($data['Account'])){
                         $member = $this->memberService->getAccount($data['Account']);
-                        $token = $this->jwtService->Jwt_user_encode($member['Account'],$member['Role']);
+                        $token = $this->jwtService->Jwt_user_encode($member['Account'],$member['Role'][0]);
+
                         return $this->sendResponse($token,"登入成功");
                     }else{
                         return $this->sendError('信箱未完成驗證，請查看信箱', [], 401);
