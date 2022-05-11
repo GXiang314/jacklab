@@ -66,7 +66,7 @@ class MeetController extends Controller
                     $requestModel->Tag ?? null, 
                     $requestModel->IsClearOld ?? [], 
                 );
-                return ($res == 'success') ? $this->sendResponse($requestModel, 'success') : $this->sendError($res ?? '新增失敗');
+                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '新增失敗');
             }else{
                 return $this->sendError($requestModel->errors);
             }

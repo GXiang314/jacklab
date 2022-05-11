@@ -193,9 +193,9 @@ class MeetService
                     'Id' => $id
                 ]);
                 $member = member::findOne('member', [
-                    'Account' => $request->USER
+                    'Account' => $request['USER']
                 ]);
-                if ($request->USER == $meeting['Uploader'] ?? '' || $member['IsAdmin']) {
+                if ($request['USER'] == $meeting['Uploader'] ?? '' || $member['IsAdmin']) {
                     foreach ($isClearOldList as $fileName) {
                         if (empty($fileName)) break;
                         $data = meeting_file::findOne('meeting_file', [
