@@ -4,11 +4,15 @@ namespace app\public;
 use app\controllers\api\AcademicController;
 use app\controllers\api\ClassesController;
 use app\controllers\api\DownloadController;
+use app\controllers\api\GameManagerController;
+use app\controllers\api\GameRecordController;
 use app\controllers\api\LoginController;
 use app\controllers\api\MeetController;
 use app\core\Application;
 use app\controllers\api\MemberController;
 use app\controllers\api\PermissionController;
+use app\controllers\api\ProjectManagerController;
+use app\controllers\api\ProjectRecordController;
 use app\controllers\api\RoleController;
 use app\controllers\api\UserController;
 use Dotenv\Dotenv;
@@ -81,5 +85,32 @@ $app->router->put('/api/meeting', [MeetController::class,'update']); //修改會
 $app->router->delete('/api/meeting?', [MeetController::class,'destroy']); //刪除會議記錄(軟刪除)
 $app->router->get('/api/download/meeting?', [DownloadController::class,'download_Meet']); //下載會議記錄檔案
 
+$app->router->get('/api/game/type', [GameManagerController::class,'index']); //取得所有競賽類別
+$app->router->get('/api/game/type?', [GameManagerController::class,'show']); //取得該競賽類別所有記錄
+$app->router->post('/api/game/type', [GameManagerController::class,'store']); //新增競賽類別
+$app->router->put('/api/game/type', [GameManagerController::class,'update']); //修改競賽類別
+$app->router->delete('/api/game/type?', [GameManagerController::class,'destroy']); //刪除競賽類別
+
+$app->router->get('/api/game', [GameRecordController::class,'index']); //取得所有競賽記錄列表
+$app->router->get('/api/game?', [GameRecordController::class,'show']); //取得該競賽記錄
+$app->router->post('/api/game', [GameRecordController::class,'store']); //新增競賽記錄
+$app->router->put('/api/game', [GameRecordController::class,'update']); //修改競賽記錄
+$app->router->delete('/api/game?', [GameRecordController::class,'destroy']); //刪除競賽記錄(軟刪除)
+$app->router->get('/api/download/game?', [DownloadController::class,'download_Game']); //下載競賽記錄檔案
+
+$app->router->get('/api/project/type', [ProjectManagerController::class,'index']); //取得所有專案性質
+$app->router->get('/api/project/type?', [ProjectManagerController::class,'show']); //取得該專案性質所有專案
+$app->router->post('/api/project/type', [ProjectManagerController::class,'store']); //新增專案性質
+$app->router->put('/api/project/type', [ProjectManagerController::class,'update']); //修改專案性質
+$app->router->delete('/api/project/type?', [ProjectManagerController::class,'destroy']); //刪除專案性質
+
+$app->router->get('/api/project?', [ProjectRecordController::class,'index']); //取得該專案所有資訊(含記錄)
+$app->router->post('/api/project', [ProjectRecordController::class,'store']); //新增專案
+$app->router->post('/api/project/record', [ProjectRecordController::class,'storeRecord']); //新增專案記錄
+$app->router->put('/api/project', [ProjectRecordController::class,'update']); //修改專案
+$app->router->put('/api/project/record', [ProjectRecordController::class,'updateRecord']); //修改專案記錄
+$app->router->delete('/api/project?', [ProjectRecordController::class,'destroy']); //刪除專案(軟刪除)
+$app->router->delete('/api/project/record?', [ProjectRecordController::class,'destroyRecord']); //刪除專案記錄(軟刪除)
+$app->router->get('/api/download/project?', [DownloadController::class,'download_Project']); //下載競賽記錄檔案
 
 $app->run();
