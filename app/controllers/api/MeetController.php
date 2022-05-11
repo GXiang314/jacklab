@@ -44,7 +44,7 @@ class MeetController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->meetService->add($data, $requestModel->Files ?? null, $requestModel->Tag ?? null);
-                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '新增失敗', 401);
+                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '新增失敗', [], 401);
             }else{
                 return $this->sendError($requestModel->errors);
             }
@@ -66,7 +66,7 @@ class MeetController extends Controller
                     $requestModel->Tag ?? null, 
                     $requestModel->IsClearOld ?? [], 
                 );
-                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '修改失敗', 401);
+                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '修改失敗', [], 401);
             }else{
                 return $this->sendError($requestModel->errors);
             }
