@@ -176,7 +176,6 @@ class RoleService
         if (role::count('role') == 0) {
             $permissionList = permission::get('permission');
             $roleArray = [
-                '管理者',
                 '研究生',
                 '專題生',
             ];
