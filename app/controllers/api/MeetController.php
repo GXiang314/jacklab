@@ -23,8 +23,8 @@ class MeetController extends Controller
     public function index(Request $request)
     {
         if($request->isGet()){
-            $page = $request->getBody()['page'] ?? '';
-            $search = $request->getBody()['search'] ?? '';
+            $page = $request->getBody()['page'] ?? 1;
+            $search = $request->getBody()['search'] ?? null;
             $data = $this->meetService->getAll($page, $search);
             return (isset($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }

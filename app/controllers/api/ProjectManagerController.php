@@ -41,7 +41,9 @@ class ProjectManagerController extends Controller
     {
         if($request->isGet()){
             $id = $request->getBody()['id'] ?? '';
-            $data = $this->projectManagerService->getProject($id);
+            $page = $request->getBody()['page'] ?? 1;
+            $search = $request->getBody()['search'] ?? null;
+            $data = $this->projectManagerService->getProject($id, $page, $search);
             return !empty($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
         return $this->sendError('Method Not Allow.', [], 405);

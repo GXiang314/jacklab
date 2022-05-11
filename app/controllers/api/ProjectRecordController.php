@@ -28,7 +28,9 @@ class ProjectRecordController extends Controller
     {       
         if ($request->isGet()) {
             $id = $request->getBody()['id'] ?? '';
-            $data = $this->projectRecordService->getAll($id);
+            $page = $request->getBody()['page'] ?? 1;
+            $search = $request->getBody()['search'] ?? null;
+            $data = $this->projectRecordService->getAll($id, $page, $search);
             return (isset($data)) ? $this->sendResponse($data, '專案內容') : $this->sendResponse('', '沒有資料');
         }
         return $this->sendError('Method Not Allow', [], 405);
