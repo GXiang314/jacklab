@@ -195,82 +195,82 @@ class MeetService
                 $member = member::findOne('member', [
                     'Account' => $request['USER']
                 ]);
-                if ($request['USER'] == $meeting['Uploader'] ?? '' || $member['IsAdmin']) {
-                    foreach ($isClearOldList as $fileName) {
-                        if (empty($fileName)) break;
-                        $data = meeting_file::findOne('meeting_file', [
+                if (!$request['USER'] == $meeting['Uploader'] ?? '' || !$member['IsAdmin']) return "unauthorized.";
+                foreach ($isClearOldList as $fileName) {
+                    if (empty($fileName)) break;
+                    $data = meeting_file::findOne('meeting_file', [
+                        'Meet_Id' => $id,
+                        'Name' => $fileName
+                    ]);
+                    if (!empty($data)) {
+                        $directory = $data['Url'];
+                        unlink($directory);
+                        meeting_file::delete('meeting_file', [
                             'Meet_Id' => $id,
                             'Name' => $fileName
                         ]);
-                        if (!empty($data)) {
-                            $directory = $data['Url'];
-                            unlink($directory);
-                            meeting_file::delete('meeting_file', [
-                                'Meet_Id' => $id,
-                                'Name' => $fileName
-                            ]);
-                        }
-                    }
-                    meeting_tag::delete('meeting_tag', [
-                        'Meet_Id' => $id
-                    ]);
-                    meeting_member::delete('meeting_member', [
-                        'Meet_Id' => $id
-                    ]);
-
-                    meeting::update('meeting', [
-                        'Title' => $request['Title'],
-                        'Content' => $request['Content'],
-                        'Time' => $request['Time'],
-                        'Place' => $request['Place'],
-                    ], [
-                        'Id' => $id
-                    ]);
-                    foreach ($request['Member'] as $member) {
-                        meeting_member::create('meeting_member', [
-                            'Meet_Id' => $id,
-                            'Account' => $member
-                        ]);
-                    }
-                    if ($files != null) {
-                        foreach ($files['name'] as $key => $value) {
-                            $existFile = meeting_file::findOne('meeting_file', [
-                                'Name' => $value,
-                                'Meet_Id' => $id,
-                            ]);
-                            if (!empty($existFile)) {
-                                meeting_file::delete('meeting_file', [
-                                    'Id' => $existFile['Id']
-                                ]);
-                                unlink($existFile['Url']);
-                            }
-                            $extension = pathinfo($value, PATHINFO_EXTENSION);
-                            $fileName = md5($value . time()) . '.' . $extension;
-                            /*
-                                temp= explode('.',$file_name);
-                                $extension = end($temp);
-                            */
-                            $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\meeting\\" . $fileName);
-                            move_uploaded_file($files['tmp_name'][$key], $path); //upload files
-
-                            meeting_file::create('meeting_file', [
-                                'Name' => $value,
-                                'Type' => $extension,
-                                'Size' => $files['size'][$key],
-                                'Url' => $path,
-                                'Meet_Id' => $id
-                            ]);
-                        }
-                    }
-                    if ($tags != null) {
-                        foreach ($tags as $tag) {
-                            meeting_tag::create('meeting_tag', [
-                                'Name' => $tag,
-                                'Meet_Id' => $id
-                            ]);
-                        }
                     }
                 }
+                meeting_tag::delete('meeting_tag', [
+                    'Meet_Id' => $id
+                ]);
+                meeting_member::delete('meeting_member', [
+                    'Meet_Id' => $id
+                ]);
+
+                meeting::update('meeting', [
+                    'Title' => $request['Title'],
+                    'Content' => $request['Content'],
+                    'Time' => $request['Time'],
+                    'Place' => $request['Place'],
+                ], [
+                    'Id' => $id
+                ]);
+                foreach ($request['Member'] as $member) {
+                    meeting_member::create('meeting_member', [
+                        'Meet_Id' => $id,
+                        'Account' => $member
+                    ]);
+                }
+                if ($files != null) {
+                    foreach ($files['name'] as $key => $value) {
+                        $existFile = meeting_file::findOne('meeting_file', [
+                            'Name' => $value,
+                            'Meet_Id' => $id,
+                        ]);
+                        if (!empty($existFile)) {
+                            meeting_file::delete('meeting_file', [
+                                'Id' => $existFile['Id']
+                            ]);
+                            unlink($existFile['Url']);
+                        }
+                        $extension = pathinfo($value, PATHINFO_EXTENSION);
+                        $fileName = md5($value . time()) . '.' . $extension;
+                        /*
+                            temp= explode('.',$file_name);
+                            $extension = end($temp);
+                        */
+                        $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\meeting\\" . $fileName);
+                        move_uploaded_file($files['tmp_name'][$key], $path); //upload files
+
+                        meeting_file::create('meeting_file', [
+                            'Name' => $value,
+                            'Type' => $extension,
+                            'Size' => $files['size'][$key],
+                            'Url' => $path,
+                            'Meet_Id' => $id
+                        ]);
+                    }
+                }
+                if ($tags != null) {
+                    foreach ($tags as $tag) {
+                        meeting_tag::create('meeting_tag', [
+                            'Name' => $tag,
+                            'Meet_Id' => $id
+                        ]);
+                    }
+                }
+               
             } else {
                 return '不支援該檔案格式';
             }
