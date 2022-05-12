@@ -4,6 +4,8 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\Request;
+use app\middlewares\hasRoleMiddleware;
+use app\middlewares\isLoginMiddleware;
 use app\requestModel\AddRole;
 use app\requestModel\UpdateMemberRole;
 use app\requestModel\UpdateRole;
@@ -16,6 +18,8 @@ class RoleController extends Controller
     public function __construct()
     {
         $this->roleService = new RoleService();
+        $this->registerMiddleware(new isLoginMiddleware(['index', 'show', 'getMember_Role', 'store', 'update','updateMemberRole', 'destroy']));
+        $this->registerMiddleware(new hasRoleMiddleware(['index', 'show', 'getMember_Role', 'store', 'update','updateMemberRole', 'destroy']));
     }
 
     public function index()

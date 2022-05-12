@@ -4,6 +4,8 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\Request;
+use app\middlewares\hasRoleMiddleware;
+use app\middlewares\isLoginMiddleware;
 use app\services\PermissionService;
 
 class PermissionController extends Controller
@@ -14,6 +16,8 @@ class PermissionController extends Controller
     public function __construct()
     {
         $this->permissionService = new PermissionService();
+        $this->registerMiddleware(new isLoginMiddleware(['index']));
+        $this->registerMiddleware(new hasRoleMiddleware(['index']));
     }
     public function index()
     {

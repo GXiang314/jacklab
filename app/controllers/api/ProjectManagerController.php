@@ -4,6 +4,8 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\Request;
+use app\middlewares\hasRoleMiddleware;
+use app\middlewares\isLoginMiddleware;
 use app\requestModel\AddName;
 use app\requestModel\UpdateName;
 use app\services\ProjectManagerService;
@@ -15,6 +17,9 @@ class ProjectManagerController extends Controller
     public function __construct()
     {
         $this->projectManagerService = new ProjectManagerService();
+        $this->registerMiddleware(new isLoginMiddleware(['index', 'show', 'store', 'update', 'destroy']));
+        $this->registerMiddleware(new hasRoleMiddleware(['store', 'update', 'destroy']));
+
     }
 
     public function index()

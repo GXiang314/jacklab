@@ -4,6 +4,8 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\Request;
+use app\middlewares\hasRoleMiddleware;
+use app\middlewares\isLoginMiddleware;
 use app\requestModel\AddClassName;
 use app\requestModel\UpdateName;
 use app\services\ClassService;
@@ -15,6 +17,9 @@ class ClassesController extends Controller{
     public function __construct()
     {
         $this->classService = new ClassService();
+        $this->registerMiddleware(new isLoginMiddleware(['index', 'show', 'store', 'update', 'destroy']));
+        $this->registerMiddleware(new hasRoleMiddleware(['index', 'show', 'store', 'update', 'destroy']));
+
     }
 
     public function index()
