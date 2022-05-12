@@ -15,6 +15,7 @@ class AddProject extends Model{
     public string $Deleted;
     public int $Proj_type;
     public array $Tag;
+    public array $Member;
 
 
     public function loadData($data)
@@ -32,6 +33,7 @@ class AddProject extends Model{
             'Name' => [self::RULE_REQUIRED],
             'Description' => [self::RULE_REQUIRED],
             'USER' => [self::RULE_REQUIRED],
+            'Member' => [self::RULE_REQUIRED],
             'Proj_type' => [self::RULE_REQUIRED]         
         ];
     }
