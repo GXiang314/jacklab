@@ -26,9 +26,14 @@ class UserController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = $this->memberService->getAllMember();
+        if($request->isGet()){
+            $page = $request->getBody()['page'] ?? 1;
+            $search = $request->getBody()['search'] ?? null;
+            $academic = $request->getBody()['academic'] ?? null;
+        }
+        $data = $this->memberService->getAllMember($page, $search, $academic);
         return ($data != []) ? $this->sendResponse($data, '所有成員') : $this->sendResponse('', '沒有資料');
     }
 
