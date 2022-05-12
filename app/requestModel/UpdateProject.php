@@ -14,6 +14,8 @@ class UpdateProject extends Model{
     public string $USER;
     public string $Deleted;
     public int $Proj_type;
+    public array $Member;
+    public array $Tag;
 
 
     public function loadData($data)
@@ -32,6 +34,7 @@ class UpdateProject extends Model{
             'Name' => [self::RULE_REQUIRED],
             'Description' => [self::RULE_REQUIRED],
             'USER' => [self::RULE_REQUIRED],
+            'Member' => [self::RULE_REQUIRED],
             'Proj_type' => [self::RULE_REQUIRED]         
         ];
     }
