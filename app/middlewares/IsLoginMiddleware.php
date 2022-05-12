@@ -46,7 +46,7 @@ class isLoginMiddleware extends Middleware{
             echo Response::json([
                 'success'=>false,
                 'message'=>'請先登入！'
-            ],403);
+            ],401);
             exit;
         }
         return $request;
