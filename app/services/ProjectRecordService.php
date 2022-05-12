@@ -6,6 +6,7 @@ use app\core\DbModel;
 
 use app\model\member;
 use app\model\proj_file;
+use app\model\proj_member;
 use app\model\proj_record;
 use app\model\proj_tag;
 use app\model\project;
@@ -19,7 +20,7 @@ class ProjectRecordService
         $statement = project::prepare("
         SELECT
             p.Id,
-            p.NAME,
+            p.Name,
             p.Description,
             p.Creater,
             p.CreateTime,
@@ -37,6 +38,44 @@ class ProjectRecordService
         $statement->execute();
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
         if (empty($data)) return "not found";
+
+        $statement = project::prepare("
+        SELECT
+        CASE
+                s.`Name` 
+                WHEN s.`Name` THEN
+                s.`Name` ELSE t.NAME 
+            END AS Name,
+            m.Account,
+            CASE
+                s.`Image` 
+                WHEN s.`Image` THEN
+                s.`Image` ELSE t.Image 
+            END AS Image
+        FROM
+            member AS m
+            INNER JOIN proj_member AS pm ON pm.Account = m.Account
+            INNER JOIN project AS p ON p.Id = pm.Project_Id
+            LEFT JOIN student AS s ON s.Account = m.Account
+            LEFT JOIN teacher AS t ON t.Account = m.Account 
+        WHERE
+            p.id = '{$project_Id}';");
+        $statement->execute();
+        $member = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['Member'] = $member;
+
+        $statement = project::prepare("
+        SELECT
+        pt.`Name`
+        FROM
+            proj_tag AS pt
+            INNER JOIN project AS p ON p.Id = pt.Project_Id
+        WHERE
+            p.id = '{$project_Id}';");
+        $statement->execute();
+        $tag = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['Tag'] = $tag ?? [];
+
         $statement = proj_record::prepare("
         SELECT
             pr.Id AS Id,
@@ -111,7 +150,12 @@ class ProjectRecordService
                 'CreateTime' => $now,
                 'Creater' => $request['USER'],
             ])['Id'] ?? '';
-
+            foreach($request['Member'] as $member){
+                proj_member::create('proj_member', [
+                    'Project_Id' => $id,
+                    'Account' => $member
+                ]);
+            }
             if ($tags != null) {
                 foreach ($tags as $tag) {
                     proj_tag::create('proj_tag', [
@@ -165,7 +209,7 @@ class ProjectRecordService
         return 'success';
     }
 
-    public function update($id, $request)
+    public function update($id, $request, $tags = null)
     {
         try {
             project::update('project', [
@@ -176,6 +220,28 @@ class ProjectRecordService
             ], [
                 'Id' => $id
             ]);
+            proj_member::delete('proj_member', [
+                'Project_Id' => $id
+            ]);
+            proj_tag::delete('proj_tag', [
+                'Project_Id' => $id
+            ]);
+
+            foreach($request['Member'] as $member){
+                proj_member::create('proj_member', [
+                    'Project_Id' => $id,
+                    'Account' => $member
+                ]);
+            }
+
+            if ($tags != null) {
+                foreach ($tags as $tag) {
+                    proj_tag::create('proj_tag', [
+                        'Name' => $tag,
+                        'Project_Id' => $id
+                    ]);
+                }
+            }
         } catch (Exception $e) {
             return $e->getMessage();
         }
