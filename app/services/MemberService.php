@@ -390,17 +390,17 @@ class MemberService
             m.CreateTime AS CreateTime,
             r.Id AS Role_Id,
             r.`Name` AS Role_Name,
-            c.Name as Class_Name
+            c.NAME AS Class_Name 
         FROM
-            member AS m,
-            student AS s,
-            member_role AS mr,
-            role AS r,
-            classes as c
+            member AS m
+            LEFT JOIN student AS s ON s.Account = m.Account
+            LEFT JOIN member_role AS mr ON mr.Account = m.Account
+            LEFT JOIN role AS r ON r.Id = mr.Role_Id
+            LEFT JOIN classes AS c ON c.Id = s.Class_Id 
         WHERE
             s.Account = m.Account 
             AND m.Account = mr.Account 
-            AND mr.Role_Id = r.Id
+            AND mr.Role_Id = r.Id 
             AND s.Class_Id = c.Id;");
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -429,10 +429,10 @@ class MemberService
             END AS Image 
         FROM
             member AS m
-            INNER JOIN member_role AS mr ON mr.Account = m.Account
-            INNER JOIN role ON role.Id = mr.Role_Id
+            LEFT JOIN member_role AS mr ON mr.Account = m.Account
+            LEFT JOIN role ON role.Id = mr.Role_Id
             LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN teacher AS t ON t.Account = m.Account      
+            LEFT JOIN teacher AS t ON t.Account = m.Account;      
         ");
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
