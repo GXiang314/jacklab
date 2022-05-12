@@ -84,10 +84,12 @@ class ProjectRecordController extends Controller
             $data =  $request->getJson() ?? '';
             $requestModel = new UpdateProject();
             $requestModel->loadData($data);
+
             if ($requestModel->validate()) {
                 $res = $this->projectRecordService->update(
                     $requestModel->Id,
-                    $data                   
+                    $data,
+                    $requestModel->Tag ?? null                   
                 );
                 return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '修改失敗');
             } else {
