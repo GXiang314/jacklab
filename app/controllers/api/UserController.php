@@ -78,7 +78,7 @@ class UserController extends Controller
             $requestModel = new UpdateUserPassword();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                $result = $this->memberService->updateUserPassword($request['account'], $request['password']);
+                $result = $this->memberService->updateUserPassword($requestModel->account, $requestModel->password);
                 return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError($result ?? '修改失敗', [], 401);
             }
             return $this->sendError($requestModel->errors);
