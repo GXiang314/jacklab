@@ -105,7 +105,7 @@ class MemberService
                 $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName);
                 move_uploaded_file($file['tmp_name'], $path); //upload files
                 $res = DbModel::update('student', ['Image' => $path], ['Account' => $account]);
-            }else{
+            } else {
                 return "不支援該檔案格式";
             }
         } catch (Exception $e) {
@@ -460,6 +460,35 @@ class MemberService
     }
 
     /* #endregion */
+
+    /* #region  取得該學生競賽記錄 */
+    public function getStudentGameRecord($student_id)
+    {
+        try {
+            $statement = DbModel::prepare("
+            SELECT
+                gr.`Name`,
+                gr.`Game_group`,
+                gr.`Ranking`,
+                gr.`Game_time`,
+                gt.`Name` as Type_name
+                
+            FROM
+                student AS s
+                LEFT JOIN game_member gm ON gm.Student_Id = s.Id
+                LEFT JOIN game_record AS gr ON gr.Id = gm.Game_record 
+                INNER JOIN game_type gt on gt.Id = gr.Game_type
+            WHERE
+                s.Id = '{$student_id}';");
+            $statement->execute();
+            $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return $data;
+    }
+    /* #endregion */
+
 
     /* #region  登入密碼確認 */
     public function passwordCheck(string $account, string $password)
