@@ -381,16 +381,19 @@ class MemberService
     /* #endregion */
 
     /* #region  取得所有會員資料 */
-    public function getAllMember()
+    public function getAllMember($page = 1, $search = null, $academic = null)
     {
         $member = new Member();
         $statement = $member->prepare("
         SELECT
-            s.*,
+            s.Id,
+            s.Name,
+            s.Account,
+            s.Class_Id,
+            c.NAME AS Class_Name, 
             m.CreateTime AS CreateTime,
             r.Id AS Role_Id,
-            r.`Name` AS Role_Name,
-            c.NAME AS Class_Name 
+            r.`Name` AS Role_Name
         FROM
             member AS m
             LEFT JOIN student AS s ON s.Account = m.Account
@@ -398,7 +401,18 @@ class MemberService
             LEFT JOIN role AS r ON r.Id = mr.Role_Id
             LEFT JOIN classes AS c ON c.Id = s.Class_Id 
         WHERE
-            s.Account = m.Account;");
+            s.Account = m.Account".
+            ($search != null) ? 
+            " and (
+                s.Id like '%$search%' or 
+                s.Name like '%$search%' or 
+                s.Account like '%$search%' or 
+                c.Name like '%$search%' or 
+                m.CreateTime like '%$search%' or 
+                r.Name like '%$search%') " : ' '
+            .
+             " limit ".(($page-1)*10).", ".($page*10).
+            ";");
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $datalist;
