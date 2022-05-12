@@ -66,7 +66,7 @@ $app->router->delete('/api/manager/role?', [RoleController::class,'destroy']); /
 
 $app->router->get('/api/manager/user', [UserController::class,'index']); //取得所有會員資料
 $app->router->post('/api/manager/useradd', [UserController::class,'useradd']); //加入學生
-$app->router->put('/api/manager/user/password', [UserController::class,'updateUserPassword']); //修改使用者密碼
+$app->router->put('/api/manager/user/password', [UserController::class,'changeUserPassword']); //修改使用者密碼
 $app->router->put('/api/manager/user/class', [UserController::class,'updateUserClass']); //修改使用者班級
 $app->router->delete('/api/manager/user?', [UserController::class,'destroy']); //刪除使用者
 
