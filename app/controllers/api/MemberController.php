@@ -35,6 +35,22 @@ class MemberController extends Controller
     }
 
     /**
+     * Get student all game record in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getSelfGameRecord(Request $request)
+    {
+        if($request->isGet()){
+            $account = $request->getBody()['USER'];
+            $data = $this->memberService->getStudentGameRecord($account);
+            return ($data != []) ? $this->sendResponse($data, '所有競賽記錄') : $this->sendResponse('', '沒有資料');
+        }
+        return $this->sendError('Method Not Allow', [], 405);
+    }
+
+    /**
      * Get one resource in storage.
      *
      * @param  \app\core\Request
