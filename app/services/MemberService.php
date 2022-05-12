@@ -398,10 +398,7 @@ class MemberService
             LEFT JOIN role AS r ON r.Id = mr.Role_Id
             LEFT JOIN classes AS c ON c.Id = s.Class_Id 
         WHERE
-            s.Account = m.Account 
-            AND m.Account = mr.Account 
-            AND mr.Role_Id = r.Id 
-            AND s.Class_Id = c.Id;");
+            s.Account = m.Account;");
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $datalist;
