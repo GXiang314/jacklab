@@ -108,6 +108,7 @@ class RoleService
     public function delete($idList)
     {
         try {
+            $idList = explode(',', $idList);
             foreach($idList as $id){
                 member_role::delete('member_role', [
                     'Role_Id' => $id
