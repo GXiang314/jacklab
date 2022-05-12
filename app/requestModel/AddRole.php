@@ -17,7 +17,7 @@ class AddRole extends Model{
         return [            
             'Name' => [self::RULE_REQUIRED, 
             [self::RULE_MAX, 'max'=>20],
-            [self::RULE_UNIQUE, 'unique' => self::class]
+            [self::RULE_UNIQUE, 'unique' => role::class]
         ],
             'Permission' => [self::RULE_REQUIRED],
         ];
