@@ -105,18 +105,21 @@ class RoleService
     /* #endregion */
 
     /* #region  刪除角色 */
-    public function delete($id)
+    public function delete($idList)
     {
         try {
-            member_role::delete('member_role', [
-                'Role_Id' => $id
-            ]);
-            role_permission::delete('role_permission', [
-                'Role_Id' => $id
-            ]);
-            role::delete('role', [
-                'Id' => $id
-            ]);
+            foreach($idList as $id){
+                member_role::delete('member_role', [
+                    'Role_Id' => $id
+                ]);
+                role_permission::delete('role_permission', [
+                    'Role_Id' => $id
+                ]);
+                role::delete('role', [
+                    'Id' => $id
+                ]);
+            }
+            
         } catch (Exception $e) {
             return $e->getMessage();
         }
