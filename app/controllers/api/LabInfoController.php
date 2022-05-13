@@ -45,8 +45,10 @@ class LabInfoController extends Controller
             $requestModel->loadData($request->getJson());
             if ($requestModel->validate()) {
                 $result = $this->labinfoService->add($requestModel->Title, $requestModel->Content);
+                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            }else{
+                return $this->sendError($requestModel->errors);
             }
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
@@ -58,8 +60,10 @@ class LabInfoController extends Controller
             $requestModel->loadData($request->getJson());
             if ($requestModel->validate()) {
                 $result = $this->labinfoService->update($requestModel->Id, $requestModel->Title, $requestModel->Content);
+                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            }else{
+                return $this->sendError($requestModel->errors);
             }
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }

@@ -27,7 +27,7 @@ class AlbumController extends Controller
     public function index()
     {
         $data = $this->albumService->getAll();
-        return isset($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
+        return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
     }
 
     public function show(Request $request)
@@ -35,7 +35,7 @@ class AlbumController extends Controller
         if ($request->isGet()) {
             $id = $request->getBody()['id'] ?? '';
             $data = $this->albumService->getOne($id);
-            return isset($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
+            return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
@@ -47,9 +47,11 @@ class AlbumController extends Controller
             $requestModel = new AddAlbum();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                $result = $this->albumService->add($requestModel->Title, $requestModel->File);
+                $result = $this->albumService->add($requestModel->Title, $requestModel->Image);
+                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            }else{
+                return $this->sendError($requestModel->errors);
             }
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
@@ -61,9 +63,11 @@ class AlbumController extends Controller
             $requestModel = new UpdateAlbum();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                $result = $this->albumService->update($requestModel->Id, $requestModel->Title, $requestModel->File);
+                $result = $this->albumService->update($requestModel->Id, $requestModel->Title, $requestModel->Image);
+                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            }else{
+                return $this->sendError($requestModel->errors);
             }
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }

@@ -37,6 +37,8 @@ class ProjectManagerController extends Controller
             if($requestModel->validate()){
                 $res = $this->projectManagerService->add($data['Name']);
                 return ($res =='success')? $this->sendResponse($res,'success') : $this->sendError('error');
+            }else{
+                return $this->sendError($requestModel->errors);
             }
         }       
         return $this->sendError('Method Not Allow', [], 405);
@@ -63,6 +65,8 @@ class ProjectManagerController extends Controller
             if($requestModel->validate()){
                 $res = $this->projectManagerService->update($data['Id'],$data['Name']);
                 return ($res =='success')? $this->sendResponse($res,'success') : $this->sendError('error');
+            }else{
+                return $this->sendError($requestModel->errors);
             }            
         }
         return $this->sendError('Method Not Allow.', [], 405);       

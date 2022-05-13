@@ -46,6 +46,8 @@ class UserController extends Controller
             if ($userAddModel->validate()) {
                 $this->memberService->studentAdd($data);
                 return $this->sendResponse([], '加入成功');
+            }else{
+                return $this->sendError($userAddModel->errors);
             }
         }
         return $this->sendError($userAddModel->errors, 'Registered failed.');

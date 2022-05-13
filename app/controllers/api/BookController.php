@@ -45,9 +45,11 @@ class BookController extends Controller
             $requestModel = new AddBook();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                $result = $this->bookService->add($data, $requestModel->Authors, $requestModel->file);
+                $result = $this->bookService->add($data, $requestModel->Authors, $requestModel->Image);
+                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            }else{
+                return $this->sendError($requestModel->errors);
             }
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
@@ -59,9 +61,11 @@ class BookController extends Controller
             $requestModel = new UpdateBook();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                $result = $this->bookService->update($requestModel->Id, $data, $requestModel->Authors, $requestModel->File);
+                $result = $this->bookService->update($requestModel->Id, $data, $requestModel->Authors, $requestModel->Image);
+                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            }else{
+                return $this->sendError($requestModel->errors);
             }
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }

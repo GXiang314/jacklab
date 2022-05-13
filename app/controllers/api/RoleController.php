@@ -73,6 +73,8 @@ class RoleController extends Controller
             if($requestModel->validate()){
                 $result = $this->roleService->update($data['Id'], $data['Permission']);
                 return $result=='success' ? $this->sendResponse($result, '修改成功') : $this->sendError($result, '修改失敗');
+            }else{
+                return $this->sendError($requestModel->errors);
             }
         }  
         return $this->sendError('Method Not Allow.', [], 405);       

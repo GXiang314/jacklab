@@ -32,6 +32,8 @@ class GameManagerController extends Controller
             if($requestModel->validate()){
                 $res = $this->gameManagerService->add($data['Name']);
                 return ($res =='success')? $this->sendResponse($res,'success') : $this->sendError('error');
+            }else{
+                return $this->sendError($requestModel->errors);
             }
         }       
         return $this->sendError('Method Not Allow', [], 405);
@@ -56,6 +58,8 @@ class GameManagerController extends Controller
             if($requestModel->validate()){
                 $res = $this->gameManagerService->update($data['Id'],$data['Name']);
                 return ($res =='success')? $this->sendResponse($res,'success') : $this->sendError('error');
+            }else{
+                return $this->sendError($requestModel->errors);
             }            
         }
         return $this->sendError('Method Not Allow.', [], 405);       
