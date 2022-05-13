@@ -31,7 +31,6 @@ class book extends DbModel{
                 $this->{$key} = $value;
             }            
         }        
-        $this->Time = date('Y-m-d h:i:s');   
     }
 
     public function save()
