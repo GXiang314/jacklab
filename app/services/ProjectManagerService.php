@@ -20,7 +20,7 @@ class ProjectManagerService{
         return $data;
     }
 
-    public function getProject($id, $page = 1, $search = null)
+    public function getProject($id = '%', $page = 1, $search = null)
     {
         $statement = project::prepare("
         SELECT DISTINCT
@@ -40,7 +40,7 @@ class ProjectManagerService{
             LEFT JOIN teacher AS t ON t.Account = p.Creater 
         	LEFT JOIN proj_tag AS pt ON pt.Project_Id = p.Id 
         WHERE
-            p.Proj_type = '{$id}'".
+            p.Proj_type like '{$id}'".
             ((!empty($search))
             ? 
             "and (p.NAME like '%$search%'

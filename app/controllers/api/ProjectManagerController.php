@@ -47,7 +47,7 @@ class ProjectManagerController extends Controller
     public function show(Request $request)
     {
         if($request->isGet()){
-            $id = $request->getBody()['id'] ?? '';
+            $id = $request->getBody()['id'] ?? '%';
             $page = $request->getBody()['page'] ?? 1;
             $search = $request->getBody()['search'] ?? null;
             $data = $this->projectManagerService->getProject($id, $page, $search);
