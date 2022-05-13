@@ -6,18 +6,19 @@ use app\core\DbModel;
 use app\model\album;
 use Exception;
 
-class AlbumService{
+class AlbumService
+{
 
     public function getAll()
     {
-        $data = album::get('album');        
+        $data = album::get('album');
         return $data;
     }
 
     public function getOne($id)
     {
 
-        $data = album::findOne('album',[
+        $data = album::findOne('album', [
             'Id' => $id
         ]);
         return $data;
@@ -25,7 +26,7 @@ class AlbumService{
 
     public function add($title, $file)
     {
-        try{
+        try {
             if ($this->checkExtensions($file)) {
                 $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $fileName = md5($file['name'] . time()) . '.' . $extension;
@@ -40,26 +41,24 @@ class AlbumService{
                     'CreateTime' => date("Y-m-d h:i:s"),
                     'Image' => $path
                 ]);
-                
             } else {
                 return "不支援該檔案格式";
-            }            
-        }
-        catch(Exception $e){
+            }
+        } catch (Exception $e) {
             return $e->getMessage();
         }
         return 'success';
     }
     public function update($id, $title, $file = null)
     {
-        try{
+        try {
             if ($file == null) {
                 album::update('album', [
                     'Title' => $title
-                ],[
+                ], [
                     'Id' => $id
                 ]);
-            }else{
+            } else {
                 if ($this->checkExtensions($file)) {
                     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
                     $fileName = md5($file['name'] . time()) . '.' . $extension;
@@ -69,43 +68,47 @@ class AlbumService{
                     */
                     $path = dirname(dirname(__DIR__)) . "\public\storage\album\\" . $fileName;
                     move_uploaded_file($file['tmp_name'], $path); //upload files
+
+                    unlink(
+                        album::findOne('album', [
+                            'Id' => $id
+                        ])['Image'] ?? ''
+                    );
                     album::update('album', [
                         'Title' => $title,
                         'Image' => $path
-                    ],[
+                    ], [
                         'Id' => $id
                     ]);
-                }else{
+                } else {
                     return "不支援該檔案格式";
                 }
-            }            
-        }
-        catch(Exception $e){
+            }
+        } catch (Exception $e) {
             return $e->getMessage();
         }
         return 'success';
     }
     public function delete($idList)
     {
-        try{
+        try {
             $idList = explode(',', $idList);
-            foreach($idList as $id){
+            foreach ($idList as $id) {
                 $url = album::findOne('album', [
                     'Id' => $id
                 ])['Image'];
                 unlink($url);
-                
+
                 album::delete('album', [
                     'Id' => $id
-                ]);       
+                ]);
             }
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             return $e->getMessage();
         }
         return 'success';
     }
-    
+
     /* #region  驗證副檔名 */
     public function checkExtensions($file = null)
     {
