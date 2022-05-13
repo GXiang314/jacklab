@@ -104,11 +104,13 @@ class MemberService
                 */
                 $path = dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName;
                 move_uploaded_file($file['tmp_name'], $path); //upload files
-                unlink(
-                    DbModel::findOne('student', [
-                        'Account' => $account
-                    ])['Image'] ?? ''
-                );
+                $url = DbModel::findOne('student', [
+                    'Account' => $account
+                ])['Image'] ?? '';
+                if(file_exists($url) && !str_contains($url,'man.png')){
+                    unlink($url);
+                }
+                
                 $res = DbModel::update('student', ['Image' => $path], ['Account' => $account]);
             } else {
                 return "不支援該檔案格式";
@@ -133,11 +135,12 @@ class MemberService
                 */
                 $path = dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName;
                 move_uploaded_file($file['tmp_name'], $path); //upload files
-                unlink(
-                    DbModel::findOne('teacher', [
-                        'Account' => $account
-                    ])['Image'] ?? ''
-                );
+                $url = DbModel::findOne('teacher', [
+                    'Account' => $account
+                ])['Image'] ?? '';
+                if(file_exists($url) && !str_contains($url,'man.png')){
+                    unlink($url);
+                }
                 $res = DbModel::update('teacher', ['Image' => $path], ['Account' => $account]);
             }
         } catch (Exception $e) {
@@ -515,7 +518,6 @@ class MemberService
         return $data;
     }
     /* #endregion */
-
 
     /* #region  登入密碼確認 */
     public function passwordCheck(string $account, string $password)

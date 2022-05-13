@@ -97,7 +97,9 @@ class AlbumService
                 $url = album::findOne('album', [
                     'Id' => $id
                 ])['Image'];
-                unlink($url);
+                if(file_exists($url)){
+                    unlink($url);
+                }
 
                 album::delete('album', [
                     'Id' => $id

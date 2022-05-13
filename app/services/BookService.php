@@ -167,7 +167,9 @@ class BookService{
                 $url = book::findOne('book', [
                     'Id' => $id
                 ])['Image'];
-                unlink($url);
+                if(file_exists($url)){
+                    unlink($url);
+                }
                 author::delete('author', [
                     'Book_Id' => $id
                 ]);
