@@ -40,7 +40,9 @@ class ProjectManagerService{
             LEFT JOIN teacher AS t ON t.Account = p.Creater 
         	LEFT JOIN proj_tag AS pt ON pt.Project_Id = p.Id 
         WHERE
-            p.Proj_type like '{$id}'".
+            p.Proj_type like '{$id}'  and (
+                ISNULL(p.Deleted) or p.Deleted like ''	
+                ) ".
             ((!empty($search))
             ? 
             "and (p.NAME like '%$search%'
