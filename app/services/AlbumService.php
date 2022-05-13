@@ -96,7 +96,7 @@ class AlbumService
             foreach ($idList as $id) {
                 $url = album::findOne('album', [
                     'Id' => $id
-                ])['Image'];
+                ])['Image'] ?? '';
                 if(file_exists($url)){
                     unlink($url);
                 }

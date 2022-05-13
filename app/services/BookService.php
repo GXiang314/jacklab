@@ -166,7 +166,7 @@ class BookService{
             foreach($idList as $id){
                 $url = book::findOne('book', [
                     'Id' => $id
-                ])['Image'];
+                ])['Image'] ?? '';
                 if(file_exists($url)){
                     unlink($url);
                 }
