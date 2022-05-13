@@ -31,11 +31,14 @@ abstract class DbModel extends Model
         return true;
     }
 
-    public static function create($tableName, array $inserData){
+    public static function create($tableName, array $insertData){
         try{
-            $insertKey = implode(',', array_keys($inserData));
-            $insertValue = implode(',', array_map(fn($attr) => "'$attr'", $inserData));
-            $statement = self::prepare("insert into $tableName($insertKey) values($insertValue);");
+            $insertKey = array_keys($insertData);
+            $insertValue = implode(',', array_map(fn($key) => ":$key", $insertKey));
+            $statement = self::prepare("insert into $tableName(". implode(',', $insertKey) .") values($insertValue);");
+            foreach($insertData as $key => $value){                
+                $statement->bindValue(":$key", "$value");
+            }
             $statement->execute();
         }catch(Exception){
             return false;
