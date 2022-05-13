@@ -410,19 +410,26 @@ class MemberService
             LEFT JOIN member_role AS mr ON mr.Account = m.Account
             LEFT JOIN role AS r ON r.Id = mr.Role_Id
             LEFT JOIN classes AS c ON c.Id = s.Class_Id 
+            LEFT JOIN academic AS a ON a.Id = c.Academic_Id
         WHERE
-            s.Account = m.Account".
-            ($search != null) ? 
+            s.Account = m.Account ".
+            (($search != null) ? 
             " and (
                 s.Id like '%$search%' or 
                 s.Name like '%$search%' or 
                 s.Account like '%$search%' or 
                 c.Name like '%$search%' or 
                 m.CreateTime like '%$search%' or 
-                r.Name like '%$search%') " : ' '
+                r.Name like '%$search%' ) " : "")
+            .
+            (($academic != null ? 
+            " and 
+             a.Id = '$academic'             
+            ": ' '))
             .
              " limit ".(($page-1)*10).", ".($page*10).
-            ";");
+            " ;");
+            var_dump($statement);
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $datalist;
