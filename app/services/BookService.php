@@ -125,6 +125,11 @@ class BookService{
                     */
                     $path = dirname(dirname(__DIR__)) . "\public\storage\book\\" . $fileName;
                     move_uploaded_file($file['tmp_name'], $path); //upload files
+                    unlink(
+                        book::findOne('album', [
+                            'Id' => $id
+                        ])['Image'] ?? ''
+                    );
                     $res = book::update('book', [
                         'Title' => $book['Title'],
                         'Publisher' => $book['Publisher'],
