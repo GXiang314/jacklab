@@ -342,8 +342,8 @@ class MemberService
                 WHERE
                     m.Account = '{$account}';");
                 $statement->execute();
-                $role =  $statement->fetchAll(\PDO::FETCH_ASSOC); //member
-                $data['Role'] = $role;
+                $role =  $statement->fetch(\PDO::FETCH_ASSOC); //member
+                $data['Role'] = $role ? $role : '';
             }
         } catch (Exception $e) {
             return $e->getMessage();
