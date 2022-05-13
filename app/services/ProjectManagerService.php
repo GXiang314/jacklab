@@ -110,13 +110,16 @@ class ProjectManagerService{
         }
         return 'success';
     }
-    public function delete($id)
+    public function delete($idList)
     {
         try{
-            // delete student
-            proj_type::delete('proj_type', [
-                'Id' => $id
-            ]);            
+            $idList = explode(',', $idList);
+            foreach($idList as $id){
+                // delete project/record
+                proj_type::delete('proj_type', [
+                    'Id' => $id
+                ]);     
+            }         
         }
         catch(Exception $e){
             return $e->getMessage();
