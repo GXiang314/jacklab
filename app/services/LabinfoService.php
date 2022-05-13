@@ -20,7 +20,7 @@ class LabinfoService{
 
     public function getOne($id)
     {
-        $data = lab_info::get('lab_info',[
+        $data = lab_info::findOne('lab_info',[
             'Id' => $id
         ]);
         return $data;

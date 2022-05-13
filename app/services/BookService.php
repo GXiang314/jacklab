@@ -25,7 +25,7 @@ class BookService{
     public function getOne($id)
     {
 
-        $data = book::get('book',[
+        $data = book::findOne('book',[
             'Id' => $id
         ]);
         

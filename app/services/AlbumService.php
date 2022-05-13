@@ -17,7 +17,7 @@ class AlbumService{
     public function getOne($id)
     {
 
-        $data = album::get('album',[
+        $data = album::findOne('album',[
             'Id' => $id
         ]);
         return $data;
