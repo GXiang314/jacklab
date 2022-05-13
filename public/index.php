@@ -2,10 +2,12 @@
 namespace app\public;
 
 use app\controllers\api\AcademicController;
+use app\controllers\api\AlbumController;
 use app\controllers\api\ClassesController;
 use app\controllers\api\DownloadController;
 use app\controllers\api\GameManagerController;
 use app\controllers\api\GameRecordController;
+use app\controllers\api\LabInfoController;
 use app\controllers\api\LoginController;
 use app\controllers\api\MeetController;
 use app\core\Application;
@@ -65,6 +67,7 @@ $app->router->delete('/api/manager/role?', [RoleController::class,'destroy']); /
 
 
 $app->router->get('/api/manager/user', [UserController::class,'index']); //取得所有會員資料
+$app->router->get('/api/manager/user?', [UserController::class,'index']); //取得所有會員資料
 $app->router->post('/api/manager/useradd', [UserController::class,'useradd']); //加入學生
 $app->router->put('/api/manager/user/password', [UserController::class,'changeUserPassword']); //修改使用者密碼
 $app->router->put('/api/manager/user/class', [UserController::class,'updateUserClass']); //修改使用者班級
@@ -118,5 +121,17 @@ $app->router->put('/api/project/record', [ProjectRecordController::class,'update
 $app->router->delete('/api/project?', [ProjectRecordController::class,'destroy']); //刪除專案(軟刪除)
 $app->router->delete('/api/project/record?', [ProjectRecordController::class,'destroyRecord']); //刪除專案記錄(軟刪除)
 $app->router->get('/api/download/project?', [DownloadController::class,'download_Project']); //下載競賽記錄檔案
+
+$app->router->get('/api/labinfo', [LabInfoController::class,'index']); //取得所有研究室介紹
+$app->router->get('/api/labinfo?', [LabInfoController::class,'show']); //取得該研究室介紹內容
+$app->router->post('/api/labinfo', [LabInfoController::class,'store']); //新增研究室介紹
+$app->router->put('/api/labinfo', [LabInfoController::class,'update']); //修改研究室介紹
+$app->router->delete('/api/labinfo?', [LabInfoController::class,'destroy']); //刪除研究室介紹
+
+$app->router->get('/api/album', [AlbumController::class,'index']); //取得所有相簿
+$app->router->get('/api/album?', [AlbumController::class,'show']); //取得該相簿內容
+$app->router->post('/api/album', [AlbumController::class,'store']); //新增相簿
+$app->router->put('/api/album', [AlbumController::class,'update']); //修改相簿
+$app->router->delete('/api/album?', [AlbumController::class,'destroy']); //刪除相簿
 
 $app->run();
