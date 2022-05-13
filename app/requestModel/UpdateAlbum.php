@@ -10,7 +10,7 @@ class UpdateAlbum extends Model{
 
     public int $Id;    
     public string $Title;    
-    public $File;
+    public $Image;
 
     public function loadData($data)
     {
@@ -19,7 +19,7 @@ class UpdateAlbum extends Model{
                 $this->{$key} = $value;
             }
         }
-        $this->File = $_FILES['File'] ?? null;
+        $this->Image = $_FILES['File'] ?? null;
     }
 
     public function rules(): array

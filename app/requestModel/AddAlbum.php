@@ -9,7 +9,7 @@ class AddAlbum extends Model{
 
 
     public string $Title;    
-    public $File;
+    public $Image;
 
     public function loadData($data)
     {
@@ -18,7 +18,7 @@ class AddAlbum extends Model{
                 $this->{$key} = $value;
             }
         }
-        $this->File = $_FILES['File'] ?? null;
+        $this->Image = $_FILES['File'] ?? null;
     }
 
     public function rules(): array
@@ -28,9 +28,8 @@ class AddAlbum extends Model{
                 self::RULE_REQUIRED, 
                 [self::RULE_MAX, 'max' => 20]
             ],
-            'File' => [
-                self::RULE_REQUIRED,
-                [self::RULE_MAX, 'max' => 2000]
+            'Image' => [
+                self::RULE_REQUIRED
             ]
         ];
     }

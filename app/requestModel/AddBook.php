@@ -13,7 +13,7 @@ class AddBook extends Model{
     public string $Time;
     public string $ISBN;
     public array $Authors;
-    public $File;
+    public $Image;
 
     public function loadData($data)
     {
@@ -39,7 +39,7 @@ class AddBook extends Model{
             'Time' => [self::RULE_REQUIRED],
             'ISBN' => [self::RULE_REQUIRED],
             'Authors' => [self::RULE_REQUIRED],
-            'File' => [self::RULE_REQUIRED],
+            'Image' => [self::RULE_REQUIRED],
         ];
     }
 }
