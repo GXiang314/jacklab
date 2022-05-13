@@ -22,7 +22,7 @@ class AddBook extends Model{
                 $this->{$key} = $value;
             }
         }
-        $this->File = $_FILES['File'] ?? null;
+        $this->File = $_FILES['Image'] ?? null;
     }
 
     public function rules(): array
