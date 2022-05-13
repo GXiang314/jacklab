@@ -429,7 +429,6 @@ class MemberService
             .
              " limit ".(($page-1)*10).", ".($page*10).
             " ;");
-            var_dump($statement);
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $datalist;
