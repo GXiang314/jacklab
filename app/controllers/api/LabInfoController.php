@@ -10,7 +10,7 @@ use app\model\lab_info;
 use app\requestModel\UpdateLabinfo;
 use app\services\labinfoService;
 
-class AcademicController extends Controller
+class LabInfoController extends Controller
 {
 
     private $labinfoService;

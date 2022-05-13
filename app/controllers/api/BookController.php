@@ -10,7 +10,7 @@ use app\requestModel\AddBook;
 use app\requestModel\UpdateBook;
 use app\services\BookService;
 
-class AcademicController extends Controller
+class BookController extends Controller
 {
 
     private $bookService;
