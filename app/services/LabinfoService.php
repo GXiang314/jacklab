@@ -54,13 +54,15 @@ class LabinfoService{
         }
         return 'success';
     }
-    public function delete($id)
+    public function delete($idList)
     {
         try{
-            // delete student
-            lab_info::delete('lab_info', [
-                'Id' => $id
-            ]);            
+            $idList = explode(',', $idList);
+            foreach($idList as $id){
+                lab_info::delete('lab_info', [
+                    'Id' => $id
+                ]);   
+            }
         }
         catch(Exception $e){
             return $e->getMessage();
