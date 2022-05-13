@@ -162,7 +162,7 @@ class GameRecordService{
                             temp= explode('.',$file_name);
                             $extension = end($temp);
                         */
-                        $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\game\\" . $fileName);
+                        $path = dirname(dirname(__DIR__)) . "\public\storage\game\\" . $fileName;
                         move_uploaded_file($files['tmp_name'][$key], $path); //upload files
 
                         game_file::create('game_file', [
@@ -248,7 +248,7 @@ class GameRecordService{
                                 temp= explode('.',$file_name);
                                 $extension = end($temp);
                             */
-                            $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\meeting\\" . $fileName);
+                            $path = dirname(dirname(__DIR__)) . "\public\storage\game\\" . $fileName;
                             move_uploaded_file($files['tmp_name'][$key], $path); //upload files
 
                             game_file::create('game_file', [

@@ -102,7 +102,7 @@ class MemberService
                     temp= explode('.',$file_name);
                     $extension = end($temp);
                 */
-                $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName);
+                $path = dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName;
                 move_uploaded_file($file['tmp_name'], $path); //upload files
                 $res = DbModel::update('student', ['Image' => $path], ['Account' => $account]);
             } else {
@@ -126,7 +126,7 @@ class MemberService
                     temp= explode('.',$file_name);
                     $extension = end($temp);
                 */
-                $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName);
+                $path = dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName;
                 move_uploaded_file($file['tmp_name'], $path); //upload files
                 $res = DbModel::update('teacher', ['Image' => $path], ['Account' => $account]);
             }

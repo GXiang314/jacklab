@@ -28,7 +28,7 @@ class teacher extends DbModel{
             }            
         }
         $this->Id = MemberService::generateTeacherId();
-        $this->Image = 'member/man.png';
+        $this->Image = dirname(dirname(__DIR__)) . "\public\storage\album\member\man.png";
         $this->Introduction = '';
     }
 

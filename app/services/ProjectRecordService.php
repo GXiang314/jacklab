@@ -190,7 +190,7 @@ class ProjectRecordService
                             temp= explode('.',$file_name);
                             $extension = end($temp);
                         */
-                        $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\project\\" . $fileName);
+                        $path = dirname(dirname(__DIR__)) . "\public\storage\project\\" . $fileName;
                         move_uploaded_file($file['tmp_name'], $path); //upload files
 
                         proj_file::create('proj_file', [
@@ -273,7 +273,7 @@ class ProjectRecordService
                     temp= explode('.',$file_name);
                     $extension = end($temp);
                 */
-                $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\project\\" . $fileName);
+                $path = dirname(dirname(__DIR__)) . "\public\storage\project\\" . $fileName;
                 move_uploaded_file($file['tmp_name'], $path); //upload files
 
                 proj_file::create('proj_file', [

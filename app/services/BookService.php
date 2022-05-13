@@ -61,7 +61,7 @@ class BookService{
                     temp= explode('.',$file_name);
                     $extension = end($temp);
                 */
-                $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\book\\" . $fileName);
+                $path = dirname(dirname(__DIR__)) . "\public\storage\book\\" . $fileName;
                 move_uploaded_file($file['tmp_name'], $path); //upload files
                 $res = book::create('book', [
                     'Title' => $book['Title'],
@@ -123,7 +123,7 @@ class BookService{
                         temp= explode('.',$file_name);
                         $extension = end($temp);
                     */
-                    $path = str_replace("\\", "\\\\", dirname(dirname(__DIR__)) . "\public\storage\book\\" . $fileName);
+                    $path = dirname(dirname(__DIR__)) . "\public\storage\book\\" . $fileName;
                     move_uploaded_file($file['tmp_name'], $path); //upload files
                     $res = book::update('book', [
                         'Title' => $book['Title'],
