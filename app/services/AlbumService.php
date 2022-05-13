@@ -34,7 +34,7 @@ class AlbumService
                     temp= explode('.',$file_name);
                     $extension = end($temp);
                 */
-                $path = dirname(dirname(__DIR__)) . "\public\storage\album\\" . $fileName;
+                $path = dirname(dirname(__DIR__)) . "\public\storage\album\\" . $fileName ;
                 move_uploaded_file($file['tmp_name'], $path); //upload files
                 album::create('album', [
                     'Title' => $title,
