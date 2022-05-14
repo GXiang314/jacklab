@@ -34,10 +34,13 @@ class ProjectRecordService
             LEFT JOIN student AS s ON s.Account = p.Creater
             LEFT JOIN teacher AS t ON t.Account = p.Creater 
         WHERE
-            p.Id = '{$project_Id}';");
+            p.Id = '{$project_Id}' and (
+            ISNULL(p.Deleted) or p.Deleted like ''	
+            )
+            ;");
         $statement->execute();
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
-        if (empty($data)) return "not found";
+        if (empty($data)) return "";
 
         $statement = project::prepare("
         SELECT
