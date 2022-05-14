@@ -11,11 +11,20 @@ class BookService{
 
     public function getAll()
     {
-        $data = book::get('book');
+        $statement = book::prepare("
+        SELECT
+            b.Id,
+            b.Title,
+            b.Image 
+        FROM
+            book AS b;
+        ");
+        $statement->execute();
+        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
         if(!empty($data)){
             $index = 0;
             foreach($data as $row){
-                $data[$index] = $this->getOne($row['Id']);
+                $data[$index]['Authors'] = $this->getAuthors($row['Id']);
                 $index++;
             }
         }
@@ -30,7 +39,14 @@ class BookService{
         ]);
         
         if(!empty($data)){
-            $statement = DbModel::prepare("
+            $data['Authors'] = $this->getAuthors($id);
+        }
+        return $data;
+    }
+
+    public function getAuthors($id)
+    {
+        $statement = DbModel::prepare("
             SELECT
             CASE
                     s.`Name` 
@@ -43,12 +59,10 @@ class BookService{
                 LEFT JOIN student AS s ON s.Account = a.Account
                 LEFT JOIN teacher AS t ON t.Account = a.Account
             WHERE
-                b.Id = {'$id'};
+                b.Id = '{$id}';
             ");
-            $statement->execute();
-            $data['Author'] = $statement->fetchAll(\PDO::FETCH_ASSOC) ?? [];
-        }
-        return $data;
+        $statement->execute();
+        return $statement->fetchAll(\PDO::FETCH_COLUMN) ?? [];
     }
 
     public function add($book, $authors, $file)
