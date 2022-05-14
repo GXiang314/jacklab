@@ -3,6 +3,7 @@ namespace app\public;
 
 use app\controllers\api\AcademicController;
 use app\controllers\api\AlbumController;
+use app\controllers\api\BookController;
 use app\controllers\api\ClassesController;
 use app\controllers\api\DownloadController;
 use app\controllers\api\GameManagerController;
@@ -134,5 +135,11 @@ $app->router->get('/api/album?', [AlbumController::class,'show']); //取得該�
 $app->router->post('/api/album', [AlbumController::class,'store']); //新增相簿
 $app->router->put('/api/album', [AlbumController::class,'update']); //修改相簿
 $app->router->delete('/api/album?', [AlbumController::class,'destroy']); //刪除相簿
+
+$app->router->get('/api/book', [BookController::class,'index']); //取得所有相簿
+$app->router->get('/api/book?', [BookController::class,'show']); //取得該相簿內容
+$app->router->post('/api/book', [BookController::class,'store']); //新增相簿
+$app->router->put('/api/book', [BookController::class,'update']); //修改相簿
+$app->router->delete('/api/book?', [BookController::class,'destroy']); //刪除相簿
 
 $app->run();
