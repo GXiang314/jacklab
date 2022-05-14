@@ -25,7 +25,7 @@ class BookController extends Controller
     public function index()
     {
         $data = $this->bookService->getAll();
-        return isset($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
+        return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
     }
 
     public function show(Request $request)
@@ -33,7 +33,7 @@ class BookController extends Controller
         if ($request->isGet()) {
             $id = $request->getBody()['id'] ?? '';
             $data = $this->bookService->getOne($id);
-            return isset($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
+            return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
