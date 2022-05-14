@@ -29,6 +29,7 @@ class ProjectManagerService{
             p.Description,
             p.Creater,
             p.CreateTime,
+            Type.`Name` as Type_name,						
         CASE
             s.`Name` 
             WHEN s.`Name` THEN
@@ -38,7 +39,8 @@ class ProjectManagerService{
             project AS p
             LEFT JOIN student AS s ON s.Account = p.Creater
             LEFT JOIN teacher AS t ON t.Account = p.Creater 
-        	LEFT JOIN proj_tag AS pt ON pt.Project_Id = p.Id 
+            LEFT JOIN proj_tag AS pt ON pt.Project_Id = p.Id 
+            LEFT JOIN proj_type AS type ON type.Id = p.Proj_type
         WHERE
             p.Proj_type like '{$id}'  and (
                 ISNULL(p.Deleted) or p.Deleted like ''	
