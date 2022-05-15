@@ -146,7 +146,7 @@ class UserController extends Controller
     public function destroyTeacher(Request $request)
     {
         if ($request->isDelete()) {
-            $result = $this->memberService->delete($request->getBody()['id'] ?? '0');
+            $result = $this->memberService->deleteTeacher($request->getBody()['id'] ?? '0');
             if ($result == 'success') {
                 return $this->sendResponse($result, '刪除成功');
             }
