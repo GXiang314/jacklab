@@ -25,7 +25,6 @@ class ProjectRecordService
             p.Creater,
             p.CreateTime,
             pt.Id as Type_id,
-            pt.Name as Type_name,
         CASE
                 s.`Name` 
                 WHEN s.`Name` THEN
