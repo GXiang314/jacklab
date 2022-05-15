@@ -8,6 +8,8 @@ use app\middlewares\hasRoleMiddleware;
 use app\middlewares\isLoginMiddleware;
 use app\requestModel\Teacheradd;
 use app\requestModel\UpdateStudentClass;
+use app\requestModel\UpdateTeacherInfo;
+use app\requestModel\UpdateTeacherPhoto;
 use app\requestModel\UpdateUserPassword;
 use app\requestModel\Useradd;
 use app\services\MailService;
@@ -29,7 +31,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        if($request->isGet()){
+        if ($request->isGet()) {
             $page = $request->getBody()['page'] ?? 1;
             $search = $request->getBody()['search'] ?? null;
             $academic = $request->getBody()['academic'] ?? null;
@@ -38,47 +40,77 @@ class UserController extends Controller
         return ($data != []) ? $this->sendResponse($data, '所有成員') : $this->sendResponse('', '沒有資料');
     }
 
+    public function getAllTeacher(Request $request)
+    {
+        if ($request->isGet()) {
+            $page = $request->getBody()['page'] ?? 1;
+            $search = $request->getBody()['search'] ?? null;
+        }
+        $data = $this->memberService->getTeacher($page, $search);
+        return $data ? $this->sendResponse($data, '所有教師') : $this->sendResponse('', '沒有資料');
+    }
+
     public function useradd(Request $request)
     {
-        $userAddModel = new Useradd();
         if ($request->isPost()) {
+            $userAddModel = new Useradd();
             $data = $request->getJson();
             $userAddModel->loadData($data);
             if ($userAddModel->validate()) {
-                $this->memberService->studentAdd($data);
-                return $this->sendResponse([], '加入成功');
-            }else{
+                $res = $this->memberService->studentAdd($data);
+                return $res? $this->sendResponse($res, '加入成功') : $this->sendError($res, '加入失敗');
+            } else {
                 return $this->sendError($userAddModel->errors, 'Registered failed.');
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
 
-    public function getAllTeacher(Request $request)
-    {
-        if($request->isGet()){
-            $page = $request->getBody()['page'] ?? 1;
-            $search = $request->getBody()['search'] ?? null;            
-        }
-        $data = $this->memberService->getTeacher($page, $search);
-        return $data ? $this->sendResponse($data, '所有教師') : $this->sendResponse('', '沒有資料');
-    }
-
-
     public function teacheradd(Request $request)
     {
-        $teachererAddModel = new Teacheradd();
         if ($request->isPost()) {
+            $teachererAddModel = new Teacheradd();
             $data = $request->getJson();
             $teachererAddModel->loadData($data);
             if ($teachererAddModel->validate()) {
-                $this->memberService->teacherAdd($data);
-                return $this->sendResponse([], '加入成功');
-            }else{
+                $res = $this->memberService->teacherAdd($data);
+                return $res? $this->sendResponse($res, '加入成功') : $this->sendError($res, '加入失敗');
+            } else {
                 return $this->sendError($teachererAddModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
+    }
+
+    public function updateTeacherInfo(Request $request)
+    {
+        if ($request->isPut()) {
+            $teachererAddModel = new UpdateTeacherInfo();
+            $data = $request->getJson();
+            $teachererAddModel->loadData($data);
+            if ($teachererAddModel->validate()) {
+                $res = $this->memberService->updateTeacherInfo($teachererAddModel->Id, $data);
+                return $res == 'success' ? $this->sendResponse($res, '修改成功') : $this->sendError($res, '修改失敗');
+            } else {
+                return $this->sendError($teachererAddModel->errors);
+            }
+        }
+        return $this->sendError('Method Not Allow.', [], 405);
+    }
+
+    public function updateTeacherPhoto(Request $request)
+    {
+        if ($request->isPut()) {
+            $data = $request->getBody();
+            $requestModel = new UpdateTeacherPhoto();
+            $requestModel->loadData($data);
+            if ($requestModel->validate()) {
+                $result = $this->memberService->updateTeacherPhoto($requestModel->Id, $requestModel->File);
+                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            }
+            return $this->sendError($requestModel->errors);
+        }
+        return $this->sendError('Method Not Allow', [], 405);
     }
 
     public function changeUserPassword(Request $request)
@@ -109,6 +141,18 @@ class UserController extends Controller
             return $this->sendError($requestModel->errors);
         }
         return $this->sendError('Method Not Allow', [], 405);
+    }
+
+    public function destroyTeacher(Request $request)
+    {
+        if ($request->isDelete()) {
+            $result = $this->memberService->delete($request->getBody()['id'] ?? '0');
+            if ($result == 'success') {
+                return $this->sendResponse($result, '刪除成功');
+            }
+        }
+
+        return $this->sendError($result, '刪除失敗，請稍後再試');
     }
 
     public function destroy(Request $request)
