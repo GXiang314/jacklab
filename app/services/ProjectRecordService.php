@@ -24,6 +24,7 @@ class ProjectRecordService
             p.Description,
             p.Creater,
             p.CreateTime,
+            pt.Id as Type_id,
             pt.Name as Type_name,
         CASE
                 s.`Name` 
