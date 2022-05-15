@@ -75,7 +75,7 @@ class MemberService
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return $res ? 'success' : 'error';
+        return $res ? 'success' : false;
     }
     /* #endregion */
 
@@ -84,6 +84,24 @@ class MemberService
     {
         try {
             $res = DbModel::update('student', ['Introduction' => $text], ['Account' => $account]);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return $res ? 'success' : 'error';
+    }
+    /* #endregion */
+
+    /* #region  修改教師介紹 */
+    public function updateTeacherInfo($id, $request)
+    {
+        try {
+            $res = DbModel::update('teacher', [
+                'Introduction' => $request['Introduction'],
+                'Title' => $request['Title'],
+                'Name' => $request['Name'],
+            ], [
+                'Id' => $id
+            ]);
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -123,7 +141,7 @@ class MemberService
     /* #endregion */
 
     /* #region  修改教師大頭貼 */
-    public function updateTeacherPhoto(string $account, $file)
+    public function updateTeacherPhoto($id, $file)
     {
         try {
             if ($this->checkExtensions($file)) {
@@ -136,12 +154,12 @@ class MemberService
                 $path = dirname(dirname(__DIR__)) . "\public\storage\member\\" . $fileName;
                 move_uploaded_file($file['tmp_name'], $path); //upload files
                 $url = DbModel::findOne('teacher', [
-                    'Account' => $account
+                    'Id' => $id
                 ])['Image'] ?? '';
                 if (file_exists($url) && !str_contains($url, 'man.png')) {
                     unlink($url);
                 }
-                $res = DbModel::update('teacher', ['Image' => $path], ['Account' => $account]);
+                $res = DbModel::update('teacher', ['Image' => $path], ['Id' => $id]);
             }
         } catch (Exception $e) {
             return $e->getMessage();
@@ -188,10 +206,35 @@ class MemberService
     /* #endregion */
 
     /* #region  刪除會員帳號 */
+
     public function delete($idList)
     {
         $idList = explode(',', $idList);
         try {
+            foreach ($idList as $id) {
+                $data = $this->getMemberData($id);
+                if (isset($data['Account'])) {
+                    Application::$app->db->pdo->exec("
+                        delete from game_member where Student_Id = '{$id}';
+                        delete from meeting_member where Account = '{$data['Account']}';
+                        delete from member_role where Account = '{$data['Account']}';
+                        delete from student where Account = '{$data['Account']}';
+                        delete from teacher where Account = '{$data['Account']}';
+                        delete from member where Account = '{$data['Account']}';
+                    ");
+                }
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return 'success';
+    }
+
+    public function deleteTeacher($idList)
+    {
+        $idList = explode(',', $idList);
+        try {
+            
             foreach ($idList as $id) {
                 $data = $this->getMemberData($id);
                 if (isset($data['Account'])) {
@@ -298,7 +341,7 @@ class MemberService
     }
     /* #endregion */
 
-    /* #region  取得個人資料 */
+    /* #region  取得學生資料 */
 
     public function getMemberData($student_id)
     {
@@ -328,6 +371,66 @@ class MemberService
         return $data;
     }
 
+    public function getAccountData($account)
+    {
+        try {
+            $statement = DbModel::prepare("         
+            select s.*, m.* from member as m, student as s 
+            where 
+                s.Account = m.Account and
+                m.Account = '$account' 
+            limit 1;");
+            $statement->execute();
+            $data =  $statement->fetch(\PDO::FETCH_ASSOC); //member
+            if (!empty($data)) {
+                $roldSelect = DbModel::prepare("         
+                select r.* from role as r, member_role as mr 
+                where 
+                    r.Id = mr.Role_ID and
+                    mr.Account = '$account';
+                ");
+                $roldSelect->execute();
+                $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC); //role
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return $data;
+    }
+
+    /* #endregion */
+
+    /* #region  取得教師資料 */
+    public function getTeacherData($teacher_Id)
+    {
+        try {
+            $statement = DbModel::prepare("
+            select t.*, m.* from teacher as t, member as m 
+            where 
+                t.Account = m.Account and
+                t.Id = '$teacher_Id' 
+            limit 1;");
+            $statement->execute();
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
+            if (!empty($data)) {
+                $roldSelect = DbModel::prepare("         
+                select r.* from role as r, member_role as mr, teacher as t
+                where 
+                    r.Id = mr.Role_ID and
+                    mr.Account = t.Account;
+                    t.Id = '$teacher_Id';
+                ");
+                $roldSelect->execute();
+                $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC); //role
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return $data;
+    }
+    /* #endregion */
+
+    /* #region  取得帳戶資訊 */
     public function getAccount($account)
     {
         try {
@@ -363,34 +466,6 @@ class MemberService
         }
         return $data;
     }
-
-    public function getAccountData($account)
-    {
-        try {
-            $statement = DbModel::prepare("         
-            select s.*, m.* from member as m, student as s 
-            where 
-                s.Account = m.Account and
-                m.Account = '$account' 
-            limit 1;");
-            $statement->execute();
-            $data =  $statement->fetch(\PDO::FETCH_ASSOC); //member
-            if (!empty($data)) {
-                $roldSelect = DbModel::prepare("         
-                select r.* from role as r, member_role as mr 
-                where 
-                    r.Id = mr.Role_ID and
-                    mr.Account = '$account';
-                ");
-                $roldSelect->execute();
-                $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC); //role
-            }
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-        return $data;
-    }
-
     /* #endregion */
 
     /* #region  取得所有會員資料 */
