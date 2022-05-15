@@ -1,6 +1,8 @@
 <?php
 namespace app\public;
 
+use Dotenv\Dotenv;
+use app\core\Application;
 use app\controllers\api\AcademicController;
 use app\controllers\api\AlbumController;
 use app\controllers\api\BookController;
@@ -11,16 +13,13 @@ use app\controllers\api\GameRecordController;
 use app\controllers\api\LabInfoController;
 use app\controllers\api\LoginController;
 use app\controllers\api\MeetController;
-use app\core\Application;
 use app\controllers\api\MemberController;
 use app\controllers\api\PermissionController;
 use app\controllers\api\ProjectManagerController;
 use app\controllers\api\ProjectRecordController;
 use app\controllers\api\RoleController;
 use app\controllers\api\UserController;
-use Dotenv\Dotenv;
 
-// use app\core\Application;
 
 require_once (__DIR__."../../vendor/autoload.php");
 
@@ -141,5 +140,11 @@ $app->router->get('/api/book?', [BookController::class,'show']); //取得該相�
 $app->router->post('/api/book', [BookController::class,'store']); //新增相簿
 $app->router->put('/api/book', [BookController::class,'update']); //修改相簿
 $app->router->delete('/api/book?', [BookController::class,'destroy']); //刪除相簿
+
+
+$app->router->get('/api/manager/teacher', [UserController::class,'getAllTeacher']); //取得所有教師
+$app->router->get('/api/manager/teacher?', [UserController::class,'getAllTeacher']); //取得教師(搜尋值)
+$app->router->post('/api/manager/teacher', [UserController::class,'teacheradd']); //新增教師
+
 
 $app->run();
