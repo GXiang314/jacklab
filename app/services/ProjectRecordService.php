@@ -24,6 +24,7 @@ class ProjectRecordService
             p.Description,
             p.Creater,
             p.CreateTime,
+            pt.Name as Type_name,
         CASE
                 s.`Name` 
                 WHEN s.`Name` THEN
@@ -32,7 +33,8 @@ class ProjectRecordService
         FROM
             project AS p
             LEFT JOIN student AS s ON s.Account = p.Creater
-            LEFT JOIN teacher AS t ON t.Account = p.Creater 
+            LEFT JOIN teacher AS t ON t.Account = p.Creater
+            LEFT JOIN proj_type AS pt ON pt.Id = p.Proj_type
         WHERE
             p.Id = '{$project_Id}' and (
             ISNULL(p.Deleted) or p.Deleted like ''	
