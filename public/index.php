@@ -121,7 +121,7 @@ $app->router->put('/api/project', [ProjectRecordController::class,'update']); //
 $app->router->put('/api/project/record', [ProjectRecordController::class,'updateRecord']); //修改專案記錄
 $app->router->delete('/api/project?', [ProjectRecordController::class,'destroy']); //刪除專案(軟刪除)
 $app->router->delete('/api/project/record?', [ProjectRecordController::class,'destroyRecord']); //刪除專案記錄(軟刪除)
-$app->router->get('/api/download/project?', [DownloadController::class,'download_Project']); //下載競賽記錄檔案
+$app->router->get('/api/download/project?', [DownloadController::class,'download_Project']); //下載專案記錄檔案
 
 $app->router->get('/api/labinfo', [LabInfoController::class,'index']); //取得所有研究室介紹
 $app->router->get('/api/labinfo?', [LabInfoController::class,'show']); //取得該研究室介紹內容
@@ -145,6 +145,8 @@ $app->router->delete('/api/book?', [BookController::class,'destroy']); //刪除�
 $app->router->get('/api/manager/teacher', [UserController::class,'getAllTeacher']); //取得所有教師
 $app->router->get('/api/manager/teacher?', [UserController::class,'getAllTeacher']); //取得教師(搜尋值)
 $app->router->post('/api/manager/teacher', [UserController::class,'teacheradd']); //新增教師
+$app->router->put('/api/manager/teacher/info', [UserController::class,'updateTeacherInfo']); //修改教師資訊
+$app->router->put('/api/manager/teacher/photo', [UserController::class,'updateTeacherPhoto']); //修改教師大頭貼
 
 
 $app->run();
