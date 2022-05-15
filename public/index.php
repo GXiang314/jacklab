@@ -147,6 +147,7 @@ $app->router->get('/api/manager/teacher?', [UserController::class,'getAllTeacher
 $app->router->post('/api/manager/teacher', [UserController::class,'teacheradd']); //新增教師
 $app->router->put('/api/manager/teacher/info', [UserController::class,'updateTeacherInfo']); //修改教師資訊
 $app->router->put('/api/manager/teacher/photo', [UserController::class,'updateTeacherPhoto']); //修改教師大頭貼
+$app->router->delete('/api/manager/teacher', [UserController::class,'destroyTeacher']); //刪除教師
 
 
 $app->run();
