@@ -39,8 +39,8 @@ class teacher extends DbModel{
 
     public function save()
     {
-        $this->Student_Id = MemberService::generateTeacherId();
-        $this->Image = 'member/man.png';
+        $this->Id = MemberService::generateTeacherId();
+        $this->Image = dirname(dirname(__DIR__)) . "\public\storage\album\member\man.png";
         $this->Introduction = '';
         return parent::save();
     }

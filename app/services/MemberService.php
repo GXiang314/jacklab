@@ -107,10 +107,10 @@ class MemberService
                 $url = DbModel::findOne('student', [
                     'Account' => $account
                 ])['Image'] ?? '';
-                if(file_exists($url) && !str_contains($url,'man.png')){
+                if (file_exists($url) && !str_contains($url, 'man.png')) {
                     unlink($url);
                 }
-                
+
                 $res = DbModel::update('student', ['Image' => $path], ['Account' => $account]);
             } else {
                 return "不支援該檔案格式";
@@ -138,7 +138,7 @@ class MemberService
                 $url = DbModel::findOne('teacher', [
                     'Account' => $account
                 ])['Image'] ?? '';
-                if(file_exists($url) && !str_contains($url,'man.png')){
+                if (file_exists($url) && !str_contains($url, 'man.png')) {
                     unlink($url);
                 }
                 $res = DbModel::update('teacher', ['Image' => $path], ['Account' => $account]);
@@ -250,11 +250,11 @@ class MemberService
     /* #region  產生教師編號 */
     public static function generateTeacherId()
     {
-        $str = str_pad('1', 8, '7', STR_PAD_RIGHT);
+        $str = str_pad('1', 8, '0', STR_PAD_RIGHT);
         $teacher = new teacher();
         $statement = $teacher->prepare(
             "
-            select Id from teacher where Id like '%$str%' order by Id desc limit 1;"
+            select Id from teacher where Id order by Id desc limit 1;"
         );
         $statement->execute();
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
@@ -415,9 +415,9 @@ class MemberService
             LEFT JOIN classes AS c ON c.Id = s.Class_Id 
             LEFT JOIN academic AS a ON a.Id = c.Academic_Id
         WHERE
-            s.Account = m.Account ".
-            (($search != null) ? 
-            " and (
+            s.Account = m.Account " .
+            (($search != null) ?
+                " and (
                 s.Id like '%$search%' or 
                 s.Name like '%$search%' or 
                 s.Account like '%$search%' or 
@@ -425,12 +425,12 @@ class MemberService
                 m.CreateTime like '%$search%' or 
                 r.Name like '%$search%' ) " : "")
             .
-            (($academic != null ? 
-            " and 
+            (($academic != null ?
+                " and 
              a.Id = '$academic'             
-            ": ' '))
+            " : ' '))
             .
-             " limit ".(($page-1)*10).", ".($page*10).
+            " limit " . (($page - 1) * 10) . ", " . ($page * 10) .
             " ;");
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -467,6 +467,49 @@ class MemberService
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $datalist;
+    }
+    /* #endregion */
+
+    /* #region  取得所有教師 */
+    public function getTeacher($page = 1, $search = null)
+    {
+        $statement = DbModel::prepare("
+        Select 
+            t.*
+        From
+            teacher as t "
+            .
+            (($search) ? "
+        Where 
+            t.Id like '%{$search}%' or 
+            t.Name like '%{$search}%' or 
+            t.Title like '%{$search}%' or 
+            t.Introduction like '%{$search}%' or 
+            t.Account like '%{$search}%'         
+        " :
+                '') .
+            " limit " . (($page - 1) * 10) . ", " . ($page * 10) .
+            ";");
+        $statement->execute();
+        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        return $data;
+    }
+    /* #endregion */
+
+    /* #region  取得教師公開資料 */
+    public function getPublicTeacher()
+    {
+        $statement = DbModel::prepare("
+        select 
+            t.Id,
+            t.Name,
+            t.Title,
+            t.Introduction,
+            t.Image
+        from teacher as t;
+        ");
+        $statement->execute();
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
     /* #endregion */
 

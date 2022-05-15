@@ -6,6 +6,7 @@ use app\core\Controller;
 use app\core\Request;
 use app\middlewares\hasRoleMiddleware;
 use app\middlewares\isLoginMiddleware;
+use app\requestModel\Teacheradd;
 use app\requestModel\UpdateStudentClass;
 use app\requestModel\UpdateUserPassword;
 use app\requestModel\Useradd;
@@ -47,36 +48,38 @@ class UserController extends Controller
                 $this->memberService->studentAdd($data);
                 return $this->sendResponse([], '加入成功');
             }else{
-                return $this->sendError($userAddModel->errors);
+                return $this->sendError($userAddModel->errors, 'Registered failed.');
             }
         }
-        return $this->sendError($userAddModel->errors, 'Registered failed.');
+        return $this->sendError('Method Not Allow.', [], 405);
     }
-    /*
+
+    public function getAllTeacher(Request $request)
+    {
+        if($request->isGet()){
+            $page = $request->getBody()['page'] ?? 1;
+            $search = $request->getBody()['search'] ?? null;            
+        }
+        $data = $this->memberService->getTeacher($page, $search);
+        return $data ? $this->sendResponse($data, '所有教師') : $this->sendResponse('', '沒有資料');
+    }
+
+
     public function teacheradd(Request $request)
     {
-        try {
-            // $request->validate([ //這邊會驗證註冊的資料是否符合格式
-            //     'account' => ['required', 'string', 'email', 'max:100','unique:member,Account'],
-            //     'password' => ['required'],
-            //     'name' => ['required', 'max:20'],
-            //     'title' => ['required', 'max:20'],
-            //     'role_Id' => ['required']
-            // ]);
-            $request['token'] = $this->memberService->generateAuthToken();
-            $result = $this->memberService->addTeacher($request);
-            $url = action([MemberController::class,'emailvalidate'],['account' => $request['account'],'token' => $request['token']]);
-            $content = "使用者「{$request['name']}」，您好：\r\n\r\n您的帳號是：{$request['account']}\r\n您的密碼是：{$request['password']}\r\n\r\n請點擊以下連結以完成驗證步驟：\r\n{$url}";
-            Mail::raw($content, function ($message) use ($request) {
-                $message
-                ->to($request['account'])
-                ->subject("創建帳號通知");
-            });
-        } catch (Exception $e) {
-            return $this->sendError($e->getMessage(), 'Registered failed.');
+        $teachererAddModel = new Teacheradd();
+        if ($request->isPost()) {
+            $data = $request->getJson();
+            $teachererAddModel->loadData($data);
+            if ($teachererAddModel->validate()) {
+                $this->memberService->teacherAdd($data);
+                return $this->sendResponse([], '加入成功');
+            }else{
+                return $this->sendError($teachererAddModel->errors);
+            }
         }
-        return $this->sendResponse($result,'success');
-    }*/
+        return $this->sendError('Method Not Allow.', [], 405);
+    }
 
     public function changeUserPassword(Request $request)
     {
