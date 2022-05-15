@@ -219,7 +219,6 @@ class MemberService
                         delete from meeting_member where Account = '{$data['Account']}';
                         delete from member_role where Account = '{$data['Account']}';
                         delete from student where Account = '{$data['Account']}';
-                        delete from teacher where Account = '{$data['Account']}';
                         delete from member where Account = '{$data['Account']}';
                     ");
                 }
@@ -234,15 +233,14 @@ class MemberService
     {
         $idList = explode(',', $idList);
         try {
-            
+
             foreach ($idList as $id) {
-                $data = $this->getMemberData($id);
+                $data = $this->getTeacherData($id);
                 if (isset($data['Account'])) {
                     Application::$app->db->pdo->exec("
                         delete from game_member where Student_Id = '{$id}';
                         delete from meeting_member where Account = '{$data['Account']}';
                         delete from member_role where Account = '{$data['Account']}';
-                        delete from student where Account = '{$data['Account']}';
                         delete from teacher where Account = '{$data['Account']}';
                         delete from member where Account = '{$data['Account']}';
                     ");
