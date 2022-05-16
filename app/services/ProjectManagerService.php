@@ -3,6 +3,7 @@
 namespace app\services;
 
 use app\core\DbModel;
+use app\model\proj_record;
 use app\model\proj_tag;
 use app\model\proj_type;
 use app\model\project;
@@ -80,10 +81,12 @@ class ProjectManagerService{
                 } else {
                     $data[$index]['Tag'] = [];
                 }
+                $data[$index]['Record_count'] = proj_record::count('proj_record', [
+                    'Project_Id' => $row['Id']
+                ]) ?? 0;
                 $index++;
             }
         }
-        return $data;
         return $data;
     }
 
