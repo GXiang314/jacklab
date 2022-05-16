@@ -128,8 +128,14 @@ abstract class DbModel extends Model
         return true;
     }
 
-    public static function count($tableName){
+    public static function count($tableName, array $where = []){
         $statement = self::prepare("select count(*) as c from $tableName;");
+        $whereKey = array_keys($where);
+        $where_sql = ($where) ? ' where ' . implode(' and ', array_map(fn ($attr) => "$attr = :$attr", $whereKey)) : '';
+            $statement = self::prepare("select count(*) as c from $tableName $where_sql;");
+            foreach ($where as $key => $value) {
+                $statement->bindValue(":$key", $value);
+            }
         $statement->execute();
         return $statement->fetch(\PDO::FETCH_ASSOC)['c'];
     }
