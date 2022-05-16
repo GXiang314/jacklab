@@ -87,7 +87,7 @@ class ProjectManagerService{
                 FROM
                     proj_record AS pr 
                 WHERE
-                    pr.Project_Id = 3 
+                    pr.Project_Id = {$row['Id']} 
                     AND (
                         ISNULL( pr.Deleted ) 
                     OR pr.Deleted LIKE '')
