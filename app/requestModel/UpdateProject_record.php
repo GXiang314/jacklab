@@ -30,8 +30,7 @@ class UpdateProject_record extends Model{
         return [            
             'Id' => [self::RULE_REQUIRED],
             'Remark' => [self::RULE_REQUIRED],
-            'USER' => [self::RULE_REQUIRED],
-            'File' => [self::RULE_REQUIRED]
+            'USER' => [self::RULE_REQUIRED]
         ];
     }
 }
