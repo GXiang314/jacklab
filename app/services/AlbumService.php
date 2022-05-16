@@ -66,7 +66,7 @@ class AlbumService
                         temp= explode('.',$file_name);
                         $extension = end($temp);
                     */
-                    $path = "storage\album\\" . $fileName;
+                    $path = "\storage\album\\" . $fileName;
                     move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path);
                     unlink(
                         dirname(dirname(__DIR__)) . "\public" . album::findOne('album', [

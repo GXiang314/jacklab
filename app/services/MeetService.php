@@ -171,7 +171,7 @@ class MeetService
                             temp= explode('.',$file_name);
                             $extension = end($temp);
                         */
-                        $path = "storage\meeting\\" . $fileName;
+                        $path = "\storage\meeting\\" . $fileName;
                         move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public".$path); //upload files
 
                         meeting_file::create('meeting_file', [

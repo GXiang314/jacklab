@@ -137,7 +137,7 @@ class BookService{
                         temp= explode('.',$file_name);
                         $extension = end($temp);
                     */
-                    $path = "storage\book\\" . $fileName;
+                    $path = "\storage\book\\" . $fileName;
                     move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
                     unlink(
                         book::findOne('album', [
