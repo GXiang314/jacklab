@@ -81,9 +81,19 @@ class ProjectManagerService{
                 } else {
                     $data[$index]['Tag'] = [];
                 }
-                $data[$index]['Record_count'] = proj_record::count('proj_record', [
-                    'Project_Id' => $row['Id']
-                ]) ?? 0;
+                $statement = proj_record::prepare("
+                SELECT
+                    count(*) AS c 
+                FROM
+                    proj_record AS pr 
+                WHERE
+                    pr.Project_Id = 3 
+                    AND (
+                        ISNULL( pr.Deleted ) 
+                    OR pr.Deleted LIKE '')
+                ");
+                $statement->execute();
+                $data[$index]['Record_count'] = $statement->fetch(\PDO::FETCH_COLUMN);
                 $index++;
             }
         }
