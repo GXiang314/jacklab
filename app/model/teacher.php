@@ -28,7 +28,7 @@ class teacher extends DbModel{
             }            
         }
         $this->Id = MemberService::generateTeacherId();
-        $this->Image = dirname(dirname(__DIR__)) . "\public\storage\album\member\man.png";
+        $this->Image = "\storage\member\man.png";
         $this->Introduction = '';
     }
 
@@ -40,7 +40,7 @@ class teacher extends DbModel{
     public function save()
     {
         $this->Id = MemberService::generateTeacherId();
-        $this->Image = dirname(dirname(__DIR__)) . "\public\storage\album\member\man.png";
+        $this->Image = "\storage\member\man.png";
         $this->Introduction = '';
         return parent::save();
     }

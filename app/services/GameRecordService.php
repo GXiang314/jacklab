@@ -10,7 +10,8 @@ use app\model\game_type;
 use app\model\member;
 use Exception;
 
-class GameRecordService{
+class GameRecordService
+{
 
     public function getAll()
     {
@@ -162,8 +163,8 @@ class GameRecordService{
                             temp= explode('.',$file_name);
                             $extension = end($temp);
                         */
-                        $path = dirname(dirname(__DIR__)) . "\public\storage\game\\" . $fileName;
-                        move_uploaded_file($files['tmp_name'][$key], $path); //upload files
+                        $path = "\storage\game\\" . $fileName;
+                        move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public".$path); //upload files
 
                         game_file::create('game_file', [
                             'Name' => $value,
@@ -174,7 +175,6 @@ class GameRecordService{
                         ]);
                     }
                 }
-               
             } else {
                 return '不支援該檔案格式';
             }
@@ -209,7 +209,7 @@ class GameRecordService{
                                 'Name' => $fileName
                             ]);
                         }
-                    }                   
+                    }
                     game_member::delete('game_member', [
                         'Game_record' => $id
                     ]);
@@ -248,8 +248,8 @@ class GameRecordService{
                                 temp= explode('.',$file_name);
                                 $extension = end($temp);
                             */
-                            $path = dirname(dirname(__DIR__)) . "\public\storage\game\\" . $fileName;
-                            move_uploaded_file($files['tmp_name'][$key], $path); //upload files
+                            $path = "\storage\game\\" . $fileName;
+                            move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
 
                             game_file::create('game_file', [
                                 'Name' => $value,
@@ -259,7 +259,7 @@ class GameRecordService{
                                 'Game_record' => $id
                             ]);
                         }
-                    }                    
+                    }
                 }
             } else {
                 return '不支援該檔案格式';

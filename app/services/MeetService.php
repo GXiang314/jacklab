@@ -171,8 +171,8 @@ class MeetService
                             temp= explode('.',$file_name);
                             $extension = end($temp);
                         */
-                        $path = dirname(dirname(__DIR__)) . "\public\storage\meeting\\" . $fileName;
-                        move_uploaded_file($files['tmp_name'][$key], $path); //upload files
+                        $path = "storage\meeting\\" . $fileName;
+                        move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public".$path); //upload files
 
                         meeting_file::create('meeting_file', [
                             'Name' => $value,
@@ -255,7 +255,7 @@ class MeetService
                             meeting_file::delete('meeting_file', [
                                 'Id' => $existFile['Id']
                             ]);
-                            unlink($existFile['Url']);
+                            unlink(dirname(dirname(__DIR__)) . "\public".$existFile['Url']);
                         }
                         $extension = pathinfo($value, PATHINFO_EXTENSION);
                         $fileName = md5($value . time()) . '.' . $extension;
@@ -263,8 +263,8 @@ class MeetService
                             temp= explode('.',$file_name);
                             $extension = end($temp);
                         */
-                        $path = dirname(dirname(__DIR__)) . "\public\storage\meeting\\" . $fileName;
-                        move_uploaded_file($files['tmp_name'][$key], $path); //upload files
+                        $path = "\storage\meeting\\" . $fileName;
+                        move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public".$path); //upload files
 
                         meeting_file::create('meeting_file', [
                             'Name' => $value,

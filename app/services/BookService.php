@@ -75,8 +75,8 @@ class BookService{
                     temp= explode('.',$file_name);
                     $extension = end($temp);
                 */
-                $path = dirname(dirname(__DIR__)) . "\public\storage\book\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], $path); //upload files
+                $path = "\storage\book\\" . $fileName;
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
                 $res = book::create('book', [
                     'Title' => $book['Title'],
                     'Publisher' => $book['Publisher'],
@@ -137,8 +137,8 @@ class BookService{
                         temp= explode('.',$file_name);
                         $extension = end($temp);
                     */
-                    $path = dirname(dirname(__DIR__)) . "\public\storage\book\\" . $fileName;
-                    move_uploaded_file($file['tmp_name'], $path); //upload files
+                    $path = "storage\book\\" . $fileName;
+                    move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
                     unlink(
                         book::findOne('album', [
                             'Id' => $id
@@ -181,8 +181,8 @@ class BookService{
                 $url = book::findOne('book', [
                     'Id' => $id
                 ])['Image'] ?? '';
-                if(file_exists($url)){
-                    unlink($url);
+                if(file_exists(dirname(dirname(__DIR__)) . "\public".$url)){
+                    unlink(dirname(dirname(__DIR__)) . "\public".$url);
                 }
                 author::delete('author', [
                     'Book_Id' => $id

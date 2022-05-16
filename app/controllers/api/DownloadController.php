@@ -25,7 +25,8 @@ class DownloadController extends Controller{
     {
         if($request->isGet()){
             $id = $request->getBody()['id'] ?? '';
-            $file = $this->meetService->getFile($id);       
+            $file = $this->meetService->getFile($id);    
+            $root = dirname(dirname(__DIR__)) . "\public";   
             if(!empty($file)){
                 if (file_exists($file['Url'])) {
                     header('Content-Description: File Transfer');
@@ -34,8 +35,8 @@ class DownloadController extends Controller{
                     header('Expires: 0');
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
-                    header('Content-Length: ' . filesize($file['Url']));
-                    readfile($file['Url']);
+                    header('Content-Length: ' . filesize($root.$file['Url']));
+                    readfile($root.$file['Url']);
                     exit;
                 }
             }            
@@ -48,6 +49,7 @@ class DownloadController extends Controller{
         if($request->isGet()){
             $id = $request->getBody()['id'] ?? '';
             $file = $this->gameRecordService->getFile($id);
+            $root = dirname(dirname(__DIR__)) . "\public";   
             if(!empty($file)){
                 if (file_exists($file['Url'])) {
                     header('Content-Description: File Transfer');
@@ -56,8 +58,8 @@ class DownloadController extends Controller{
                     header('Expires: 0');
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
-                    header('Content-Length: ' . filesize($file['Url']));
-                    readfile($file['Url']);
+                    header('Content-Length: ' . filesize($root.$file['Url']));
+                    readfile($root.$file['Url']);
                     exit;
                 }
             }            
@@ -71,16 +73,17 @@ class DownloadController extends Controller{
         if($request->isGet()){
             $id = $request->getBody()['id'] ?? '';
             $file = $this->projectRecordService->getFile($id);
+            $root = dirname(dirname(__DIR__)) . "\public";   
             if(!empty($file)){
                 if (file_exists($file['Url'])) {
                     header('Content-Description: File Transfer');
                     header('Content-Type: application/octet-stream');
-                    header('Content-Disposition: attachment; filename="'.basename($file['Name']).'"');
+                    header('Content-Disposition: attachment; filename="'.basename($root.$file['Name']).'"');
                     header('Expires: 0');
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
-                    header('Content-Length: ' . filesize($file['Url']));
-                    readfile($file['Url']);
+                    header('Content-Length: ' . filesize($root.$file['Url']));
+                    readfile($root.$file['Url']);
                     exit;
                 }
             }            

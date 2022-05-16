@@ -34,7 +34,7 @@ class student extends DbModel{
             }            
         }
         $this->Id = MemberService::generateStudentId($this->Class_Id);
-        $this->Image = dirname(dirname(__DIR__)) . "\public\storage\member\man.png";
+        $this->Image = "\storage\member\man.png";
         $this->Introduction = '';
     }
 

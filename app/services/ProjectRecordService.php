@@ -106,13 +106,13 @@ class ProjectRecordService
             OR isnull( pr.Deleted )) "
             .
             ((!empty($search))
-            ?
-            "and (pr.Remark like '%$search%'
+                ?
+                "and (pr.Remark like '%$search%'
              or pr.CreateTime like '%$search%'
              or s.Name like '%$search%'
              or t.Name like '%$search%')"
-            : ' ')
-            . " limit ".(($page-1)*10).", ".($page*10).";");
+                : ' ')
+            . " limit " . (($page - 1) * 10) . ", " . ($page * 10) . ";");
         $statement->execute();
         $data['Record'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         if (!empty($data['Record'])) {
@@ -155,7 +155,7 @@ class ProjectRecordService
                 'CreateTime' => $now,
                 'Creater' => $request['USER'],
             ])['Id'] ?? '';
-            foreach($request['Member'] as $member){
+            foreach ($request['Member'] as $member) {
                 proj_member::create('proj_member', [
                     'Project_Id' => $id,
                     'Account' => $member
@@ -195,8 +195,8 @@ class ProjectRecordService
                             temp= explode('.',$file_name);
                             $extension = end($temp);
                         */
-                        $path = dirname(dirname(__DIR__)) . "\public\storage\project\\" . $fileName;
-                        move_uploaded_file($file['tmp_name'], $path); //upload files
+                        $path = "\storage\project\\" . $fileName;
+                        move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
 
                         proj_file::create('proj_file', [
                             'Name' => $file['name'],
@@ -232,7 +232,7 @@ class ProjectRecordService
                 'Project_Id' => $id
             ]);
 
-            foreach($request['Member'] as $member){
+            foreach ($request['Member'] as $member) {
                 proj_member::create('proj_member', [
                     'Project_Id' => $id,
                     'Account' => $member
@@ -278,8 +278,8 @@ class ProjectRecordService
                     temp= explode('.',$file_name);
                     $extension = end($temp);
                 */
-                $path = dirname(dirname(__DIR__)) . "\public\storage\project\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], $path); //upload files
+                $path = "\storage\project\\" . $fileName;
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
 
                 proj_file::create('proj_file', [
                     'Name' => $file['name'],
