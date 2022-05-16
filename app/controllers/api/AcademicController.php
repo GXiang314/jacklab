@@ -19,7 +19,6 @@ class AcademicController extends Controller{
         $this->academicService = new AcademicService();
         $this->registerMiddleware(new isLoginMiddleware(['index', 'show', 'store', 'update', 'destroy']));
         $this->registerMiddleware(new hasRoleMiddleware(['index', 'show', 'store', 'update', 'destroy']));
-
     }
 
     public function index()
