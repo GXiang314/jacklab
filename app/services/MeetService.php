@@ -15,7 +15,8 @@ class MeetService
 
     public function getAll($page = 1, $search = null)
     {
-        $statement = meeting::prepare("
+        $statement = meeting::prepare(
+            "
         SELECT DISTINCT
             meet.Id,
             meet.Title,
@@ -36,10 +37,10 @@ class MeetService
         WHERE
             (meet.Deleted LIKE '' 
             OR isnull( meet.Deleted ))             
-            ".            
-            ((!empty($search))
-            ? 
-            "and (meet.Title like '%$search%'
+            " .
+                ((!empty($search))
+                    ?
+                    "and (meet.Title like '%$search%'
              or meet.Place like '%$search%'
              or meet.Time like '%$search%'
              or s.Name like '%$search%'
@@ -47,8 +48,8 @@ class MeetService
              or meet.Content like '%$search%'
              or mt.Name like '%$search%'
              )"
-             :' ').
-            " limit ".(($page-1)*10).", ".($page*10).";"
+                    : ' ') .
+                " limit " . (($page - 1) * 10) . ", " . ($page * 10) . ";"
         );
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -172,7 +173,7 @@ class MeetService
                             $extension = end($temp);
                         */
                         $path = "\storage\meeting\\" . $fileName;
-                        move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public".$path); //upload files
+                        move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
 
                         meeting_file::create('meeting_file', [
                             'Name' => $value,
@@ -207,9 +208,17 @@ class MeetService
                 'Id' => $id
             ]);
             if ($request['USER'] != $meeting['Uploader'] && !$request['ADMIN']) return "unauthorized.";
-            if ($this->checkExtensions($files)) {                
+
+            $clearoldcount = count($isClearOldList);
+            $addCount = count($files['name'] ?? []);
+            $nowCount = meeting_file::count('meeting_file', [
+                'Meet_Id' => $id
+            ]);
+            if (($addCount + $nowCount - $clearoldcount) > intval($_ENV['MAX_UPLOAD_NUM'])) return "最多上傳五個檔案";
+            if ($this->checkExtensions($files)) {
                 foreach ($isClearOldList as $fileName) {
                     if (empty($fileName)) break;
+
                     $data = meeting_file::findOne('meeting_file', [
                         'Meet_Id' => $id,
                         'Name' => $fileName
@@ -255,7 +264,7 @@ class MeetService
                             meeting_file::delete('meeting_file', [
                                 'Id' => $existFile['Id']
                             ]);
-                            unlink(dirname(dirname(__DIR__)) . "\public".$existFile['Url']);
+                            unlink(dirname(dirname(__DIR__)) . "\public" . $existFile['Url']);
                         }
                         $extension = pathinfo($value, PATHINFO_EXTENSION);
                         $fileName = md5($value . time()) . '.' . $extension;
@@ -264,7 +273,7 @@ class MeetService
                             $extension = end($temp);
                         */
                         $path = "\storage\meeting\\" . $fileName;
-                        move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public".$path); //upload files
+                        move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
 
                         meeting_file::create('meeting_file', [
                             'Name' => $value,
@@ -283,7 +292,6 @@ class MeetService
                         ]);
                     }
                 }
-               
             } else {
                 return '不支援該檔案格式';
             }
