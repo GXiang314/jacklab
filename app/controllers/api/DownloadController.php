@@ -27,7 +27,7 @@ class DownloadController extends Controller{
             $id = $request->getBody()['id'] ?? '';
             $file = $this->meetService->getFile($id);    
             $root = dirname(dirname(__DIR__)) . "\public";   
-            if(!empty($file)){
+            if(!empty($root.$file)){
                 if (file_exists($file['Url'])) {
                     header('Content-Description: File Transfer');
                     header('Content-Type: application/octet-stream');
@@ -50,7 +50,7 @@ class DownloadController extends Controller{
             $id = $request->getBody()['id'] ?? '';
             $file = $this->gameRecordService->getFile($id);
             $root = dirname(dirname(__DIR__)) . "\public";   
-            if(!empty($file)){
+            if(!empty($root.$file)){
                 if (file_exists($file['Url'])) {
                     header('Content-Description: File Transfer');
                     header('Content-Type: application/octet-stream');
@@ -74,7 +74,7 @@ class DownloadController extends Controller{
             $id = $request->getBody()['id'] ?? '';
             $file = $this->projectRecordService->getFile($id);
             $root = dirname(dirname(__DIR__)) . "\public";   
-            if(!empty($file)){
+            if(!empty($root.$file)){
                 if (file_exists($file['Url'])) {
                     header('Content-Description: File Transfer');
                     header('Content-Type: application/octet-stream');
