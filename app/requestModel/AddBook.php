@@ -30,7 +30,7 @@ class AddBook extends Model{
         return [            
             'Title' => [
                 self::RULE_REQUIRED, 
-                [self::RULE_MAX, 'max' => 50]
+                [self::RULE_MAX, 'max' => 100]
             ],
             'Publisher' => [
                 self::RULE_REQUIRED, 
