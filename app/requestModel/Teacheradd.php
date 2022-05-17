@@ -14,7 +14,19 @@ class Teacheradd extends Model{
     
     public string $Password;
 
-    public int $Role_Id;
+    public string $Title;
+
+    public bool $IsAdmin;
+
+    public function loadData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }            
+        }
+        $this->IsAdmin = true;
+    }
 
     public function rules(): array
     {
@@ -26,7 +38,10 @@ class Teacheradd extends Model{
                 [self::RULE_UNIQUE,'class'=>member::class]
             ],
             'Name' => [self::RULE_REQUIRED],
-            'Role_Id' => [self::RULE_REQUIRED]
+            'Title' => [
+                self::RULE_REQUIRED,
+                [self::RULE_MAX, 'max' => 100]
+            ],
         ];
     }
 }

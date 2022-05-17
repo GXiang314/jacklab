@@ -62,15 +62,13 @@ class MemberService
     public function teacherAdd($request)
     {
         try {
+            var_dump($request);
             $member = new member();
             $teacher = new teacher();
-            $member_rold = new member_role();
             $member->loadData($request);
             $teacher->loadData($request);
-            $member_rold->loadData($request);
             if ($res = $member->save()) {
                 $teacher->save();
-                $member_rold->save();
             }
         } catch (Exception $e) {
             return $e->getMessage();
@@ -692,11 +690,8 @@ class MemberService
             $member->loadData($data);
             if ($member->save()) {
                 $teacher = new teacher();
-                $member_rold = new member_role();
                 $teacher->loadData($data);
-                $member_rold->loadData($data);
-                $teacher->save();
-                $res = $member_rold->save();
+                $res = $teacher->save();
             }
         }
         return $res ?? false;

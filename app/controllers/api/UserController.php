@@ -73,7 +73,7 @@ class UserController extends Controller
             $data = $request->getJson();
             $teachererAddModel->loadData($data);
             if ($teachererAddModel->validate()) {
-                $res = $this->memberService->teacherAdd($data);
+                $res = $this->memberService->teacherAdd($teachererAddModel);
                 return $res? $this->sendResponse($res, '加入成功') : $this->sendError($res, '加入失敗');
             } else {
                 return $this->sendError($teachererAddModel->errors);
