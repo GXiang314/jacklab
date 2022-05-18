@@ -80,7 +80,7 @@ class MemberService
     public function updateIntroduction(string $account, string $text)
     {
         try {
-            $res = DbModel::update('student', ['Introduction' => $text], ['Account' => $account]);
+            $res = DbModel::update('student', ['Introduction' => nl2br($text)], ['Account' => $account]);
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -93,7 +93,7 @@ class MemberService
     {
         try {
             $res = DbModel::update('teacher', [
-                'Introduction' => $request['Introduction'],
+                'Introduction' => nl2br($request['Introduction']),
                 'Title' => $request['Title'],
                 'Name' => $request['Name'],
             ], [

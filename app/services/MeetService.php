@@ -153,7 +153,7 @@ class MeetService
                 meeting::create('meeting', [
                     'Id' => $id,
                     'Title' => $request['Title'],
-                    'Content' => $request['Content'],
+                    'Content' => nl2br($request['Content']),
                     'Time' => $request['Time'],
                     'Place' => $request['Place'],
                     'Uploader' => $request['USER'],
@@ -242,7 +242,7 @@ class MeetService
 
                 meeting::update('meeting', [
                     'Title' => $request['Title'],
-                    'Content' => $request['Content'],
+                    'Content' => nl2br($request['Content']),
                     'Time' => $request['Time'],
                     'Place' => $request['Place'],
                 ], [

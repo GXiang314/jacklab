@@ -182,7 +182,7 @@ class ProjectRecordService
                 $id = $this->newId();
                 proj_record::create('proj_record', [
                     'Id' => $id,
-                    'Remark' => $request['Remark'],
+                    'Remark' => nl2br($request['Remark']),
                     'CreateTime' => date("Y-m-d h:i:s"),
                     'Project_Id' => $request['Project_Id'],
                     'Uploader' => $request['USER'],
@@ -219,7 +219,7 @@ class ProjectRecordService
         try {
             project::update('project', [
                 'Name' => $request['Name'],
-                'Description' => $request['Description'],
+                'Description' => nl2br($request['Description']) ,
                 'Proj_type' => $request['Proj_type'],
                 'Creater' => $request['USER'],
             ], [
@@ -257,7 +257,7 @@ class ProjectRecordService
     {
         try {
             proj_record::update('proj_record', [
-                'Remark' => $request['Remark'],
+                'Remark' => nl2br($request['Remark']),
                 'Uploader' => $request['USER'],
             ], [
                 'Id' => $id
