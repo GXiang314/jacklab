@@ -62,6 +62,7 @@ class MemberService
     public function teacherAdd($request)
     {
         try {
+            var_dump($request);
             $member = new member();
             $teacher = new teacher();
             $member->loadData($request);
@@ -80,7 +81,7 @@ class MemberService
     public function updateIntroduction(string $account, string $text)
     {
         try {
-            $res = DbModel::update('student', ['Introduction' => nl2br($text)], ['Account' => $account]);
+            $res = DbModel::update('student', ['Introduction' => $text], ['Account' => $account]);
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -93,7 +94,7 @@ class MemberService
     {
         try {
             $res = DbModel::update('teacher', [
-                'Introduction' => nl2br($request['Introduction']),
+                'Introduction' => $request['Introduction'],
                 'Title' => $request['Title'],
                 'Name' => $request['Name'],
             ], [
