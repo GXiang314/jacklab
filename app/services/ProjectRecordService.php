@@ -146,7 +146,7 @@ class ProjectRecordService
             $now = date("Y-m-d h:i:s", time());
             project::create('project', [
                 'Name' => $request['Name'],
-                'Description' => $request['Description'],
+                'Description' => nl2br( $request['Description']),
                 'CreateTime' => $now,
                 'Proj_type' => $request['Proj_type'],
                 'Creater' => $request['USER'],
