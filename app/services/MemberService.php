@@ -62,7 +62,6 @@ class MemberService
     public function teacherAdd($request)
     {
         try {
-            var_dump($request);
             $member = new member();
             $teacher = new teacher();
             $member->loadData($request);
