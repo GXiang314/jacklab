@@ -46,12 +46,12 @@ class BookService{
     {
         $statement = DbModel::prepare("
             SELECT
-            a.Account, 
+            a.Account as account, 
             CASE
                     s.`Name` 
                     WHEN s.`Name` THEN
                     s.`Name` ELSE t.NAME 
-                END AS `Name`	
+                END AS `name`	
             FROM
                 book AS b
                 LEFT JOIN author AS a ON a.Book_Id = b.Id
