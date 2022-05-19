@@ -8,6 +8,7 @@ use app\middlewares\hasRoleMiddleware;
 use app\middlewares\isLoginMiddleware;
 use app\requestModel\AddBook;
 use app\requestModel\UpdateBook;
+use app\requestModel\UpdateImage;
 use app\services\BookService;
 
 class BookController extends Controller
@@ -61,7 +62,23 @@ class BookController extends Controller
             $requestModel = new UpdateBook();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                $result = $this->bookService->update($requestModel->Id, $data, $requestModel->Authors, $requestModel->Image);
+                $result = $this->bookService->update($requestModel->Id, $data, $requestModel->Authors);
+                return $result == 'success' ? $this->sendResponse($result, '修改失敗') : $this->sendError('修改失敗', $result);
+            } else {
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+            }
+        }
+        return $this->sendError('Method Not Allow.', [], 405);
+    }
+
+    public function updateImage(Request $request)
+    {
+        if ($request->isPut()) {
+            $data = $request->getBody();
+            $requestModel = new UpdateImage();
+            $requestModel->loadData($data);
+            if ($requestModel->validate()) {
+                $result = $this->bookService->updateImage($requestModel->Id, $requestModel->Image);
                 return $result == 'success' ? $this->sendResponse($result, '修改失敗') : $this->sendError('修改失敗', $result);
             } else {
                 return $this->sendError('欄位格式錯誤', $requestModel->errors);
