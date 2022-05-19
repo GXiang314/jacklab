@@ -46,11 +46,12 @@ class BookService{
     {
         $statement = DbModel::prepare("
             SELECT
+            a.Account, 
             CASE
                     s.`Name` 
                     WHEN s.`Name` THEN
                     s.`Name` ELSE t.NAME 
-                END AS `Author`	
+                END AS `Name`	
             FROM
                 book AS b
                 LEFT JOIN author AS a ON a.Book_Id = b.Id
@@ -60,7 +61,7 @@ class BookService{
                 b.Id = '{$id}';
             ");
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_COLUMN) ?? [];
+        return $statement->fetchAll(\PDO::FETCH_ASSOC) ?? [];
     }
 
     public function add($book, $authors, $file)
