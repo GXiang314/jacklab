@@ -108,70 +108,64 @@ class BookService{
     public function update($id, $book, $authors, $file = null)
     {
         try{
-            if ($file == null) {
-                $res = book::update('book', [
-                    'Title' => $book['Title'],
-                    'Publisher' => $book['Publisher'],
-                    'Time' => $book['Time'],
-                    'ISBN' => $book['ISBN'],
-                ],[
-                    'Id' => $id
-                ]);
-                if($res){           
-                    author::delete('author', ['Book_Id' => $id]);
-                    foreach($authors as $author){
-                        author::create('author', [
-                            'Account' => $author,
-                            'Book_Id' => $id
-                        ]);
-                    }                    
-                }else{
-                    return false;
-                }
-            }else{
-                if ($this->checkExtensions($file)) {
-                    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                    $fileName = md5($file['name'] . time()) . '.' . $extension;
-                    /*
-                        temp= explode('.',$file_name);
-                        $extension = end($temp);
-                    */
-                    $path = "\storage\book\\" . $fileName;
-                    move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
-                    unlink(
-                        book::findOne('album', [
-                            'Id' => $id
-                        ])['Image'] ?? ''
-                    );
-                    $res = book::update('book', [
-                        'Title' => $book['Title'],
-                        'Publisher' => $book['Publisher'],
-                        'Time' => $book['Time'],
-                        'ISBN' => $book['ISBN'],
-                    ],[
-                        'Id' => $id
+            $res = book::update('book', [
+                'Title' => $book['Title'],
+                'Publisher' => $book['Publisher'],
+                'Time' => $book['Time'],
+                'ISBN' => $book['ISBN'],
+            ],[
+                'Id' => $id
+            ]);
+            if($res){           
+                author::delete('author', ['Book_Id' => $id]);
+                foreach($authors as $author){
+                    author::create('author', [
+                        'Account' => $author,
+                        'Book_Id' => $id
                     ]);
-                    if($res){           
-                        author::delete('author', ['Book_Id' => $id]);
-                        foreach($authors as $author){
-                            author::create('author', [
-                                'Account' => $author,
-                                'Book_Id' => $id
-                            ]);
-                        }
-                    }else{
-                        return false;
-                    }
-                }else{
-                    return "不支援該檔案格式";
-                }
-            }            
+                }                    
+            }else{
+                return false;
+            }       
         }
         catch(Exception $e){
             return $e->getMessage();
         }
         return 'success';
     }
+
+    public function UpdateImage($id, $file)
+    {
+        try{
+            if ($this->checkExtensions($file)) {
+                $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $fileName = md5($file['name'] . time()) . '.' . $extension;
+                /*
+                    temp= explode('.',$file_name);
+                    $extension = end($temp);
+                */
+                $path = "\storage\book\\" . $fileName;
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
+                unlink(
+                    book::findOne('album', [
+                        'Id' => $id
+                    ])['Image'] ?? ''
+                );
+                book::update('book', [
+                    'Image' => $path
+                ],[
+                    'Id' => $id
+                ]);
+                
+            }else{
+                return "不支援該檔案格式";
+            }
+        }catch(Exception $e){
+            return $e->getMessage();
+        }
+        return 'success';
+    }
+
     public function delete($idList)
     {
         try{
