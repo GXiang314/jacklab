@@ -1,3 +1,2 @@
 # dontlaravel_jacklab
-JackLAB
-從原本 Laravel 框架改為原生php
+撰寫 api 底層，開發研究室網站後端 web api
