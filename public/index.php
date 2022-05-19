@@ -138,7 +138,8 @@ $app->router->delete('/api/album?', [AlbumController::class,'destroy']); //刪�
 $app->router->get('/api/book', [BookController::class,'index']); //取得所有相簿
 $app->router->get('/api/book?', [BookController::class,'show']); //取得該相簿內容
 $app->router->post('/api/book', [BookController::class,'store']); //新增相簿
-$app->router->put('/api/book', [BookController::class,'update']); //修改相簿
+$app->router->put('/api/book', [BookController::class,'update']); //修改相簿資訊
+$app->router->put('/api/book/image', [BookController::class,'updateImage']); //修改相簿資訊
 $app->router->delete('/api/book?', [BookController::class,'destroy']); //刪除相簿
 
 
