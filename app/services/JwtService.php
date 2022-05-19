@@ -36,7 +36,7 @@ class JwtService{
         $payload['account'] = $account;
         // return $roles;
         
-        $payload['roles'] = $role['Id'];
+        $payload['roles'] = $role['Id'] ?? null;
         
         $payload['exp'] = strtotime("+ 1 day");
         $payload = base64_encode(json_encode($payload));
