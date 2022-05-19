@@ -66,6 +66,7 @@ class MemberService
             $member = new member();
             $teacher = new teacher();
             $member->loadData($request);
+            $member->AuthToken = '';
             $teacher->loadData($request);
             if ($res = $member->save()) {
                 $teacher->save();
@@ -119,7 +120,7 @@ class MemberService
                     $extension = end($temp);
                 */
                 $path = "\storage\member\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
                 $url = DbModel::findOne('student', [
                     'Account' => $account
                 ])['Image'] ?? '';
@@ -150,7 +151,7 @@ class MemberService
                     $extension = end($temp);
                 */
                 $path = "\storage\member\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
                 $url = DbModel::findOne('teacher', [
                     'Id' => $id
                 ])['Image'] ?? '';
