@@ -13,7 +13,6 @@ class UpdateBook extends Model{
     public string $Time;
     public string $ISBN;
     public array $Authors;
-    public $Image;
 
     public function loadData($data)
     {
@@ -22,7 +21,6 @@ class UpdateBook extends Model{
                 $this->{$key} = $value;
             }
         }
-        $this->Image = $_FILES['Image'] ?? null;
     }
 
     public function rules(): array
