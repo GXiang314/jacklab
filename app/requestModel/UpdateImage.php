@@ -19,7 +19,7 @@ class UpdateImage extends Model{
                 $this->{$key} = $value;
             }
         }
-        $this->File = $_FILES['Image'] ?? null;
+        $this->Image = $_FILES['Image'] ?? null;
     }
 
     public function rules(): array
