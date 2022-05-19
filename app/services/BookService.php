@@ -13,9 +13,7 @@ class BookService{
     {
         $statement = book::prepare("
         SELECT
-            b.Id,
-            b.Title,
-            b.Image 
+            b.* 
         FROM
             book AS b;
         ");
