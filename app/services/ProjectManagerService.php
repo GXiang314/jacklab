@@ -135,7 +135,7 @@ class ProjectManagerService{
                 // delete project/record
                 if(project::count('project', [ 'Proj_type' => $id ]) > 0){
                     $type_name = proj_type::findOne('proj_type', ['Id' => $id])['Name'];
-                    return "{$type_name}已包含專案，無法刪除";
+                    return "「{$type_name}」已包含專案，無法刪除";
                 }
                      
             }   
