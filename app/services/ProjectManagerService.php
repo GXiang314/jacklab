@@ -133,10 +133,17 @@ class ProjectManagerService{
             $idList = explode(',', $idList);
             foreach($idList as $id){
                 // delete project/record
+                if(project::count('project', [ 'Proj_type' => $id ]) > 0){
+                    $type_name = proj_type::findOne('proj_type', ['Id' => $id])['Name'];
+                    return "{$type_name}已包含專案，無法刪除";
+                }
+                     
+            }   
+            foreach($idList as $id){
                 proj_type::delete('proj_type', [
                     'Id' => $id
-                ]);     
-            }         
+                ]);
+            }      
         }
         catch(Exception $e){
             return $e->getMessage();
