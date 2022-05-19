@@ -46,9 +46,9 @@ class BookController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->bookService->add($data, $requestModel->Authors, $requestModel->Image);
-                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
-            }else{
-                return $this->sendError($requestModel->errors);
+                return $result == 'success' ? $this->sendResponse($result, '新增成功') : $this->sendError('新增失敗', $result);
+            } else {
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -62,9 +62,9 @@ class BookController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->bookService->update($requestModel->Id, $data, $requestModel->Authors, $requestModel->Image);
-                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
-            }else{
-                return $this->sendError($requestModel->errors);
+                return $result == 'success' ? $this->sendResponse($result, '修改失敗') : $this->sendError('修改失敗', $result);
+            } else {
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -75,7 +75,7 @@ class BookController extends Controller
         if ($request->isDelete()) {
             $id = $request->getBody()['id'] ?? '';
             $result = $this->bookService->delete($id);
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError('刪除失敗', $result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }

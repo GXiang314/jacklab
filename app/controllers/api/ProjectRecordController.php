@@ -21,11 +21,12 @@ class ProjectRecordController extends Controller
     {
         $this->projectRecordService = new ProjectRecordService();
         $this->registerMiddleware(new isLoginMiddleware([
-            'index', 'store', 'storeRecord', 'update', 'updateRecord', 'destroy', 'destroyRecord']));
+            'index', 'store', 'storeRecord', 'update', 'updateRecord', 'destroy', 'destroyRecord'
+        ]));
     }
 
     public function index(Request $request)
-    {       
+    {
         if ($request->isGet()) {
             $id = $request->getBody()['id'] ?? '';
             $page = $request->getBody()['page'] ?? 1;
@@ -54,9 +55,9 @@ class ProjectRecordController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->projectRecordService->create($data, $requestModel->Tag ?? null);
-                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '新增失敗');
+                return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError('建立失敗', $res);
             } else {
-                return $this->sendError($requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -70,9 +71,9 @@ class ProjectRecordController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->projectRecordService->addRecord($data, $requestModel->File);
-                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '新增失敗');
+                return ($res == 'success') ? $this->sendResponse($res, '新增成功') : $this->sendError('新增失敗', $res);
             } else {
-                return $this->sendError($requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -89,11 +90,11 @@ class ProjectRecordController extends Controller
                 $res = $this->projectRecordService->update(
                     $requestModel->Id,
                     $data,
-                    $requestModel->Tag ?? null                   
+                    $requestModel->Tag ?? null
                 );
-                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '修改失敗');
+                return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
             } else {
-                return $this->sendError($requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -109,11 +110,11 @@ class ProjectRecordController extends Controller
                 $res = $this->projectRecordService->updateRecord(
                     $requestModel->Id,
                     $data,
-                    $requestModel->File       
+                    $requestModel->File
                 );
-                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '修改失敗');
+                return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
             } else {
-                return $this->sendError($requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -124,17 +125,17 @@ class ProjectRecordController extends Controller
         if ($request->isDelete()) {
             $id = $request->getBody()['id'] ?? '';
             $result = $this->projectRecordService->delete($id);
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError("刪除失敗", $result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
-    
+
     public function destroyRecord(Request $request)
     {
         if ($request->isDelete()) {
             $id = $request->getBody()['id'] ?? '';
             $result = $this->projectRecordService->deleteRecord($id);
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError('刪除失敗', $result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }

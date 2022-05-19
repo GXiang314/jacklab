@@ -10,10 +10,11 @@ use app\requestModel\AddName;
 use app\requestModel\UpdateName;
 use app\services\AcademicService;
 
-class AcademicController extends Controller{
-    
+class AcademicController extends Controller
+{
+
     private $academicService;
-    
+
     public function __construct()
     {
         $this->academicService = new AcademicService();
@@ -26,10 +27,10 @@ class AcademicController extends Controller{
         $data = $this->academicService->getAll();
         return isset($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
     }
-        
+
     public function show(Request $request)
     {
-        if($request->isGet()){
+        if ($request->isGet()) {
             $id = $request->getBody()['id'] ?? '';
             $data = $this->academicService->getClass($id);
             return isset($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
@@ -39,36 +40,40 @@ class AcademicController extends Controller{
 
     public function store(Request $request)
     {
-        if($request->isPost()){
+        if ($request->isPost()) {
             $requestModel = new AddName();
             $requestModel->loadData($request->getJson());
-            if($requestModel->validate()){
+            if ($requestModel->validate()) {
                 $result = $this->academicService->add($requestModel->Name);
+                return $result == 'success' ? $this->sendResponse($result, '新增成功') : $this->sendError('新增失敗', $result);
+            } else {
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
-            return $result == 'success'? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
-    
+
     public function update(Request $request)
     {
-        if($request->isPut()){
+        if ($request->isPut()) {
             $requestModel = new UpdateName();
             $requestModel->loadData($request->getJson());
-            if($requestModel->validate()){
-                $result = $this->academicService->update($requestModel->Id,$requestModel->Name);
+            if ($requestModel->validate()) {
+                $result = $this->academicService->update($requestModel->Id, $requestModel->Name);
+                return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
+            } else {
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
-            return $result == 'success'? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
-    
+
     public function destroy(Request $request)
     {
-        if($request->isDelete()){
+        if ($request->isDelete()) {
             $id = $request->getBody()['id'] ?? '';
             $result = $this->academicService->delete($id);
-            return $result == 'success'? $this->sendResponse($result, 'success') : $this->sendError($result);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError('刪除失敗', $result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }

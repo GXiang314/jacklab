@@ -7,6 +7,7 @@ use app\core\DbModel;
 use app\core\Request;
 use app\middlewares\isLoginMiddleware;
 use app\requestModel\ChangePassword;
+use app\requestModel\EmailValidate;
 use app\requestModel\ResetPassword;
 use app\requestModel\UpdateMemberPhoto;
 use app\services\MailService;
@@ -42,7 +43,7 @@ class MemberController extends Controller
      */
     public function getSelfGameRecord(Request $request)
     {
-        if($request->isGet()){
+        if ($request->isGet()) {
             $account = $request->getBody()['USER'];
             $data = $this->memberService->getStudentGameRecord($account);
             return ($data != []) ? $this->sendResponse($data, '所有競賽記錄') : $this->sendResponse('', '沒有資料');
@@ -79,9 +80,9 @@ class MemberController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->memberService->updatePassword($data['USER'], $requestModel->oldpassword, $requestModel->password);
-                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+                return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
             }
-            return $this->sendError($requestModel->errors);
+            return $this->sendError('欄位格式錯誤', $requestModel->errors);
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -97,7 +98,7 @@ class MemberController extends Controller
         if ($request->isPut()) {
             $data = $request->getJson();
             $result = $this->memberService->updateIntroduction($data['USER'], $data['text']);
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -114,11 +115,11 @@ class MemberController extends Controller
             $data = $request->getBody();
             $requestModel = new UpdateMemberPhoto();
             $requestModel->loadData($data);
-            if($requestModel->validate()){
+            if ($requestModel->validate()) {
                 $result = $this->memberService->updatePhoto($requestModel->USER, $requestModel->File);
-                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+                return $result == 'success' ? $this->sendResponse($result, '變更成功') : $this->sendError('變更失敗', $result);
             }
-            return $this->sendError($requestModel->errors);
+            return $this->sendError('欄位格式錯誤', $requestModel->errors);
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -133,8 +134,14 @@ class MemberController extends Controller
     {
         if ($request->isGet()) {
             $data = $request->getBody();
-            $result = $this->memberService->emailTokenCheck($data['email'], $data['token']);
-            return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+            $requestModel = new EmailValidate();
+            $requestModel->loadData($data);
+            if ($requestModel->validate()) {
+                $result = $this->memberService->emailTokenCheck($data['email'], $data['token']);
+                return $result == 'success' ? $this->sendResponse($result, '驗證成功') : $this->sendError('驗證失敗', $result);
+            } else {
+                return $this->sendError('傳送資料錯誤', $requestModel->errors);
+            }
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -226,7 +233,7 @@ class MemberController extends Controller
                         DbModel::delete('reset_password', [
                             'Account' => $requestModel->account,
                         ]);
-                        return $res ? $this->sendResponse($res, "修改成功！") : $this->sendError("Error");
+                        return $res ? $this->sendResponse($res, "修改成功！") : $this->sendError("修改失敗");
                     }
                     return $this->sendError('兩次密碼輸入不一致');
                 }

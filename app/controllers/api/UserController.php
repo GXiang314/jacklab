@@ -58,9 +58,9 @@ class UserController extends Controller
             $userAddModel->loadData($data);
             if ($userAddModel->validate()) {
                 $res = $this->memberService->studentAdd($data);
-                return $res? $this->sendResponse($res, '加入成功') : $this->sendError($res, '加入失敗');
+                return $res ? $this->sendResponse($res, '加入成功') : $this->sendError('加入失敗', $res);
             } else {
-                return $this->sendError($userAddModel->errors, 'Registered failed.');
+                return $this->sendError('欄位格式錯誤', $userAddModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -74,9 +74,9 @@ class UserController extends Controller
             $teachererAddModel->loadData($data);
             if ($teachererAddModel->validate()) {
                 $res = $this->memberService->teacherAdd($teachererAddModel);
-                return $res? $this->sendResponse($res, '加入成功') : $this->sendError($res, '加入失敗');
+                return $res ? $this->sendResponse($res, '加入成功') : $this->sendError('加入失敗', $res);
             } else {
-                return $this->sendError($teachererAddModel->errors);
+                return $this->sendError('欄位格式錯誤', $teachererAddModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -90,9 +90,9 @@ class UserController extends Controller
             $teachererAddModel->loadData($data);
             if ($teachererAddModel->validate()) {
                 $res = $this->memberService->updateTeacherInfo($teachererAddModel->Id, $data);
-                return $res == 'success' ? $this->sendResponse($res, '修改成功') : $this->sendError($res, '修改失敗');
+                return $res == 'success' ? $this->sendResponse($res, '修改成功') : $this->sendError('變更失敗', $res);
             } else {
-                return $this->sendError($teachererAddModel->errors);
+                return $this->sendError('欄位格式錯誤', $teachererAddModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -106,9 +106,9 @@ class UserController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->memberService->updateTeacherPhoto($requestModel->Id, $requestModel->File);
-                return $result == 'success' ? $this->sendResponse($result, 'success') : $this->sendError($result);
+                return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
             }
-            return $this->sendError($requestModel->errors);
+            return $this->sendError('欄位格式錯誤', $requestModel->errors);
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -121,9 +121,9 @@ class UserController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->memberService->updateUserPassword($requestModel->account, $requestModel->password);
-                return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError($result ?? '修改失敗', [], 401);
+                return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError('修改失敗', $result);
             }
-            return $this->sendError($requestModel->errors);
+            return $this->sendError('欄位格式錯誤', $requestModel->errors);
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -136,9 +136,9 @@ class UserController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->memberService->updateStudentClass($requestModel->Account, $requestModel->Class);
-                return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError($result ?? '修改失敗', [], 401);
+                return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError('修改失敗', $result);
             }
-            return $this->sendError($requestModel->errors);
+            return $this->sendError('欄位格式錯誤', $requestModel->errors);
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -151,8 +151,7 @@ class UserController extends Controller
                 return $this->sendResponse($result, '刪除成功');
             }
         }
-
-        return $this->sendError($result, '刪除失敗，請稍後再試');
+        return $this->sendError('刪除失敗', $result);
     }
 
     public function destroy(Request $request)
@@ -163,7 +162,6 @@ class UserController extends Controller
                 return $this->sendResponse($result, '刪除成功');
             }
         }
-
-        return $this->sendError($result, '刪除失敗，請稍後再試');
+        return $this->sendError('刪除失敗', $result);
     }
 }

@@ -19,34 +19,33 @@ class ProjectManagerController extends Controller
         $this->projectManagerService = new ProjectManagerService();
         $this->registerMiddleware(new isLoginMiddleware(['index', 'show', 'store', 'update', 'destroy']));
         $this->registerMiddleware(new hasRoleMiddleware(['store', 'update', 'destroy']));
-
     }
 
     public function index()
     {
         $data = $this->projectManagerService->getAll();
-        return ($data !=[])? $this->sendResponse($data,'所有專案性質'):$this->sendError('沒有資料');
+        return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendError('沒有資料');
     }
 
     public function store(Request $request)
     {
-        if($request->isPost()){
+        if ($request->isPost()) {
             $data = $request->getJson();
             $requestModel = new AddName();
             $requestModel->loadData($data);
-            if($requestModel->validate()){
+            if ($requestModel->validate()) {
                 $res = $this->projectManagerService->add($data['Name']);
-                return ($res =='success')? $this->sendResponse($res,'success') : $this->sendError('error');
-            }else{
+                return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError('建立失敗', $res);
+            } else {
                 return $this->sendError($requestModel->errors);
             }
-        }       
+        }
         return $this->sendError('Method Not Allow', [], 405);
     }
 
     public function show(Request $request)
     {
-        if($request->isGet()){
+        if ($request->isGet()) {
             $id = $request->getBody()['id'] ?? '%';
             $page = $request->getBody()['page'] ?? 1;
             $search = $request->getBody()['search'] ?? null;
@@ -58,28 +57,27 @@ class ProjectManagerController extends Controller
 
     public function update(Request $request)
     {
-        if($request->isPut()){
+        if ($request->isPut()) {
             $data = $request->getJson();
             $requestModel = new UpdateName();
             $requestModel->loadData($data);
-            if($requestModel->validate()){
-                $res = $this->projectManagerService->update($data['Id'],$data['Name']);
-                return ($res =='success')? $this->sendResponse($res,'success') : $this->sendError('error');
-            }else{
+            if ($requestModel->validate()) {
+                $res = $this->projectManagerService->update($data['Id'], $data['Name']);
+                return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
+            } else {
                 return $this->sendError($requestModel->errors);
-            }            
-        }
-        return $this->sendError('Method Not Allow.', [], 405);       
-    }
-
-    public function destroy(Request $request)
-    {
-        if($request->isDelete()){
-            $id = $request->getBody()['id'] ?? '';
-            $result = $this->projectManagerService->delete($id);
-            return $result == 'success'? $this->sendResponse($result, 'success') : $this->sendError($result);
+            }
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
 
+    public function destroy(Request $request)
+    {
+        if ($request->isDelete()) {
+            $id = $request->getBody()['id'] ?? '';
+            $result = $this->projectManagerService->delete($id);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError('刪除失敗', $result);
+        }
+        return $this->sendError('Method Not Allow.', [], 405);
+    }
 }

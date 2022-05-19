@@ -43,9 +43,9 @@ class GameRecordController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->gameRecordService->add($data, $requestModel->Files ?? null);
-                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '新增失敗');
-            }else{
-                return $this->sendError($requestModel->errors);
+                return ($res == 'success') ? $this->sendResponse($res, '新增成功') : $this->sendError('新增失敗', $res);
+            } else {
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -59,14 +59,14 @@ class GameRecordController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->gameRecordService->update(
-                    $requestModel->Id, 
-                    $data, 
-                    $requestModel->Files ?? null, 
-                    $requestModel->IsClearOld ?? [], 
+                    $requestModel->Id,
+                    $data,
+                    $requestModel->Files ?? null,
+                    $requestModel->IsClearOld ?? [],
                 );
-                return ($res == 'success') ? $this->sendResponse($requestModel, 'success') : $this->sendError($res ?? '新增失敗');
-            }else{
-                return $this->sendError($requestModel->errors);
+                return ($res == 'success') ? $this->sendResponse($requestModel, '修改成功') : $this->sendError('修改失敗', $res);
+            } else {
+                return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -74,12 +74,11 @@ class GameRecordController extends Controller
 
     public function destroy(Request $request)
     {
-        if($request->isDelete()){
+        if ($request->isDelete()) {
             $id = $request->getBody()['id'] ?? '';
             $result = $this->gameRecordService->delete($id);
-            return $result == 'success'? $this->sendResponse($result, 'success') : $this->sendError($result);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError('刪除失敗', $result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
-
 }

@@ -24,13 +24,13 @@ class MeetController extends Controller
 
     public function index(Request $request)
     {
-        if($request->isGet()){
+        if ($request->isGet()) {
             $page = $request->getBody()['page'] ?? 1;
             $search = $request->getBody()['search'] ?? null;
             $data = $this->meetService->getAll($page, $search);
             return (isset($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);        
+        return $this->sendError('Method Not Allow.', [], 405);
     }
 
     public function show(Request $request)
@@ -51,8 +51,8 @@ class MeetController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->meetService->add($data, $requestModel->Files ?? null, $requestModel->Tag ?? null);
-                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '新增失敗', [], 401);
-            }else{
+                return ($res == 'success') ? $this->sendResponse($res, '新增成功') : $this->sendError('新增失敗', $res);
+            } else {
                 return $this->sendError($requestModel->errors);
             }
         }
@@ -67,14 +67,14 @@ class MeetController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->meetService->update(
-                    $requestModel->Id, 
-                    $data, 
-                    $requestModel->Files ?? null, 
-                    $requestModel->Tag ?? null, 
-                    $requestModel->IsClearOld ?? [], 
+                    $requestModel->Id,
+                    $data,
+                    $requestModel->Files ?? null,
+                    $requestModel->Tag ?? null,
+                    $requestModel->IsClearOld ?? [],
                 );
-                return ($res == 'success') ? $this->sendResponse($res, 'success') : $this->sendError($res ?? '修改失敗', [], 401);
-            }else{
+                return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
+            } else {
                 return $this->sendError($requestModel->errors);
             }
         }
@@ -83,13 +83,11 @@ class MeetController extends Controller
 
     public function destroy(Request $request)
     {
-        if($request->isDelete()){
+        if ($request->isDelete()) {
             $id = $request->getBody()['id'] ?? '';
             $result = $this->meetService->delete($id);
-            return $result == 'success'? $this->sendResponse($result, 'success') : $this->sendError($result);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError('刪除失敗', $result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
-
-
 }
