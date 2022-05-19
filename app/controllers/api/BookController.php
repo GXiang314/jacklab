@@ -58,12 +58,12 @@ class BookController extends Controller
     public function update(Request $request)
     {
         if ($request->isPut()) {
-            $data = $request->getBody();
+            $data = $request->getJson();
             $requestModel = new UpdateBook();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->bookService->update($requestModel->Id, $data, $requestModel->Authors);
-                return $result == 'success' ? $this->sendResponse($result, '修改失敗') : $this->sendError('修改失敗', $result);
+                return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
             } else {
                 return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
@@ -79,7 +79,7 @@ class BookController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->bookService->updateImage($requestModel->Id, $requestModel->Image);
-                return $result == 'success' ? $this->sendResponse($result, '修改失敗') : $this->sendError('修改失敗', $result);
+                return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
             } else {
                 return $this->sendError('欄位格式錯誤', $requestModel->errors);
             }
