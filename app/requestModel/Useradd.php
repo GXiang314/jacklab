@@ -12,9 +12,9 @@ class Useradd extends Model{
 
     public string $Name;
 
-    public int $Class_Id;
+    public $Class_Id;
 
-    public int $Role_Id;
+    public $Role_Id;
 
     public function rules(): array
     {
