@@ -115,7 +115,7 @@ class ProjectRecordService
             . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";");
         $statement->execute();
         $data['Record'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
-
+        $data['page'] = $this->getRecordListPage($project_Id, $search);
         if (!empty($data['Record'])) {
             $index = 0;
             foreach ($data['Record'] as $row) {
@@ -141,7 +141,7 @@ class ProjectRecordService
         return $data;
     }
 
-    public function getProjectListPage($id, $search = null)
+    public function getRecordListPage($id, $search = null)
     {
         $statement =  DbModel::prepare("
         SELECT
