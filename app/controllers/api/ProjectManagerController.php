@@ -21,10 +21,15 @@ class ProjectManagerController extends Controller
         $this->registerMiddleware(new hasRoleMiddleware(['store', 'update', 'destroy']));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = $this->projectManagerService->getAll();
-        return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendError('沒有資料');
+        if($request->isGet()){
+            $page = $request->getBody()['page'] ?? 1;
+            $search = $request->getBody()['search'] ?? null;
+            $data = $this->projectManagerService->getAll((!is_numeric($page)) ? 1 : intval($page), $search);
+            return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendError('沒有資料');
+        }
+        return $this->sendError("Method Not Allow", [], 405);
     }
 
     public function store(Request $request)
