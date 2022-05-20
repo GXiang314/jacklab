@@ -10,7 +10,7 @@ class LabinfoService{
 
     public function __construct()
     {
-        $this->install();
+        //$this->install();
     }
     public function getAll()
     {
