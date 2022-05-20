@@ -22,9 +22,9 @@ class PermissionService{
     {
 
         $permission_Array = [        
-            '新增競賽記錄' =>'GameRecordController@store',
-            '編輯競賽記錄' =>'GameRecordController@update',
-            '刪除競賽記錄' =>'GameRecordController@destroy',
+            // '新增競賽記錄' =>'GameRecordController@store',
+            // '編輯競賽記錄' =>'GameRecordController@update',
+            // '刪除競賽記錄' =>'GameRecordController@destroy',
         
             '建立專案' =>'ProjectRecordController@store',
             '編輯專案內容' =>'ProjectRecordController@update',
