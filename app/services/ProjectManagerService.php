@@ -42,14 +42,15 @@ class ProjectManagerService
 
     public function getAllTypePage($search = null)
     {
-        $statement =  DbModel::prepare("select count(*) from proj_type "
-            .
-            (($search != null) ?
-                " 
-            where 
-            Name like '%$search%' 
-            " : ""
-            ));
+        $statement =  DbModel::prepare("
+        select count(*) from proj_type "
+        .
+        (($search != null) ?
+            " 
+        where 
+        Name like '%$search%' 
+        " : ""
+        ));
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);

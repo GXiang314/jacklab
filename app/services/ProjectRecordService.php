@@ -112,9 +112,10 @@ class ProjectRecordService
              or s.Name like '%$search%'
              or t.Name like '%$search%')"
                 : ' ')
-            . " limit " . (($page - 1) * 10) . ", " . ($page * 10) . ";");
+            . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";");
         $statement->execute();
         $data['Record'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
         if (!empty($data['Record'])) {
             $index = 0;
             foreach ($data['Record'] as $row) {
@@ -138,6 +139,37 @@ class ProjectRecordService
             }
         }
         return $data;
+    }
+
+    public function getProjectListPage($id, $search = null)
+    {
+        $statement =  DbModel::prepare("
+        SELECT
+            count(*) 
+        FROM
+            proj_record AS pr
+            INNER JOIN project AS p ON p.Id = pr.Project_Id
+            INNER JOIN member AS m ON m.Account = pr.Uploader
+            LEFT JOIN student AS s ON s.Account = m.Account
+            LEFT JOIN teacher AS t ON t.Account = m.Account 
+        WHERE
+            pr.Project_Id = '{$id}' 
+            AND (
+            pr.Deleted LIKE '' 
+            OR isnull( pr.Deleted )) "
+            .
+            ((!empty($search))
+                ?
+                "and (pr.Remark like '%$search%'
+             or pr.CreateTime like '%$search%'
+             or s.Name like '%$search%'
+             or t.Name like '%$search%')"
+                : ' '
+        ));
+        $statement->execute();
+        $count = $statement->fetchColumn();
+        $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        return $page;
     }
 
     public function create($request, $tags = null)
@@ -279,7 +311,7 @@ class ProjectRecordService
                     $extension = end($temp);
                 */
                 $path = "\storage\project\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
 
                 proj_file::create('proj_file', [
                     'Name' => $file['name'],
