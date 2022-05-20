@@ -49,7 +49,7 @@ class MeetService
              or mt.Name like '%$search%'
              )"
                     : ' ') .
-                " limit " . (($page - 1) * 10) . ", " . ($page * 10) . ";"
+                " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";"
         );
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -226,7 +226,7 @@ class MeetService
 
                     if (!empty($data)) {
                         $directory = $data['Url'];
-                        unlink($directory);
+                        unlink(dirname(dirname(__DIR__)) . "\public" .$directory);
                         meeting_file::delete('meeting_file', [
                             'Meet_Id' => $id,
                             'Name' => $fileName
