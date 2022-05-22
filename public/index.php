@@ -141,6 +141,7 @@ $app->router->post('/api/labinfo', [LabInfoController::class, 'store']); //新�
 $app->router->put('/api/labinfo', [LabInfoController::class, 'update']); //修改研究室介紹
 $app->router->delete('/api/labinfo?', [LabInfoController::class, 'destroy']); //刪除研究室介紹
 
+$app->router->get('/api/album/select', [AlbumController::class, 'selector']); //取得所有相簿
 $app->router->get('/api/album/list', [AlbumController::class, 'index']); //取得所有相簿
 $app->router->get('/api/album/list?', [AlbumController::class, 'index']); //取得所有相簿(搜尋值)
 $app->router->get('/api/album?', [AlbumController::class, 'show']); //取得該相簿內容

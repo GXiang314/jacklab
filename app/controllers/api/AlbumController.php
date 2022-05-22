@@ -24,6 +24,12 @@ class AlbumController extends Controller
         $this->registerMiddleware(new hasRoleMiddleware(['store', 'update', 'destroy']));
     }
 
+    public function selector()
+    {
+        $data = $this->albumService->select();
+        return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
+    }
+
     public function index(Request $request)
     {
         if ($request->isGet()) {

@@ -9,6 +9,11 @@ use Exception;
 class AlbumService
 {
 
+    public function select()
+    {
+        return album::get('album');
+    }
+
     public function getAll($page = 1, $search = null)
     {
         $search = $this->addSlashes($search);
