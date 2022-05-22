@@ -47,7 +47,9 @@ class RoleService
             $statement->bindValue(':search', $search);
         }
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['page'] = $this->getAllRolePage($search);
+        return $data;
     }
 
     public function getAllRolePage($search = null)
