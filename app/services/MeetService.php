@@ -40,17 +40,20 @@ class MeetService
             " .
                 ((!empty($search))
                     ?
-                    "and (meet.Title like '%$search%'
-             or meet.Place like '%$search%'
-             or meet.Time like '%$search%'
-             or s.Name like '%$search%'
-             or t.Name like '%$search%'
-             or meet.Content like '%$search%'
-             or mt.Name like '%$search%'
+                    "and (meet.Title like :search 
+             or meet.Place like :search 
+             or meet.Time like :search 
+             or s.Name like :search 
+             or t.Name like :search 
+             or meet.Content like :search 
+             or mt.Name like :search 
              )"
                     : ' ') .
                 " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
+        if ($search != null){
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getAllMeetPage($search);
@@ -159,15 +162,18 @@ class MeetService
         (($search != null) ?
             " 
         where 
-            meet.Title like '%$search%'
-            or meet.Place like '%$search%'
-            or meet.Time like '%$search%'
-            or s.Name like '%$search%'
-            or t.Name like '%$search%'
-            or meet.Content like '%$search%'
-            or mt.Name like '%$search%'
+            meet.Title like :search 
+            or meet.Place like :search 
+            or meet.Time like :search 
+            or s.Name like :search 
+            or t.Name like :search 
+            or meet.Content like :search 
+            or mt.Name like :search 
         " : ""
         ));
+        if ($search != null){
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);

@@ -20,9 +20,9 @@ class ProjectManagerService
 
     public function getAllNoPaging()
     {
-        try{
+        try {
             $data = proj_type::get('proj_type');
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return $e->getMessage();
         }
         return $data;
@@ -38,13 +38,15 @@ class ProjectManagerService
                 (($search != null) ?
                     " 
             where 
-            Name like '%$search%'
+            Name like :search 
             " : ""
                 )
-            .
-            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");            
-            
-            $statement->execute();            
+                .
+                " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
+            if ($search != null) {
+                $statement->bindValue(':search', $search);
+            }
+            $statement->execute();
             $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
             $data['page'] = $this->getAllTypePage($search);
         } catch (Exception $e) {
@@ -59,13 +61,16 @@ class ProjectManagerService
         $search = $this->addSlashes($search);
         $statement =  DbModel::prepare("
         select count(*) from proj_type "
-        .
-        (($search != null) ?
-            " 
+            .
+            (($search != null) ?
+                " 
         where 
-        Name like '%$search%' 
+        Name like :search  
         " : ""
-        ));
+            ));
+        if ($search != null) {
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
@@ -100,13 +105,13 @@ class ProjectManagerService
                 ) " .
             ((!empty($search))
                 ?
-                "and (p.NAME like '%$search%'
-             or p.Description like '%$search%'
-             or p.Creater like '%$search%'
-             or p.CreateTime like '%$search%'
-             or s.Name like '%$search%'
-             or t.Name like '%$search%'
-             or pt.Name like '%$search%'
+                "and (p.NAME like :search 
+             or p.Description like :search 
+             or p.Creater like :search 
+             or p.CreateTime like :search 
+             or s.Name like :search 
+             or t.Name like :search 
+             or pt.Name like :search 
              )"
                 : ' ')
             . " 
@@ -114,6 +119,9 @@ class ProjectManagerService
             p.CreateTime DESC "
             .
             " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";");
+        if ($search != null) {
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         if (!empty($data)) {
@@ -171,16 +179,19 @@ class ProjectManagerService
                 ) " .
             ((!empty($search))
                 ?
-                "and (p.NAME like '%$search%'
-             or p.Description like '%$search%'
-             or p.Creater like '%$search%'
-             or p.CreateTime like '%$search%'
-             or s.Name like '%$search%'
-             or t.Name like '%$search%'
-             or pt.Name like '%$search%'
+                "and (p.NAME like :search 
+             or p.Description like :search 
+             or p.Creater like :search 
+             or p.CreateTime like :search 
+             or s.Name like :search 
+             or t.Name like :search 
+             or pt.Name like :search 
              )"
                 : ' '
             ));
+        if ($search != null) {
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);

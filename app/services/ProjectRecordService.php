@@ -108,12 +108,15 @@ class ProjectRecordService
             .
             ((!empty($search))
                 ?
-                "and (pr.Remark like '%$search%'
-             or pr.CreateTime like '%$search%'
-             or s.Name like '%$search%'
-             or t.Name like '%$search%')"
+                "and (pr.Remark like :search 
+             or pr.CreateTime like :search 
+             or s.Name like :search 
+             or t.Name like :search )"
                 : ' ')
             . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";");
+        if ($search != null) {
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $data['Record'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getRecordListPage($project_Id, $search);
@@ -143,7 +146,7 @@ class ProjectRecordService
     }
 
     public function getOne($project_Id, $page = 1, $search = null)
-    {   
+    {
         $search = $this->addSlashes($search);
         $statement = proj_record::prepare("
         SELECT
@@ -171,12 +174,15 @@ class ProjectRecordService
             .
             ((!empty($search))
                 ?
-                "and (pr.Remark like '%$search%'
-             or pr.CreateTime like '%$search%'
-             or s.Name like '%$search%'
-             or t.Name like '%$search%')"
+                "and (pr.Remark like :search 
+             or pr.CreateTime like :search 
+             or s.Name like :search 
+             or t.Name like :search )"
                 : ' ')
             . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
+        if ($search != null) {
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getRecordListPage($project_Id, $search);
@@ -225,12 +231,15 @@ class ProjectRecordService
             .
             ((!empty($search))
                 ?
-                "and (pr.Remark like '%$search%'
-             or pr.CreateTime like '%$search%'
-             or s.Name like '%$search%'
-             or t.Name like '%$search%')"
+                "and (pr.Remark like :search 
+             or pr.CreateTime like :search 
+             or s.Name like :search 
+             or t.Name like :search )"
                 : ' '
-        ));
+            ));
+        if ($search != null) {
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);

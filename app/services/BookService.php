@@ -19,13 +19,16 @@ class BookService{
             book AS b "
         .(($search != null)?
         " Where 
-            b.Title like '%$search%' or 
-            b.Publisher like '%$search%' or 
-            b.ISBN like '%$search%' or 
-            b.Time like '%$search%' 
+            b.Title like :search  or 
+            b.Publisher like :search  or 
+            b.ISBN like :search  or 
+            b.Time like :search  
         ": "").
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
+        if ($search != null){
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         if(!empty($data['list'])){
@@ -83,12 +86,15 @@ class BookService{
         (($search != null) ?
             " 
         where 
-            Title like '%$search%' or 
-            Publisher like '%$search%' or 
-            ISBN like '%$search%' or 
-            Time like '%$search%' 
+            Title like :search  or 
+            Publisher like :search  or 
+            ISBN like :search  or 
+            Time like :search  
         " : ""
         ));
+        if ($search != null){
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);

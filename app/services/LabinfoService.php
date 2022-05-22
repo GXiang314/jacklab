@@ -23,11 +23,12 @@ class LabinfoService{
             lab_info as l ".
         (($search != null)?
         " Where 
-            l.Title like '%$search%' or 
-            l.Content like '%$search%' 
+            l.Title like :search  or 
+            l.Content like :search  
         " : "").
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
+        $statement->bindValue(':search', $search);
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getAllInfoPage($search);
@@ -51,10 +52,11 @@ class LabinfoService{
         (($search != null) ?
             " 
         where 
-        Title like '%$search%' or
-        Content like '%$search%'
+        Title like :search  or
+        Content like :search 
         " : ""
         ));
+        $statement->bindValue(':search', $search);
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);

@@ -62,7 +62,6 @@ class MemberService
     public function teacherAdd($request)
     {
         try {
-            var_dump($request);
             $member = new member();
             $teacher = new teacher();
             $member->loadData($request);
@@ -420,6 +419,7 @@ class MemberService
     public function getAccount($account)
     {
         try {
+            $account = $this->addSlashes($account);
             $statement = DbModel::prepare("         
             SELECT
                 m.*,
@@ -429,7 +429,8 @@ class MemberService
                 LEFT JOIN student AS s ON s.Account = m.Account
                 LEFT JOIN teacher AS t ON t.Account = m.Account 
             WHERE
-                m.Account = '{$account}';");
+                m.Account = :acc ;");
+            $statement->bindValue(':acc', $account);
             $statement->execute();
             $data =  $statement->fetch(\PDO::FETCH_ASSOC); //member
             if (!empty($data)) {
@@ -442,7 +443,8 @@ class MemberService
                     INNER JOIN member_role AS mr ON mr.Account = m.Account
                     INNER JOIN role AS r ON r.Id = mr.Role_Id 
                 WHERE
-                    m.Account = '{$account}';");
+                    m.Account = :acc ;");
+                $statement->bindValue(':acc', $account);
                 $statement->execute();
                 $role =  $statement->fetch(\PDO::FETCH_ASSOC); //member
                 $data['Role'] = $role ? $role : '';
@@ -480,12 +482,12 @@ class MemberService
             s.Account = m.Account " .
             (($search != null) ?
                 " and (
-                s.Id like '%$search%' or 
-                s.Name like '%$search%' or 
-                s.Account like '%$search%' or 
-                c.Name like '%$search%' or 
-                m.CreateTime like '%$search%' or 
-                r.Name like '%$search%' ) " : "")
+                s.Id like :search  or 
+                s.Name like :search  or 
+                s.Account like :search  or 
+                c.Name like :search  or 
+                m.CreateTime like :search  or 
+                r.Name like :search  ) " : "")
             .
             (($academic != null ?
                 " and 
@@ -494,6 +496,9 @@ class MemberService
             .
             " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
             " ;");
+        if ($search != null) {
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $datalist['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $datalist['page'] = $this->getAllMemberPage($search);
@@ -520,15 +525,18 @@ class MemberService
             ((!empty($search))
                 ?
                 " and (
-                s.Id like '%$search%' or 
-                s.Name like '%$search%' or 
-                s.Account like '%$search%' or 
-                c.Name like '%$search%' or 
-                m.CreateTime like '%$search%' or 
-                r.Name like '%$search%' 
+                s.Id like :search  or 
+                s.Name like :search  or 
+                s.Account like :search  or 
+                c.Name like :search  or 
+                m.CreateTime like :search  or 
+                r.Name like :search  
              )"
                 : ' '
             ));
+        if ($search != null) {
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);

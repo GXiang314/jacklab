@@ -24,10 +24,13 @@ class AlbumService
             album as a ".
         (($search != null)?
         " Where 
-            a.Title like '%$search%'        
+            a.Title like :search         
         " : "").
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
+        if ($search != null){
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getAllAlbumPage($search);
@@ -52,9 +55,12 @@ class AlbumService
         (($search != null) ?
             " 
         where 
-            Title like '%$search%'
+            Title like :search 
         " : ""
         ));
+        if ($search != null){
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
