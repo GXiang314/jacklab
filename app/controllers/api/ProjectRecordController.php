@@ -37,15 +37,17 @@ class ProjectRecordController extends Controller
         return $this->sendError('Method Not Allow', [], 405);
     }
 
-    // public function show(Request $request)
-    // {
-    //     if ($request->isGet()) {
-    //         $id = $request->getBody()['id'] ?? '';
-    //         $data = $this->projectRecordService->get($id);
-    //         return (!empty($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
-    //     }
-    //     return $this->sendError('Method Not Allow.', [], 405);
-    // }
+    public function show(Request $request)
+    {
+        if ($request->isGet()) {
+            $id = $request->getBody()['id'] ?? '';
+            $page = $request->getBody()['page'] ?? 1;
+            $search = $request->getBody()['search'] ?? null;
+            $data = $this->projectRecordService->getOne($id, $page, $search);
+            return (!empty($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
+        }
+        return $this->sendError('Method Not Allow.', [], 405);
+    }
 
     public function store(Request $request)
     {

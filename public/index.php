@@ -116,6 +116,7 @@ $app->router->put('/api/project/type', [ProjectManagerController::class,'update'
 $app->router->delete('/api/project/type?', [ProjectManagerController::class,'destroy']); //刪除專案性質
 
 $app->router->get('/api/project?', [ProjectRecordController::class,'index']); //取得該專案所有資訊(含記錄)
+$app->router->get('/api/project/record?', [ProjectRecordController::class,'show']); //取得該專案所有記錄
 $app->router->post('/api/project', [ProjectRecordController::class,'store']); //新增專案
 $app->router->post('/api/project/record', [ProjectRecordController::class,'storeRecord']); //新增專案記錄
 $app->router->put('/api/project', [ProjectRecordController::class,'update']); //修改專案

@@ -141,6 +141,68 @@ class ProjectRecordService
         return $data;
     }
 
+    public function getOne($project_Id, $page = 1, $search = null)
+    {   
+        $statement = proj_record::prepare("
+        SELECT
+            pr.Id AS Id,
+            pr.Remark AS Remark,
+            pr.CreateTime AS CreateTime,
+            pr.Uploader,
+        CASE
+                s.`Name` 
+                WHEN s.`Name` THEN
+                s.`Name` ELSE t.NAME 
+            END AS Uploader_name,
+            p.`Name` AS Project_name 
+        FROM
+            proj_record AS pr
+            INNER JOIN project AS p ON p.Id = pr.Project_Id
+            INNER JOIN member AS m ON m.Account = pr.Uploader
+            LEFT JOIN student AS s ON s.Account = m.Account
+            LEFT JOIN teacher AS t ON t.Account = m.Account 
+        WHERE
+            pr.Project_Id = '{$project_Id}' 
+            AND (
+            pr.Deleted LIKE '' 
+            OR isnull( pr.Deleted )) "
+            .
+            ((!empty($search))
+                ?
+                "and (pr.Remark like '%$search%'
+             or pr.CreateTime like '%$search%'
+             or s.Name like '%$search%'
+             or t.Name like '%$search%')"
+                : ' ')
+            . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";");
+        $statement->execute();
+        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['page'] = $this->getRecordListPage($project_Id, $search);
+        if (!empty($data)) {
+            $index = 0;
+            foreach ($data as $row) {
+                $statement = proj_file::prepare("
+                SELECT
+                    pf.Id,
+                    pf.Name,
+                    pf.Size 
+                FROM
+                    proj_file AS pf 
+                WHERE
+                    pf.Proj_record = '{$row['Id']}';");
+                $statement->execute();
+                $file = $statement->fetch(\PDO::FETCH_ASSOC);
+                if (!empty($file)) {
+                    $data[$index]['File'] = $file;
+                } else {
+                    $data[$index]['File'] = [];
+                }
+                $index++;
+            }
+        }
+        return $data;
+    }
+
     public function getRecordListPage($id, $search = null)
     {
         $statement =  DbModel::prepare("
