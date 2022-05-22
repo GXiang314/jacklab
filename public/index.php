@@ -57,6 +57,7 @@ $app->router->put('/api/member/photo', [MemberController::class, 'updateMemberPh
 
 $app->router->get('/api/manager/permission', [PermissionController::class, 'index']); //取得所有權限資料
 
+$app->router->get('/api/manager/role/select', [RoleController::class, 'selector']); //取得所有專案性質(下拉式)
 $app->router->get('/api/manager/role/list', [RoleController::class, 'index']); //取得所有角色資料
 $app->router->get('/api/manager/role/list?', [RoleController::class, 'index']); //取得所有角色資料(搜尋)
 $app->router->get('/api/manager/role?', [RoleController::class, 'show']); //取得該角色權限
@@ -114,6 +115,7 @@ $app->router->put('/api/game', [GameRecordController::class, 'update']); //修�
 $app->router->delete('/api/game?', [GameRecordController::class, 'destroy']); //刪除競賽記錄(軟刪除)
 $app->router->get('/api/download/game?', [DownloadController::class, 'download_Game']); //下載競賽記錄檔案
 
+$app->router->get('/api/project/type/select', [ProjectManagerController::class, 'selector']); //取得所有專案性質(下拉式)
 $app->router->get('/api/project/type', [ProjectManagerController::class, 'index']); //取得所有專案性質
 $app->router->get('/api/project/type?', [ProjectManagerController::class, 'index']); //取得所有專案性質(搜尋值)
 $app->router->get('/api/project/list', [ProjectManagerController::class, 'show']); //取得所有專案
