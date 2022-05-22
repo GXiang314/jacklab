@@ -26,6 +26,7 @@ class MeetController extends Controller
     {
         if ($request->isGet()) {
             $page = $request->getBody()['page'] ?? 1;
+            $page = (!is_numeric($page)) ? 1 : intval($page);
             $search = $request->getBody()['search'] ?? null;
             $data = $this->meetService->getAll($page, $search);
             return (isset($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');

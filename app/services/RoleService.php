@@ -16,10 +16,22 @@ class RoleService
     {
         $this->install();
     }
-    public function getAll()
+
+    public function getAll($page = 1, $search = null)
     {
-        $data = role::get('role');
-        return $data;
+        $statement = DbModel::prepare("
+        select 
+            r.* 
+        from 
+            role as r ".
+        (($search != null)?
+        " Where 
+            r.Name like '%$search%'        
+        " : "").
+        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";"
+        );
+        $statement->execute();
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /* #region  新增角色權限 */

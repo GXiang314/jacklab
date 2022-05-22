@@ -24,10 +24,16 @@ class AlbumController extends Controller
         $this->registerMiddleware(new hasRoleMiddleware(['store', 'update', 'destroy']));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = $this->albumService->getAll();
-        return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
+        if ($request->isGet()) {
+            $page = $request->getBody()['page'] ?? 1;
+            $page = (!is_numeric($page)) ? 1 : intval($page);
+            $search = $request->getBody()['search'] ?? null;
+            $data = $this->albumService->getAll($page, $search);
+            return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
+        }
+        return $this->sendError('Method Not Allow.', [], 405);
     }
 
     public function show(Request $request)

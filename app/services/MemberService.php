@@ -408,18 +408,7 @@ class MemberService
                 t.Id = '$teacher_Id' 
             limit 1;");
             $statement->execute();
-            $data = $statement->fetch(\PDO::FETCH_ASSOC);
-            if (!empty($data)) {
-                $roldSelect = DbModel::prepare("         
-                select r.* from role as r, member_role as mr, teacher as t
-                where 
-                    r.Id = mr.Role_ID and
-                    mr.Account = t.Account;
-                    t.Id = '$teacher_Id';
-                ");
-                $roldSelect->execute();
-                $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC); //role
-            }
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);            
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -502,7 +491,7 @@ class MemberService
              a.Id = '$academic'             
             " : ' '))
             .
-            " limit " . (($page - 1) * 10) . ", " . ($page * 10) .
+            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) .
             " ;");
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -560,7 +549,7 @@ class MemberService
             t.Account like '%{$search}%'         
         " :
                 '') .
-            " limit " . (($page - 1) * 10) . ", " . ($page * 10) .
+            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) .
             ";");
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);

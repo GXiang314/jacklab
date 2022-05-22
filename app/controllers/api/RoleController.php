@@ -22,10 +22,16 @@ class RoleController extends Controller
         $this->registerMiddleware(new hasRoleMiddleware(['index', 'show', 'getMember_Role', 'store', 'update', 'updateMemberRole', 'destroy']));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = $this->roleService->getAll();
-        return ($data != []) ? $this->sendResponse($data, '所有角色資料') : $this->sendResponse('', '沒有資料');
+        if ($request->isGet()) {
+            $page = $request->getBody()['page'] ?? 1;
+            $page = (!is_numeric($page)) ? 1 : intval($page);
+            $search = $request->getBody()['search'] ?? null;
+            $data = $this->roleService->getAll($page, $search);
+            return $data ? $this->sendResponse($data, '所有角色資料') : $this->sendResponse('', '沒有資料');
+        }
+        return $this->sendError('Method Not Allow.', [], 405);
     }
 
     public function show(Request $request)

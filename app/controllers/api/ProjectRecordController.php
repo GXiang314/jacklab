@@ -30,6 +30,7 @@ class ProjectRecordController extends Controller
         if ($request->isGet()) {
             $id = $request->getBody()['id'] ?? '';
             $page = $request->getBody()['page'] ?? 1;
+            $page = (!is_numeric($page)) ? 1 : intval($page);
             $search = $request->getBody()['search'] ?? null;
             $data = $this->projectRecordService->getAll($id, $page, $search);
             return $data ? $this->sendResponse($data, '專案內容') : $this->sendResponse('', '沒有資料');
@@ -42,6 +43,7 @@ class ProjectRecordController extends Controller
         if ($request->isGet()) {
             $id = $request->getBody()['id'] ?? '';
             $page = $request->getBody()['page'] ?? 1;
+            $page = (!is_numeric($page)) ? 1 : intval($page);
             $search = $request->getBody()['search'] ?? null;
             $data = $this->projectRecordService->getOne($id, $page, $search);
             return (!empty($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');

@@ -9,14 +9,22 @@ use Exception;
 
 class BookService{
 
-    public function getAll()
+    public function getAll($page = 1, $search = null)
     {
         $statement = book::prepare("
         SELECT
             b.* 
         FROM
-            book AS b;
-        ");
+            book AS b "
+        .(($search != null)?
+        " Where 
+            b.Title like '%$search%' or 
+            b.Publisher like '%$search%' or 
+            b.ISBN like '%$search%' or 
+            b.Time like '%$search%' 
+        ": "").
+        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";"
+        );
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
         if(!empty($data)){

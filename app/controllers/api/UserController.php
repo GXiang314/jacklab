@@ -33,21 +33,35 @@ class UserController extends Controller
     {
         if ($request->isGet()) {
             $page = $request->getBody()['page'] ?? 1;
+            $page = (!is_numeric($page)) ? 1 : intval($page);
             $search = $request->getBody()['search'] ?? null;
             $academic = $request->getBody()['academic'] ?? null;
+            $data = $this->memberService->getAllMember($page, $search, $academic);
+            return ($data != []) ? $this->sendResponse($data, '所有成員') : $this->sendResponse('', '沒有資料');
         }
-        $data = $this->memberService->getAllMember($page, $search, $academic);
-        return ($data != []) ? $this->sendResponse($data, '所有成員') : $this->sendResponse('', '沒有資料');
+        return $this->sendError('Method Not Allow.', [], 405);        
     }
 
     public function getAllTeacher(Request $request)
     {
         if ($request->isGet()) {
             $page = $request->getBody()['page'] ?? 1;
+            $page = (!is_numeric($page)) ? 1 : intval($page);
             $search = $request->getBody()['search'] ?? null;
+            $data = $this->memberService->getTeacher($page, $search);
+            return $data ? $this->sendResponse($data, '所有教師') : $this->sendResponse('', '沒有資料');
         }
-        $data = $this->memberService->getTeacher($page, $search);
-        return $data ? $this->sendResponse($data, '所有教師') : $this->sendResponse('', '沒有資料');
+        return $this->sendError('Method Not Allow.', [], 405);        
+    }
+
+    public function getTeacher(Request $request)
+    {
+        if ($request->isGet()) {
+            $id = $request->getBody()['id'] ?? '';
+            $data = $this->memberService->getTeacherData($id);
+            return $data ? $this->sendResponse($data, '所有教師') : $this->sendResponse('', '沒有資料');
+        }
+        return $this->sendError('Method Not Allow.', [], 405);        
     }
 
     public function useradd(Request $request)

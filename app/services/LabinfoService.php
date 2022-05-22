@@ -12,10 +12,23 @@ class LabinfoService{
     {
         //$this->install();
     }
-    public function getAll()
+
+    public function getAll($page = 1, $search = null)
     {
-        $data = lab_info::get('lab_info');
-        return $data;
+        $statement = DbModel::prepare("
+        select 
+            l.* 
+        from 
+            lab_info as l ".
+        (($search != null)?
+        " Where 
+            l.Title like '%$search%' or 
+            l.Content like '%$search%' 
+        " : "").
+        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";"
+        );
+        $statement->execute();
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function getOne($id)

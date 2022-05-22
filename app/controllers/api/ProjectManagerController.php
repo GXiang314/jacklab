@@ -25,8 +25,9 @@ class ProjectManagerController extends Controller
     {
         if($request->isGet()){
             $page = $request->getBody()['page'] ?? 1;
+            $page = (!is_numeric($page)) ? 1 : intval($page);
             $search = $request->getBody()['search'] ?? null;
-            $data = $this->projectManagerService->getAll((!is_numeric($page)) ? 1 : intval($page), $search);
+            $data = $this->projectManagerService->getAll($page, $search);
             return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendError('沒有資料');
         }
         return $this->sendError("Method Not Allow", [], 405);
@@ -53,6 +54,7 @@ class ProjectManagerController extends Controller
         if ($request->isGet()) {
             $id = $request->getBody()['id'] ?? '%';
             $page = $request->getBody()['page'] ?? 1;
+            $page = (!is_numeric($page)) ? 1 : intval($page);
             $search = $request->getBody()['search'] ?? null;
             $data = $this->projectManagerService->getProject($id, $page, $search);
             return !empty($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');

@@ -9,10 +9,21 @@ use Exception;
 class AlbumService
 {
 
-    public function getAll()
+    public function getAll($page = 1, $search = null)
     {
-        $data = album::get('album');
-        return $data;
+        $statement = DbModel::prepare("
+        select 
+            a.* 
+        from 
+            album as a ".
+        (($search != null)?
+        " Where 
+            a.Title like '%$search%'        
+        " : "").
+        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";"
+        );
+        $statement->execute();
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function getOne($id)
