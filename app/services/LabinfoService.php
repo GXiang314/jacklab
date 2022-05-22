@@ -28,7 +28,9 @@ class LabinfoService{
         " : "").
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
-        $statement->bindValue(':search', $search);
+        if ($search != null){
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getAllInfoPage($search);
@@ -56,7 +58,9 @@ class LabinfoService{
         Content like :search 
         " : ""
         ));
-        $statement->bindValue(':search', $search);
+        if ($search != null){
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);

@@ -39,10 +39,13 @@ class RoleService
             role as r ".
         (($search != null)?
         " Where 
-            r.Name like '%$search%'        
+            r.Name like :search         
         " : "").
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
+        if ($search != null) {
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -56,9 +59,12 @@ class RoleService
         (($search != null) ?
             " 
         where 
-        Name like '%$search%' 
+        Name like :search  
         " : ""
         ));
+        if ($search != null) {
+            $statement->bindValue(':search', $search);
+        }
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
