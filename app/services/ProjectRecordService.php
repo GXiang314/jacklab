@@ -174,7 +174,7 @@ class ProjectRecordService
              or s.Name like '%$search%'
              or t.Name like '%$search%')"
                 : ' ')
-            . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";");
+            . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getRecordListPage($project_Id, $search);

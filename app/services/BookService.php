@@ -23,7 +23,7 @@ class BookService{
             b.ISBN like '%$search%' or 
             b.Time like '%$search%' 
         ": "").
-        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";"
+        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
