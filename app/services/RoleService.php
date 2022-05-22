@@ -27,8 +27,11 @@ class RoleService
         return $data;
     }
 
+
+
     public function getAll($page = 1, $search = null)
     {
+        $search = $this->addSlashes($search);
         $statement = DbModel::prepare("
         select 
             r.* 
@@ -46,6 +49,7 @@ class RoleService
 
     public function getAllRolePage($search = null)
     {
+        $search = $this->addSlashes($search);
         $statement =  DbModel::prepare("
         select count(*) from role "
         .
@@ -238,6 +242,11 @@ class RoleService
     }
 
     /* #endregion */
+
+    public function addSlashes($string = null)
+    {
+        return  empty($string) ? $string : addslashes($string);
+    }
 
     private function newId()
     {

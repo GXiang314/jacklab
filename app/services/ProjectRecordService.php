@@ -17,6 +17,7 @@ class ProjectRecordService
 
     public function getAll($project_Id, $page = 1, $search = null)
     {
+        $search = $this->addSlashes($search);
         $statement = project::prepare("
         SELECT
             p.Id,
@@ -143,6 +144,7 @@ class ProjectRecordService
 
     public function getOne($project_Id, $page = 1, $search = null)
     {   
+        $search = $this->addSlashes($search);
         $statement = proj_record::prepare("
         SELECT
             pr.Id AS Id,
@@ -205,6 +207,7 @@ class ProjectRecordService
 
     public function getRecordListPage($id, $search = null)
     {
+        $search = $this->addSlashes($search);
         $statement =  DbModel::prepare("
         SELECT
             count(*) 
@@ -444,6 +447,11 @@ class ProjectRecordService
     //     }
     //     return 'success';
     // }
+
+    public function addSlashes($string = null)
+    {
+        return  empty($string) ? $string : addslashes($string);
+    }
 
     private function newId()
     {

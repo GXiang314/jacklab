@@ -11,6 +11,7 @@ class AlbumService
 
     public function getAll($page = 1, $search = null)
     {
+        $search = $this->addSlashes($search);
         $statement = DbModel::prepare("
         select 
             a.* 
@@ -39,6 +40,7 @@ class AlbumService
 
     public function getAllAlbumPage($search = null)
     {
+        $search = $this->addSlashes($search);
         $statement =  DbModel::prepare("
         select count(*) from album "
         .
@@ -138,6 +140,11 @@ class AlbumService
             return $e->getMessage();
         }
         return 'success';
+    }
+
+    public function addSlashes($string = null)
+    {
+        return  empty($string) ? $string : addslashes($string);
     }
 
     /* #region  驗證副檔名 */

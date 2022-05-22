@@ -11,6 +11,7 @@ class BookService{
 
     public function getAll($page = 1, $search = null)
     {
+        $search = $this->addSlashes($search);
         $statement = book::prepare("
         SELECT
             b.* 
@@ -75,6 +76,7 @@ class BookService{
 
     public function getAllBookPage($search = null)
     {
+        $search = $this->addSlashes($search);
         $statement =  DbModel::prepare("
         select count(*) from book "
         .
@@ -217,6 +219,11 @@ class BookService{
             return $e->getMessage();
         }
         return 'success';
+    }
+
+    public function addSlashes($string = null)
+    {
+        return  empty($string) ? $string : addslashes($string);
     }
     
     /* #region  驗證副檔名 */

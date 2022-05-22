@@ -31,19 +31,20 @@ class ProjectManagerService
     public function getAll(int $page = 1, $search = null)
     {
         try {
+            $search = $this->addSlashes($search);
             $statement = DbModel::prepare("
             select * from proj_type "
                 .
                 (($search != null) ?
                     " 
             where 
-            Name like ?
+            Name like '%$search%'
             " : ""
                 )
             .
-            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
-            $statement->bindValue(1, "%$search%");
-            $statement->execute();
+            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");            
+            
+            $statement->execute();            
             $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
             $data['page'] = $this->getAllTypePage($search);
         } catch (Exception $e) {
@@ -55,6 +56,7 @@ class ProjectManagerService
 
     public function getAllTypePage($search = null)
     {
+        $search = $this->addSlashes($search);
         $statement =  DbModel::prepare("
         select count(*) from proj_type "
         .
@@ -72,6 +74,7 @@ class ProjectManagerService
 
     public function getProject($id = '%', $page = 1, $search = null)
     {
+        $search = $this->addSlashes($search);
         $statement = project::prepare("
         SELECT DISTINCT
             p.Id,
@@ -152,6 +155,7 @@ class ProjectManagerService
 
     public function getProjectListPage($id, $search = null)
     {
+        $search = $this->addSlashes($search);
         $statement =  DbModel::prepare("
         SELECT DISTINCT
             count(*)
@@ -227,6 +231,11 @@ class ProjectManagerService
             return $e->getMessage();
         }
         return 'success';
+    }
+
+    public function addSlashes($string = null)
+    {
+        return  empty($string) ? $string : addslashes($string);
     }
 
     private function install()

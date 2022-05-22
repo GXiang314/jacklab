@@ -15,6 +15,7 @@ class LabinfoService{
 
     public function getAll($page = 1, $search = null)
     {
+        $search = $this->addSlashes($search);
         $statement = DbModel::prepare("
         select 
             l.* 
@@ -43,6 +44,7 @@ class LabinfoService{
 
     public function getAllInfoPage($search = null)
     {
+        $search = $this->addSlashes($search);
         $statement =  DbModel::prepare("
         select count(*) from lab_info "
         .
@@ -114,6 +116,11 @@ class LabinfoService{
             ]);
             }
         }
+    }
+
+    public function addSlashes($string = null)
+    {
+        return  empty($string) ? $string : addslashes($string);
     }
 
     // private function newId()

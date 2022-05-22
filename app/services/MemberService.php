@@ -458,6 +458,7 @@ class MemberService
     public function getAllMember($page = 1, $search = null, $academic = null)
     {
         $member = new Member();
+        $search = $this->addSlashes($search);
         $statement = $member->prepare("
         SELECT
             s.Id,
@@ -503,6 +504,7 @@ class MemberService
     /* #region  取得所有會員資料最大頁數 */
     public function getAllMemberPage($search = null)
     {
+        $search = $this->addSlashes($search);
         $statement =  DbModel::prepare("
         SELECT 
             count(*)
@@ -569,6 +571,7 @@ class MemberService
     /* #region  取得所有教師 */
     public function getTeacher($page = 1, $search = null)
     {
+        $search = $this->addSlashes($search);
         $statement = DbModel::prepare("
         Select 
             t.*
@@ -597,6 +600,7 @@ class MemberService
     /* #region   */
     public function getTeacherPage($search = null)
     {
+        $search = $this->addSlashes($search);
         $statement = DbModel::prepare("
         Select 
             count(*)
@@ -611,7 +615,7 @@ class MemberService
             t.Introduction like '%{$search}%' or 
             t.Account like '%{$search}%'         
         " :
-                '').";");
+                '') . ";");
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
@@ -711,6 +715,13 @@ class MemberService
             }
         }
         return false;
+    }
+    /* #endregion */
+
+    /* #region  插入反斜線 */
+    public function addSlashes($string = null)
+    {
+        return  empty($string) ? $string : addslashes($string);
     }
     /* #endregion */
 
