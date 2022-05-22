@@ -26,7 +26,7 @@ class AlbumService
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getAllAlbumPage($search);
-        return ;
+        return $data;
     }
 
     public function getOne($id)
