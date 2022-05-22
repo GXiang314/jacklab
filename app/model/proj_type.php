@@ -30,6 +30,7 @@ class proj_type extends DbModel{
         return [
             'Name' => [
                 self::RULE_REQUIRED,
+                self::RULE_UNIQUE,
                 [self::RULE_MAX,'max'=>20],                
             ]
         ];
