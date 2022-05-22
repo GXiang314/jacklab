@@ -37,6 +37,7 @@ class UserController extends Controller
             $search = $request->getBody()['search'] ?? '';
             $search = (empty(trim($search))) ? null : $search;
             $academic = $request->getBody()['academic'] ?? null;
+            $academic = (empty(trim($academic))) ? null : $academic;
             $data = $this->memberService->getAllMember($page, $search, $academic);
             return ($data != []) ? $this->sendResponse($data, '所有成員') : $this->sendResponse('', '沒有資料');
         }
