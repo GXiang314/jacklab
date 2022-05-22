@@ -17,6 +17,16 @@ class RoleService
         $this->install();
     }
 
+    public function getAllNoPaging()
+    {
+        try{
+            $data = role::get('role');
+        }catch(Exception $e){
+            return $e->getMessage();
+        }
+        return $data;
+    }
+
     public function getAll($page = 1, $search = null)
     {
         $statement = DbModel::prepare("
@@ -32,6 +42,23 @@ class RoleService
         );
         $statement->execute();
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getAllRolePage($search = null)
+    {
+        $statement =  DbModel::prepare("
+        select count(*) from role "
+        .
+        (($search != null) ?
+            " 
+        where 
+        Name like '%$search%' 
+        " : ""
+        ));
+        $statement->execute();
+        $count = $statement->fetchColumn();
+        $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        return $page == 0 ? 1 : $page;
     }
 
     /* #region  新增角色權限 */

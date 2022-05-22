@@ -16,6 +16,18 @@ class ProjectManagerService
     {
         $this->install();
     }
+
+
+    public function getAllNoPaging()
+    {
+        try{
+            $data = proj_type::get('proj_type');
+        }catch(Exception $e){
+            return $e->getMessage();
+        }
+        return $data;
+    }
+
     public function getAll(int $page = 1, $search = null)
     {
         try {
@@ -25,11 +37,12 @@ class ProjectManagerService
                 (($search != null) ?
                     " 
             where 
-            Name like '%$search%' 
+            Name like '%$search%'
             " : ""
                 )
                 .
                 " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
+            // $statement->bindValue(":search", "%$search%");
             $statement->execute();
             $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
             $data['page'] = $this->getAllTypePage($search);
@@ -54,7 +67,7 @@ class ProjectManagerService
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
-        return $page;
+        return $page == 0 ? 1 : $page;
     }
 
     public function getProject($id = '%', $page = 1, $search = null)
@@ -167,7 +180,7 @@ class ProjectManagerService
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
-        return $page;
+        return $page == 0 ? 1 : $page;
     }
     public function add(string $name)
     {

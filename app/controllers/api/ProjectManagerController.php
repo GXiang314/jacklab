@@ -21,12 +21,19 @@ class ProjectManagerController extends Controller
         $this->registerMiddleware(new hasRoleMiddleware(['store', 'update', 'destroy']));
     }
 
+    public function seletor()
+    {
+        $data = $this->projectManagerService->getAllNoPaging();
+        return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendError('沒有資料');
+    }
+
     public function index(Request $request)
     {
         if($request->isGet()){
             $page = $request->getBody()['page'] ?? 1;
             $page = (!is_numeric($page)) ? 1 : intval($page);
             $search = $request->getBody()['search'] ?? null;
+            $search = empty(trim($search)) ? null : $search;
             $data = $this->projectManagerService->getAll($page, $search);
             return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendError('沒有資料');
         }
@@ -56,6 +63,7 @@ class ProjectManagerController extends Controller
             $page = $request->getBody()['page'] ?? 1;
             $page = (!is_numeric($page)) ? 1 : intval($page);
             $search = $request->getBody()['search'] ?? null;
+            $search = empty(trim($search)) ? null : $search;
             $data = $this->projectManagerService->getProject($id, $page, $search);
             return !empty($data) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
