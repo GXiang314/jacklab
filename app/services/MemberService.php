@@ -408,7 +408,7 @@ class MemberService
                 t.Id = '$teacher_Id' 
             limit 1;");
             $statement->execute();
-            $data = $statement->fetch(\PDO::FETCH_ASSOC);            
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -494,8 +494,43 @@ class MemberService
             " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
             " ;");
         $statement->execute();
-        $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $datalist['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $datalist['page'] = $this->getAllMemberPage($search);
         return $datalist;
+    }
+    /* #endregion */
+
+    /* #region  取得所有會員資料最大頁數 */
+    public function getAllMemberPage($search = null)
+    {
+        $statement =  DbModel::prepare("
+        SELECT 
+            count(*)
+        FROM
+            member AS m
+            LEFT JOIN student AS s ON s.Account = m.Account
+            LEFT JOIN member_role AS mr ON mr.Account = m.Account
+            LEFT JOIN role AS r ON r.Id = mr.Role_Id
+            LEFT JOIN classes AS c ON c.Id = s.Class_Id 
+            LEFT JOIN academic AS a ON a.Id = c.Academic_Id
+        WHERE
+            s.Account = m.Account " .
+            ((!empty($search))
+                ?
+                " and (
+                s.Id like '%$search%' or 
+                s.Name like '%$search%' or 
+                s.Account like '%$search%' or 
+                c.Name like '%$search%' or 
+                m.CreateTime like '%$search%' or 
+                r.Name like '%$search%' 
+             )"
+                : ' '
+            ));
+        $statement->execute();
+        $count = $statement->fetchColumn();
+        $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        return $page == 0 ? 1 : $page;
     }
     /* #endregion */
 
@@ -551,10 +586,38 @@ class MemberService
                 '') .
             " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
             ";");
+
         $statement->execute();
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['page'] = $this->getTeacherPage($search);
         return $data;
     }
+    /* #endregion */
+
+    /* #region   */
+    public function getTeacherPage($search = null)
+    {
+        $statement = DbModel::prepare("
+        Select 
+            count(*)
+        From
+            teacher as t "
+            .
+            (($search) ? "
+        Where 
+            t.Id like '%{$search}%' or 
+            t.Name like '%{$search}%' or 
+            t.Title like '%{$search}%' or 
+            t.Introduction like '%{$search}%' or 
+            t.Account like '%{$search}%'         
+        " :
+                '').";");
+        $statement->execute();
+        $count = $statement->fetchColumn();
+        $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        return $page == 0 ? 1 : $page;
+    }
+
     /* #endregion */
 
     /* #region  取得教師公開資料 */

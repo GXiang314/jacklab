@@ -26,14 +26,15 @@ class BookService{
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
         $statement->execute();
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        if(!empty($data)){
+        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        if(!empty($data['list'])){
             $index = 0;
-            foreach($data as $row){
-                $data[$index]['Authors'] = $this->getAuthors($row['Id']);
+            foreach($data['list'] as $row){
+                $data['list'][$index]['Authors'] = $this->getAuthors($row['Id']);
                 $index++;
             }
         }
+        $data['page'] = $this->getAllBookPage($search);
         return $data;
     }
 
@@ -70,6 +71,26 @@ class BookService{
             ");
         $statement->execute();
         return $statement->fetchAll(\PDO::FETCH_ASSOC) ?? [];
+    }
+
+    public function getAllBookPage($search = null)
+    {
+        $statement =  DbModel::prepare("
+        select count(*) from book "
+        .
+        (($search != null) ?
+            " 
+        where 
+            Title like '%$search%' or 
+            Publisher like '%$search%' or 
+            ISBN like '%$search%' or 
+            Time like '%$search%' 
+        " : ""
+        ));
+        $statement->execute();
+        $count = $statement->fetchColumn();
+        $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        return $page == 0 ? 1 : $page;
     }
 
     public function add($book, $authors, $file)

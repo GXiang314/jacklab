@@ -28,7 +28,9 @@ class LabinfoService{
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['page'] = $this->getAllInfoPage($search);
+        return $data;
     }
 
     public function getOne($id)
@@ -37,6 +39,24 @@ class LabinfoService{
             'Id' => $id
         ]);
         return $data;
+    }
+
+    public function getAllInfoPage($search = null)
+    {
+        $statement =  DbModel::prepare("
+        select count(*) from lab_info "
+        .
+        (($search != null) ?
+            " 
+        where 
+        Title like '%$search%' or
+        Content like '%$search%'
+        " : ""
+        ));
+        $statement->execute();
+        $count = $statement->fetchColumn();
+        $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        return $page == 0 ? 1 : $page;
     }
 
     public function add(string $title,string $content)

@@ -52,10 +52,11 @@ class MeetService
                 " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
         $statement->execute();
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        if (!empty($data)) {
+        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['page'] = $this->getAllMeetPage($search);
+        if (!empty($data['list'])) {
             $index = 0;
-            foreach ($data as $row) {
+            foreach ($data['list'] as $row) {
                 $statement = meeting::prepare("
                 SELECT
                     * 
@@ -66,9 +67,9 @@ class MeetService
                 $statement->execute();
                 $tag = $statement->fetchAll(\PDO::FETCH_ASSOC);
                 if (!empty($tag)) {
-                    $data[$index]['Tag'] = $tag;
+                    $data['list'][$index]['Tag'] = $tag;
                 } else {
-                    $data[$index]['Tag'] = [];
+                    $data['list'][$index]['Tag'] = [];
                 }
                 $index++;
             }
@@ -143,6 +144,34 @@ class MeetService
         }
 
         return $data;
+    }
+
+    public function getAllMeetPage($search = null)
+    {
+        $statement =  DbModel::prepare("
+        select count(*) from 
+        meeting AS meet
+            INNER JOIN member AS m ON m.Account = meet.Uploader
+            LEFT JOIN student AS s ON s.Account = m.Account
+            LEFT JOIN teacher AS t ON t.Account = m.Account 
+            LEFT JOIN meeting_tag AS mt ON mt.Meet_Id = meet.Id "
+        .
+        (($search != null) ?
+            " 
+        where 
+            meet.Title like '%$search%'
+            or meet.Place like '%$search%'
+            or meet.Time like '%$search%'
+            or s.Name like '%$search%'
+            or t.Name like '%$search%'
+            or meet.Content like '%$search%'
+            or mt.Name like '%$search%'
+        " : ""
+        ));
+        $statement->execute();
+        $count = $statement->fetchColumn();
+        $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        return $page == 0 ? 1 : $page;
     }
 
     public function add($request, $files = null, $tags = null)

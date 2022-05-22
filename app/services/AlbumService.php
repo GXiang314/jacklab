@@ -23,7 +23,9 @@ class AlbumService
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['page'] = $this->getAllAlbumPage($search);
+        return ;
     }
 
     public function getOne($id)
@@ -33,6 +35,23 @@ class AlbumService
             'Id' => $id
         ]);
         return $data;
+    }
+
+    public function getAllAlbumPage($search = null)
+    {
+        $statement =  DbModel::prepare("
+        select count(*) from album "
+        .
+        (($search != null) ?
+            " 
+        where 
+            Title like '%$search%'
+        " : ""
+        ));
+        $statement->execute();
+        $count = $statement->fetchColumn();
+        $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        return $page == 0 ? 1 : $page;
     }
 
     public function add($title, $file)

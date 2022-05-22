@@ -176,11 +176,11 @@ class ProjectRecordService
                 : ' ')
             . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
         $statement->execute();
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getRecordListPage($project_Id, $search);
-        if (!empty($data)) {
+        if (!empty($data['list'])) {
             $index = 0;
-            foreach ($data as $row) {
+            foreach ($data['list'] as $row) {
                 $statement = proj_file::prepare("
                 SELECT
                     pf.Id,
@@ -193,9 +193,9 @@ class ProjectRecordService
                 $statement->execute();
                 $file = $statement->fetch(\PDO::FETCH_ASSOC);
                 if (!empty($file)) {
-                    $data[$index]['File'] = $file;
+                    $data['list'][$index]['File'] = $file;
                 } else {
-                    $data[$index]['File'] = [];
+                    $data['list'][$index]['File'] = [];
                 }
                 $index++;
             }
@@ -231,7 +231,7 @@ class ProjectRecordService
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
-        return $page;
+        return $page == 0 ? 1 : $page;
     }
 
     public function create($request, $tags = null)
