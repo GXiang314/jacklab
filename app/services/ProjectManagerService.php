@@ -37,12 +37,12 @@ class ProjectManagerService
                 (($search != null) ?
                     " 
             where 
-            Name like '%$search%'
+            Name like ?
             " : ""
                 )
-                .
-                " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
-            // $statement->bindValue(":search", "%$search%");
+            .
+            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
+            $statement->bindValue(1, "%$search%");
             $statement->execute();
             $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
             $data['page'] = $this->getAllTypePage($search);

@@ -32,8 +32,8 @@ class ProjectManagerController extends Controller
         if($request->isGet()){
             $page = $request->getBody()['page'] ?? 1;
             $page = (!is_numeric($page)) ? 1 : intval($page);
-            $search = $request->getBody()['search'] ?? null;
-            $search = empty(trim($search)) ? null : $search;
+            $search = $request->getBody()['search'] ?? '';
+            $search = (empty(trim($search))) ? null : $search;
             $data = $this->projectManagerService->getAll($page, $search);
             return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendError('沒有資料');
         }
