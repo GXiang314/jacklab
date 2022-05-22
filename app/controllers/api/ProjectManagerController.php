@@ -21,7 +21,7 @@ class ProjectManagerController extends Controller
         $this->registerMiddleware(new hasRoleMiddleware(['store', 'update', 'destroy']));
     }
 
-    public function seletor()
+    public function selector()
     {
         $data = $this->projectManagerService->getAllNoPaging();
         return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendError('沒有資料');
