@@ -62,7 +62,7 @@ abstract class Model
                     $statement->execute();
                     $result = $statement->fetchObject();
                     if ($result) {
-                        $this->addError($attr, self::RULE_UNIQUE, ['field' => $attr]);
+                        $this->addError($attr, self::RULE_UNIQUE, ['field' => $this->{$attr}]);
                     }
                 }
             }
@@ -86,9 +86,9 @@ abstract class Model
             self::RULE_REQUIRED => '您有必填欄位尚未填寫，請確認',
             self::RULE_EMAIL => '請輸入電子郵件',
             self::RULE_MATCH => '此欄位必須與 {match} 一致',
-            self::RULE_MIN => 'Min length of thie field must be {min}.',
+            self::RULE_MIN => '此欄位不可小於 {min} 字元',
             self::RULE_MAX => '此欄位不可超過 {max} 字元',
-            self::RULE_UNIQUE => '此欄位 {field} 已被使用',
+            self::RULE_UNIQUE => '{field} 已被使用',
         ];
     }
 
