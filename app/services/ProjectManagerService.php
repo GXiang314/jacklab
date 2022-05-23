@@ -107,7 +107,6 @@ class ProjectManagerService
                 ?
                 "and (p.NAME like :search 
              or p.Description like :search 
-             or p.Creater like :search 
              or p.CreateTime like :search 
              or s.Name like :search 
              or t.Name like :search 
@@ -181,7 +180,6 @@ class ProjectManagerService
                 ?
                 "and (p.NAME like :search 
              or p.Description like :search 
-             or p.Creater like :search 
              or p.CreateTime like :search 
              or s.Name like :search 
              or t.Name like :search 
