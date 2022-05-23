@@ -497,7 +497,7 @@ class MemberService
             " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
             " ;");
         if ($search != null) {
-            $statement->bindValue(':search', $search);
+            $statement->bindValue(':search', "%".$search."%");
         }
         $statement->execute();
         $datalist['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -535,7 +535,7 @@ class MemberService
                 : ' '
             ));
         if ($search != null) {
-            $statement->bindValue(':search', $search);
+            $statement->bindValue(':search', "%".$search."%");
         }
         $statement->execute();
         $count = $statement->fetchColumn();
