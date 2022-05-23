@@ -51,8 +51,8 @@ class MeetService
                     : ' ') .
                 " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
-        if ($search != null){
-            $statement->bindValue(':search', "%".$search."%");
+        if ($search != null) {
+            $statement->bindValue(':search', "%" . $search . "%");
         }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -162,9 +162,9 @@ class MeetService
         (meet.Deleted LIKE '' 
             OR isnull( meet.Deleted )) 
         "
-        .
-        (($search != null) ?
-            " 
+            .
+            (($search != null) ?
+                " 
         and (
             meet.Title like :search 
             or meet.Place like :search 
@@ -174,9 +174,9 @@ class MeetService
             or meet.Content like :search 
             or mt.Name like :search )
         " : ""
-        ));
-        if ($search != null){
-            $statement->bindValue(':search', "%".$search."%");
+            ));
+        if ($search != null) {
+            $statement->bindValue(':search', "%" . $search . "%");
         }
         $statement->execute();
         $count = $statement->fetchColumn();
@@ -188,6 +188,8 @@ class MeetService
     {
         try {
             if ($this->checkExtensions($files)) {
+                if ($this->fileUploadValidate($files['Name'] ?? [])) return "最多上傳五個檔案";
+                if ($this->tagUploadValidate($tags ?? [])) return "最多上傳五個標籤";
                 $id = $this->newId();
                 meeting::create('meeting', [
                     'Id' => $id,
@@ -240,6 +242,20 @@ class MeetService
         return 'success';
     }
 
+    public function fileUploadValidate($addArray = [], $nowArray = [], $clearOldArray = [])
+    {
+        $addCount = count($addArray);
+        $nowCount = count($nowArray);
+        $clearOldCount = count($clearOldArray);
+        return ($addCount + $nowCount - $clearOldCount) > intval($_ENV['MAX_UPLOAD_NUM']);
+    }
+
+    public function tagUploadValidate($addArray = [])
+    {
+        $addCount = count($addArray);
+        return $addCount > intval($_ENV['MAX_TAG_NUM']);
+    }
+
     public function update($id, $request, $files = null, $tags = null, $isClearOldList = [])
     {
         try {
@@ -248,12 +264,11 @@ class MeetService
             ]);
             if ($request['USER'] != $meeting['Uploader'] && !$request['ADMIN']) return "unauthorized.";
 
-            $clearoldcount = count($isClearOldList);
-            $addCount = count($files['name'] ?? []);
-            $nowCount = meeting_file::count('meeting_file', [
+            $nowData = meeting_file::get('meeting_file', [
                 'Meet_Id' => $id
             ]);
-            if (($addCount + $nowCount - $clearoldcount) > intval($_ENV['MAX_UPLOAD_NUM'])) return "最多上傳五個檔案";
+            if ($this->fileUploadValidate($files['name'] ?? [], $nowData, $isClearOldList)) return "最多上傳五個檔案";
+            if ($this->tagUploadValidate($tags ?? [])) return "最多上傳五個標籤";
             if ($this->checkExtensions($files)) {
                 foreach ($isClearOldList as $fileName) {
                     if (empty($fileName)) break;
@@ -265,7 +280,7 @@ class MeetService
 
                     if (!empty($data)) {
                         $directory = $data['Url'];
-                        unlink(dirname(dirname(__DIR__)) . "\public" .$directory);
+                        unlink(dirname(dirname(__DIR__)) . "\public" . $directory);
                         meeting_file::delete('meeting_file', [
                             'Meet_Id' => $id,
                             'Name' => $fileName

@@ -246,9 +246,16 @@ class ProjectRecordService
         return $page == 0 ? 1 : $page;
     }
 
+    public function tagUploadValidate($addArray = [])
+    {
+        $addCount = count($addArray);
+        return $addCount > intval($_ENV['MAX_TAG_NUM']);
+    }
+
     public function create($request, $tags = null)
     {
         try {
+            if ($this->tagUploadValidate($tags ?? [])) return "最多上傳五個標籤";
             $now = date("Y-m-d h:i:s", time());
             project::create('project', [
                 'Name' => $request['Name'],
@@ -313,6 +320,8 @@ class ProjectRecordService
                         ]);
                     }
                 }
+            } else {
+                return '不支援該檔案格式';
             }
         } catch (Exception $e) {
             return $e->getMessage();
@@ -323,6 +332,7 @@ class ProjectRecordService
     public function update($id, $request, $tags = null)
     {
         try {
+            if ($this->tagUploadValidate($tags ?? [])) return "最多上傳五個標籤";
             project::update('project', [
                 'Name' => $request['Name'],
                 'Description' => $request['Description'],
@@ -362,38 +372,42 @@ class ProjectRecordService
     public function updateRecord($id, $request, $file = null)
     {
         try {
-            proj_record::update('proj_record', [
-                'Remark' => $request['Remark'],
-                'Uploader' => $request['USER'],
-            ], [
-                'Id' => $id
-            ]);
-            if ($file != null) {
-                $data = proj_file::findOne('proj_file', [
-                    'Proj_record' => $id
+            if ($this->checkExtensions($file)) {
+                proj_record::update('proj_record', [
+                    'Remark' => $request['Remark'],
+                    'Uploader' => $request['USER'],
+                ], [
+                    'Id' => $id
                 ]);
-                if (!empty($data)) {
-                    unlink($data['Url']);
-                    proj_file::delete('proj_file', [
+                if ($file != null) {
+                    $data = proj_file::findOne('proj_file', [
+                        'Proj_record' => $id
+                    ]);
+                    if (!empty($data)) {
+                        unlink($data['Url']);
+                        proj_file::delete('proj_file', [
+                            'Proj_record' => $id
+                        ]);
+                    }
+                    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+                    $fileName = md5($file['name'] . time()) . '.' . $extension;
+                    /*
+                        temp= explode('.',$file_name);
+                        $extension = end($temp);
+                    */
+                    $path = "\storage\project\\" . $fileName;
+                    move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
+
+                    proj_file::create('proj_file', [
+                        'Name' => $file['name'],
+                        'Type' => $extension,
+                        'Size' => $file['size'],
+                        'Url' => $path,
                         'Proj_record' => $id
                     ]);
                 }
-                $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                $fileName = md5($file['name'] . time()) . '.' . $extension;
-                /*
-                    temp= explode('.',$file_name);
-                    $extension = end($temp);
-                */
-                $path = "\storage\project\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
-
-                proj_file::create('proj_file', [
-                    'Name' => $file['name'],
-                    'Type' => $extension,
-                    'Size' => $file['size'],
-                    'Url' => $path,
-                    'Proj_record' => $id
-                ]);
+            } else {
+                return '不支援該檔案格式';
             }
         } catch (Exception $e) {
             return $e->getMessage();
