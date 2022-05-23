@@ -39,6 +39,17 @@ class ProjectRecordController extends Controller
         return $this->sendError('Method Not Allow', [], 405);
     }
 
+    public function getTag(Request $request)
+    {
+        if ($request->isGet()) {            
+            $search = $request->getBody()['search'] ?? '';
+            $search = (empty(trim($search))) ? null : $search;
+            $data = $this->projectRecordService->getProjectTag($search);
+            return $data ? $this->sendResponse($data, '標籤列表') : $this->sendResponse('', '沒有資料');
+        }
+        return $this->sendError('Method Not Allow', [], 405);
+    }
+
     public function show(Request $request)
     {
         if ($request->isGet()) {
