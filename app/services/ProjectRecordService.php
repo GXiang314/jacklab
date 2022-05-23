@@ -514,7 +514,7 @@ class ProjectRecordService
 
     public function checkExtensions($file = null)
     {
-        if ($file == null) return false;
+        if ($file == null) return true;
         $allow_extensions = explode(',', $_ENV['ALLOW_EXTENSIONS']);
         $check_Array = [];
         $check_Array[] = pathinfo($file['name'], PATHINFO_EXTENSION);
