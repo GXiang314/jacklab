@@ -252,6 +252,24 @@ class ProjectRecordService
         return $addCount > intval($_ENV['MAX_TAG_NUM']);
     }
 
+    public function getProjectTag($search = null)
+    {
+        $statement = DbModel::prepare("
+        SELECT DISTINCT Name 
+        FROM
+            proj_tag ".
+        ((!empty($search)) ? 
+        "Where 
+            Name like :search 
+        ":"").
+        ";");
+        if(!empty($search)){
+            $statement->bindValue(':search', "%".$search."%");
+        }
+        $statement->execute();        
+        return $statement->fetchAll();;
+    }
+
     public function create($request, $tags = null)
     {
         try {

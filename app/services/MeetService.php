@@ -242,6 +242,24 @@ class MeetService
         return 'success';
     }
 
+    public function getMeetingTag($search = null)
+    {
+        $statement = DbModel::prepare("
+        SELECT DISTINCT Name 
+        FROM
+            meeting_tag ".
+        ((!empty($search)) ? 
+        "Where 
+            Name like :search 
+        ":"").
+        ";");
+        if(!empty($search)){
+            $statement->bindValue(':search', "%".$search."%");
+        }
+        $statement->execute();        
+        return $statement->fetchAll();;
+    }
+
     public function fileUploadValidate($addArray = [], $nowArray = [], $clearOldArray = [])
     {
         $addCount = count($addArray);
