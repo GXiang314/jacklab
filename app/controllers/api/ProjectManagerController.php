@@ -60,6 +60,7 @@ class ProjectManagerController extends Controller
     {
         if ($request->isGet()) {
             $id = $request->getBody()['id'] ?? '%';
+            $id = (empty(trim($id))) ? '%' : $id;
             $page = $request->getBody()['page'] ?? 1;
             $page = (!is_numeric($page)) ? 1 : intval($page);
             $search = $request->getBody()['search'] ?? '';
