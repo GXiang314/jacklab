@@ -4,6 +4,7 @@
 namespace app\requestModel;
 
 use app\core\Model;
+use app\model\book;
 
 class AddBook extends Model{
 
