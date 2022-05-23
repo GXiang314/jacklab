@@ -115,7 +115,7 @@ class ProjectRecordService
                 : ' ')
             . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";");
         if ($search != null) {
-            $statement->bindValue(':search', $search);
+            $statement->bindValue(':search', "%".$search."%");
         }
         $statement->execute();
         $data['Record'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -181,7 +181,7 @@ class ProjectRecordService
                 : ' ')
             . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
         if ($search != null) {
-            $statement->bindValue(':search', $search);
+            $statement->bindValue(':search', "%".$search."%");
         }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -238,7 +238,7 @@ class ProjectRecordService
                 : ' '
             ));
         if ($search != null) {
-            $statement->bindValue(':search', $search);
+            $statement->bindValue(':search', "%".$search."%");
         }
         $statement->execute();
         $count = $statement->fetchColumn();
