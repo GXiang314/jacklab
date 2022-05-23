@@ -162,7 +162,7 @@ class RoleService
             $idList = explode(',', $idList);
             foreach ($idList as $id) {
                 // delete project/record
-                if (role::count('role', ['Id' => $id]) > 0) {
+                if (role::count('member_role', ['Role_Id' => $id]) > 0) {
                     $name = role::findOne('role', ['Id' => $id])['Name'];
                     return "「{$name}」已有會員使用該角色，無法刪除";
                 }
