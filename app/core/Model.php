@@ -77,7 +77,8 @@ abstract class Model
         foreach ($params as $key => $value) {
             $message = str_replace("{{$key}}", $value, $message);
         }
-        $this->errors[$attribute][] = $message;
+        // $this->errors[$attribute][] = $message;
+        $this->errors[] = $message;
     }
 
     public function errorMessages()
@@ -92,13 +93,18 @@ abstract class Model
         ];
     }
 
-    public function hasError($attribute)
+    public function hasError($attribute = null)
     {
-        return $this->errors[$attribute] ?? false;
+        return $this->errors ?? false;
     }
 
-    public function getFirstError($attribute)
+    public function getAttrFirstError($attribute)
     {
         return $this->errors[$attribute][0] ?? false;
+    }
+
+    public function getFirstError()
+    {
+        return $this->errors[0] ?? false;
     }
 }
