@@ -157,18 +157,22 @@ class MeetService
             INNER JOIN member AS m ON m.Account = meet.Uploader
             LEFT JOIN student AS s ON s.Account = m.Account
             LEFT JOIN teacher AS t ON t.Account = m.Account 
-            LEFT JOIN meeting_tag AS mt ON mt.Meet_Id = meet.Id "
+            LEFT JOIN meeting_tag AS mt ON mt.Meet_Id = meet.Id 
+        Where 
+        (meet.Deleted LIKE '' 
+            OR isnull( meet.Deleted )) 
+        "
         .
         (($search != null) ?
             " 
-        where 
+        and (
             meet.Title like :search 
             or meet.Place like :search 
             or meet.Time like :search 
             or s.Name like :search 
             or t.Name like :search 
             or meet.Content like :search 
-            or mt.Name like :search 
+            or mt.Name like :search )
         " : ""
         ));
         if ($search != null){
