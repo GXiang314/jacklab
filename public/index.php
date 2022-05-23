@@ -157,6 +157,12 @@ $app->router->put('/api/book', [BookController::class, 'update']); //修改出�
 $app->router->put('/api/book/image', [BookController::class, 'updateImage']); //修改出版品資訊
 $app->router->delete('/api/book?', [BookController::class, 'destroy']); //刪除出版品
 
+$app->router->get('/api/tag/meeting', [MeetController::class, 'getTag']); //取得會議標籤列表
+$app->router->get('/api/tag/meeting?', [MeetController::class, 'getTag']); //取得會議標籤列表
+$app->router->get('/api/tag/project', [ProjectRecordController::class, 'getTag']); //取得專案標籤列表
+$app->router->get('/api/tag/project?', [ProjectRecordController::class, 'getTag']); //取得專案標籤列表
+
+
 
 
 $app->run();
