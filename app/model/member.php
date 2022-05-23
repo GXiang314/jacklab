@@ -47,7 +47,7 @@ class member extends DbModel{
         return [
             'Account' => [
                 self::RULE_REQUIRED,
-                [self::RULE_MAX,'max'=>50],
+                [self::RULE_MAX,'max'=>100],
                 [self::RULE_UNIQUE,'class'=>self::class]
             ],
             'Password' => [self::RULE_REQUIRED],
