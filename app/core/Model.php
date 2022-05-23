@@ -83,12 +83,12 @@ abstract class Model
     public function errorMessages()
     {
         return [
-            self::RULE_REQUIRED => 'This field is required.',
-            self::RULE_EMAIL => 'This field must be valid email address.',
-            self::RULE_MATCH => 'This field must be the same as {match}.',
+            self::RULE_REQUIRED => '您有必填欄位尚未填寫，請確認',
+            self::RULE_EMAIL => '請輸入電子郵件',
+            self::RULE_MATCH => '此欄位必須與 {match} 一致',
             self::RULE_MIN => 'Min length of thie field must be {min}.',
-            self::RULE_MAX => 'Max length of thie field must be {max}.',
-            self::RULE_UNIQUE => 'Record with this {field} already exists.',
+            self::RULE_MAX => '此欄位不可超過 {max} 字元',
+            self::RULE_UNIQUE => '此欄位 {field} 已被使用',
         ];
     }
 
