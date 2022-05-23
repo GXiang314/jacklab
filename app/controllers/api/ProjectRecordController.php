@@ -63,7 +63,7 @@ class ProjectRecordController extends Controller
                 $res = $this->projectRecordService->create($data, $requestModel->Tag ?? null);
                 return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError('建立失敗', $res);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -79,7 +79,7 @@ class ProjectRecordController extends Controller
                 $res = $this->projectRecordService->addRecord($data, $requestModel->File);
                 return ($res == 'success') ? $this->sendResponse($res, '新增成功') : $this->sendError('新增失敗', $res);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -100,7 +100,7 @@ class ProjectRecordController extends Controller
                 );
                 return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -120,7 +120,7 @@ class ProjectRecordController extends Controller
                 );
                 return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);

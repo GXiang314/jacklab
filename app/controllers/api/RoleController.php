@@ -71,7 +71,7 @@ class RoleController extends Controller
                 $result = $this->roleService->add($data['Name'], $data['Permission']);
                 return $result == 'success' ? $this->sendResponse($result, '新增成功') : $this->sendError('新增失敗', $result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -87,7 +87,7 @@ class RoleController extends Controller
                 $result = $this->roleService->update($data['Id'], $data['Permission']);
                 return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -103,7 +103,7 @@ class RoleController extends Controller
                 $result = $this->roleService->updateMemberRole($data['Account'], $data['Role']);
                 return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);

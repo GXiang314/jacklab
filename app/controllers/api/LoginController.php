@@ -44,7 +44,7 @@ class LoginController extends Controller
                     return $this->sendError('帳號或密碼輸入錯誤');
                 }
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError("Method Not Allow.", [], 405);

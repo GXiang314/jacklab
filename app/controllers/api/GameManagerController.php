@@ -33,7 +33,7 @@ class GameManagerController extends Controller
                 $res = $this->gameManagerService->add($data['Name']);
                 return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError('建立失敗', $res);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow', [], 405);
@@ -59,7 +59,7 @@ class GameManagerController extends Controller
                 $res = $this->gameManagerService->update($data['Id'], $data['Name']);
                 return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);

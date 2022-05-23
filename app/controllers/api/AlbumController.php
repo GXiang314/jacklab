@@ -63,7 +63,7 @@ class AlbumController extends Controller
                 $result = $this->albumService->add($requestModel->Title, $requestModel->Image);
                 return $result == 'success' ? $this->sendResponse($result, '新增成功') : $this->sendError('新增失敗', $result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -79,7 +79,7 @@ class AlbumController extends Controller
                 $result = $this->albumService->update($requestModel->Id, $requestModel->Title, $requestModel->Image);
                 return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);

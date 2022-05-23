@@ -55,7 +55,7 @@ class MeetController extends Controller
                 $res = $this->meetService->add($data, $requestModel->Files ?? null, $requestModel->Tag ?? null);
                 return ($res == 'success') ? $this->sendResponse($res, '新增成功') : $this->sendError('新增失敗', $res);
             } else {
-                return $this->sendError($requestModel->errors);
+                return $this->sendError($requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -77,7 +77,7 @@ class MeetController extends Controller
                 );
                 return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
             } else {
-                return $this->sendError($requestModel->errors);
+                return $this->sendError($requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);

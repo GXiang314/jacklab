@@ -47,7 +47,7 @@ class AcademicController extends Controller
                 $result = $this->academicService->add($requestModel->Name);
                 return $result == 'success' ? $this->sendResponse($result, '新增成功') : $this->sendError('新增失敗', $result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -62,7 +62,7 @@ class AcademicController extends Controller
                 $result = $this->academicService->update($requestModel->Id, $requestModel->Name);
                 return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);

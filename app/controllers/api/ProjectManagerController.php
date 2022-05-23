@@ -50,7 +50,7 @@ class ProjectManagerController extends Controller
                 $res = $this->projectManagerService->add($data['Name']);
                 return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError('建立失敗', $res);
             } else {
-                return $this->sendError($requestModel->errors);
+                return $this->sendError($requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow', [], 405);
@@ -81,7 +81,7 @@ class ProjectManagerController extends Controller
                 $res = $this->projectManagerService->update($data['Id'], $data['Name']);
                 return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
             } else {
-                return $this->sendError($requestModel->errors);
+                return $this->sendError($requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);

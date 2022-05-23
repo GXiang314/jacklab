@@ -45,7 +45,7 @@ class GameRecordController extends Controller
                 $res = $this->gameRecordService->add($data, $requestModel->Files ?? null);
                 return ($res == 'success') ? $this->sendResponse($res, '新增成功') : $this->sendError('新增失敗', $res);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -66,7 +66,7 @@ class GameRecordController extends Controller
                 );
                 return ($res == 'success') ? $this->sendResponse($requestModel, '修改成功') : $this->sendError('修改失敗', $res);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);

@@ -124,7 +124,7 @@ class UserController extends Controller
                 $result = $this->memberService->updateTeacherPhoto($requestModel->Id, $requestModel->File);
                 return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
             }
-            return $this->sendError('欄位格式錯誤', $requestModel->errors);
+            return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -139,7 +139,7 @@ class UserController extends Controller
                 $result = $this->memberService->updateUserPassword($requestModel->account, $requestModel->password);
                 return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError('修改失敗', $result);
             }
-            return $this->sendError('欄位格式錯誤', $requestModel->errors);
+            return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -154,7 +154,7 @@ class UserController extends Controller
                 $result = $this->memberService->updateStudentClass($requestModel->Account, $requestModel->Class);
                 return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError('修改失敗', $result);
             }
-            return $this->sendError('欄位格式錯誤', $requestModel->errors);
+            return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
         }
         return $this->sendError('Method Not Allow', [], 405);
     }

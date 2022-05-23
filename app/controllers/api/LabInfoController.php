@@ -54,7 +54,7 @@ class LabInfoController extends Controller
                 $result = $this->labinfoService->add($requestModel->Title, $requestModel->Content);
                 return $result == 'success' ? $this->sendResponse($result, '建立成功') : $this->sendError('建立失敗', $result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -69,7 +69,7 @@ class LabInfoController extends Controller
                 $result = $this->labinfoService->update($requestModel->Id, $requestModel->Title, $requestModel->Content);
                 return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->errors);
+                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
