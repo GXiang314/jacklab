@@ -267,7 +267,7 @@ class ProjectRecordService
             $statement->bindValue(':search', "%".$search."%");
         }
         $statement->execute();        
-        return $statement->fetchAll();;
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function create($request, $tags = null)
