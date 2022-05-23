@@ -37,7 +37,10 @@ class AddBook extends Model{
                 [self::RULE_MAX, 'max' => 50]
             ],
             'Time' => [self::RULE_REQUIRED],
-            'ISBN' => [self::RULE_REQUIRED],
+            'ISBN' => [
+                self::RULE_REQUIRED, 
+                [self::RULE_UNIQUE, 'class' => book::class]
+            ],
             'Authors' => [self::RULE_REQUIRED],
             'Image' => [self::RULE_REQUIRED],
         ];
