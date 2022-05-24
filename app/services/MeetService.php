@@ -152,7 +152,7 @@ class MeetService
     public function getAllMeetPage($search = null)
     {
         $statement =  DbModel::prepare("
-        select count(*) from 
+        select count(DISTINCT meet.Id) from 
         meeting AS meet
             INNER JOIN member AS m ON m.Account = meet.Uploader
             LEFT JOIN student AS s ON s.Account = m.Account
@@ -173,7 +173,7 @@ class MeetService
             or t.Name like :search 
             or meet.Content like :search 
             or mt.Name like :search )
-        " : ""
+        " : "".";"
             ));
         if ($search != null) {
             $statement->bindValue(':search', "%" . $search . "%");
