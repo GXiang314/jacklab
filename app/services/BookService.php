@@ -23,7 +23,11 @@ class BookService{
             b.Publisher like :search  or 
             b.ISBN like :search  or 
             b.Time like :search  
-        ": "").
+        ": "")." 
+        ORDER BY 
+            b.Time desc
+        "
+        .
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
         if ($search != null){

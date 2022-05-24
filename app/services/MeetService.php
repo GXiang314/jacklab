@@ -48,8 +48,13 @@ class MeetService
              or meet.Content like :search 
              or mt.Name like :search 
              )"
-                    : ' ') .
-                " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
+            : ' ') 
+        ." 
+        ORDER BY 
+            meet.Time desc
+        "
+        .
+        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
         if ($search != null) {
             $statement->bindValue(':search', "%" . $search . "%");

@@ -5,6 +5,7 @@ namespace app\services;
 use app\core\DbModel;
 use app\model\album;
 use Exception;
+use php_user_filter;
 
 class AlbumService
 {
@@ -33,6 +34,13 @@ class AlbumService
         }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $index = 0;
+        if($data['list']){
+            foreach($data['list'] as $row){
+                $data['list'][$index]['Image'] = pathinfo($row['Image'], PATHINFO_FILENAME).".".pathinfo($row['Image'], PATHINFO_EXTENSION) ;
+            }
+        }
+        
         $data['page'] = $this->getAllAlbumPage($search);
         return $data;
     }
@@ -72,7 +80,7 @@ class AlbumService
         try {
             if ($this->checkExtensions($file)) {
                 $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                $fileName = md5($file['name'] . time()) . '.' . $extension;
+                $fileName = $file['name'].date("y-m-d h:i:s", time()) . '.' . $extension;
                 /*
                     temp= explode('.',$file_name);
                     $extension = end($temp);
@@ -104,7 +112,7 @@ class AlbumService
             } else {
                 if ($this->checkExtensions($file)) {
                     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                    $fileName = md5($file['name'] . time()) . '.' . $extension;
+                    $fileName = $file['name'].date("y-m-d h:i:s", time()) . '.' . $extension;
                     /*
                         temp= explode('.',$file_name);
                         $extension = end($temp);

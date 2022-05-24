@@ -489,10 +489,14 @@ class MemberService
                 m.CreateTime like :search  or 
                 r.Name like :search  ) " : "")
             .
-            (($academic != null ?
+            (($academic != null) ?
                 " and 
              a.Id = '$academic'             
-            " : ' '))
+            " : ' ')            
+            ." 
+            ORDER BY 
+                m.CreateTime desc
+            "
             .
             " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
             " ;");
@@ -568,7 +572,10 @@ class MemberService
             LEFT JOIN member_role AS mr ON mr.Account = m.Account
             LEFT JOIN role ON role.Id = mr.Role_Id
             LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN teacher AS t ON t.Account = m.Account;      
+            LEFT JOIN teacher AS t ON t.Account = m.Account        
+        ORDER BY 
+            m.CreateTime desc;
+             
         ");
         $statement->execute();
         $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -605,7 +612,7 @@ class MemberService
     }
     /* #endregion */
 
-    /* #region   */
+    /* #region  取得教師頁數*/
     public function getTeacherPage($search = null)
     {
         $search = $this->addSlashes($search);

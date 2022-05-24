@@ -113,7 +113,12 @@ class ProjectRecordService
              or s.Name like :search 
              or t.Name like :search )"
                 : ' ')
-            . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";");
+        ." 
+        ORDER BY 
+            pr.CreateTime desc
+        "
+        . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) .             
+        ";");
         if ($search != null) {
             $statement->bindValue(':search', "%".$search."%");
         }
@@ -179,7 +184,11 @@ class ProjectRecordService
              or s.Name like :search 
              or t.Name like :search )"
                 : ' ')
-            . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
+        ." 
+        ORDER BY 
+            pr.CreateTime desc
+        "        
+        . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
         if ($search != null) {
             $statement->bindValue(':search', "%".$search."%");
         }
