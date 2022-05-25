@@ -35,7 +35,7 @@ class isLoginMiddleware extends Middleware{
                     ]);
                     if(!empty($data) && strtotime(date('Y-m-d h:i:s'))-$result['exp'] < 0 ){
                         $request->addKeys([
-                            'ROLE' => $roledata ?? null,
+                            'ROLE' => $roledata['Role_Id'] ?? null,
                             'USER' => $result['account'],
                             'ADMIN' => $data['IsAdmin'] ?? false
                         ]);
