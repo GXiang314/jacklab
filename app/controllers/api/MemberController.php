@@ -21,7 +21,7 @@ class MemberController extends Controller
     {
         $this->memberService = new MemberService();
         $this->mailService = new MailService();
-        $this->registerMiddleware(new isLoginMiddleware(['updatePassword', 'updateIntroduction', 'updateMemberPhoto', 'getSelfProject']));
+        $this->registerMiddleware(new isLoginMiddleware(['getSelf', 'getSelfProject', 'updatePassword', 'updateIntroduction', 'updateMemberPhoto', 'getSelfProject']));
     }
     /**
      * Get all resource in storage.
@@ -41,13 +41,29 @@ class MemberController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function getSelf(Request $request)
+    {
+        if ($request->isGet()) {
+            $account = $request->getBody()['USER'];
+            $data = $this->memberService->getPublicAccountMember($account);
+            return ($data != []) ? $this->sendResponse($data, '參與專案記錄') : $this->sendResponse('', '沒有資料');
+        }
+        return $this->sendError('Method Not Allow', [], 405);
+    }
+
+    /**
+     * Get student all project record in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function getSelfProject(Request $request)
     {
         if ($request->isGet()) {
             $account = $request->getBody()['USER'];
-            $data = $this->memberService->getSelfProject($account);
             $page = $request->getBody()['page'] ?? 1;
             $page = (!is_numeric($page)) ? 1 : intval($page);
+            $data = $this->memberService->getSelfProject($account, $page);
             return ($data != []) ? $this->sendResponse($data, '參與專案記錄') : $this->sendResponse('', '沒有資料');
         }
         return $this->sendError('Method Not Allow', [], 405);
