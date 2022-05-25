@@ -48,7 +48,11 @@ $app->router->post('/api/resetPassword', [MemberController::class, 'resetPasswor
 
 $app->router->get('/api/member', [MemberController::class, 'index']); //取得所有會員公開資料
 $app->router->get('/api/member?', [MemberController::class, 'show']); //取得該會員公開資料
-$app->router->get('/api/member/game', [MemberController::class, 'getSelfGameRecord']); //取得自己競賽記錄列表
+// $app->router->get('/api/member/game', [MemberController::class, 'getSelfGameRecord']); //取得自己競賽記錄列表
+$app->router->get('/api/member/self', [MemberController::class, 'getSelf']); //取得自己參與之專案列表
+$app->router->get('/api/member/project', [MemberController::class, 'getSelfProject']); //取得自己參與之專案列表
+$app->router->get('/api/member/project?', [MemberController::class, 'getSelfProject']); //取得自己參與之專案列表
+$app->router->get('/api/member/info', [MemberController::class, 'updateIntroduction']); //會員更改個人簡介
 $app->router->put('/api/member/pwd', [MemberController::class, 'updatePassword']); //會員更改密碼
 $app->router->put('/api/member/info', [MemberController::class, 'updateIntroduction']); //會員更改個人簡介
 $app->router->put('/api/member/photo', [MemberController::class, 'updateMemberPhoto']); //會員更改個人大頭貼
