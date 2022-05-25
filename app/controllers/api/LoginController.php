@@ -36,7 +36,8 @@ class LoginController extends Controller
                         $member = $this->memberService->getAccount($data['Account']);
                         $res['token'] = $this->jwtService->Jwt_user_encode($member['Account'], $member['Role']);
                         $res['admin'] = $member['IsAdmin'];
-                        $res['role'] = $member['Role'];
+                        $res['role'] = $member['Role']['Id'] ?? null;
+                        $res['account'] = $member['Account'];
                         return $this->sendResponse($res, "登入成功");
                     } else {
                         return $this->sendError('信箱未完成驗證，請查看信箱', [], 401);
