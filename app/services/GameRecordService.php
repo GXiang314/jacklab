@@ -276,7 +276,7 @@ class GameRecordService
             $idlist = explode(',', $idList);
             foreach ($idlist as $id) {
                 game_record::update('game_record', [
-                    'Deleted' => date('Y-m-d h:i:s', time())
+                    'Deleted' => date('Y-m-d H:i:s', time())
                 ], [
                     'Id' => $id
                 ]);

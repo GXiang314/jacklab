@@ -29,7 +29,7 @@ class album extends DbModel{
                 $this->{$key} = $value;
             }            
         }        
-        $this->CreateTime = date('Y-m-d h:i:s');   
+        $this->CreateTime = date('Y-m-d H:i:s');   
     }
 
     public function save()

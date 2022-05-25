@@ -283,7 +283,7 @@ class ProjectRecordService
     {
         try {
             if ($this->tagUploadValidate($tags ?? [])) return "最多上傳五個標籤";
-            $now = date("Y-m-d h:i:s", time());
+            $now = date("Y-m-d H:i:s", time());
             project::create('project', [
                 'Name' => $request['Name'],
                 'Description' => $request['Description'],
@@ -323,7 +323,7 @@ class ProjectRecordService
                 proj_record::create('proj_record', [
                     'Id' => $id,
                     'Remark' => $request['Remark'],
-                    'CreateTime' => date("Y-m-d h:i:s"),
+                    'CreateTime' => date("Y-m-d H:i:s"),
                     'Project_Id' => $request['Project_Id'],
                     'Uploader' => $request['USER'],
                 ]);
@@ -448,7 +448,7 @@ class ProjectRecordService
             $idlist = explode(',', $idList);
             foreach ($idlist as $id) {
                 project::update('project', [
-                    'Deleted' => date('Y-m-d h:i:s', time())
+                    'Deleted' => date('Y-m-d H:i:s', time())
                 ], [
                     'Id' => $id
                 ]);
@@ -465,7 +465,7 @@ class ProjectRecordService
             $idlist = explode(',', $idList);
             foreach ($idlist as $id) {
                 proj_record::update('proj_record', [
-                    'Deleted' => date('Y-m-d h:i:s', time())
+                    'Deleted' => date('Y-m-d H:i:s', time())
                 ], [
                     'Id' => $id
                 ]);

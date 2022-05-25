@@ -384,7 +384,7 @@ class MeetService
             $idlist = explode(',', $idList);
             foreach ($idlist as $id) {
                 meeting::update('meeting', [
-                    'Deleted' => date('Y-m-d h:i:s', time())
+                    'Deleted' => date('Y-m-d H:i:s', time())
                 ], [
                     'Id' => $id
                 ]);
