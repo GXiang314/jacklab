@@ -37,7 +37,8 @@ class AlbumService
         $index = 0;
         if($data['list']){
             foreach($data['list'] as $row){
-                $data['list'][$index]['Image'] = pathinfo($row['Image'], PATHINFO_FILENAME).".".pathinfo($row['Image'], PATHINFO_EXTENSION) ;
+                $data['list'][$index]['File'] = pathinfo($row['Image'], PATHINFO_FILENAME).".".pathinfo($row['Image'], PATHINFO_EXTENSION) ;
+                $index++;
             }
         }
         
