@@ -12,7 +12,16 @@ class AlbumService
 
     public function select()
     {
-        return album::get('album');
+        $statement = DbModel::prepare("
+        select 
+            a.* 
+        from 
+            album as a
+        order by 
+            a.CreateTime desc;    
+        ");
+        $statement->execute();
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function getAll($page = 1, $search = null)
@@ -27,6 +36,10 @@ class AlbumService
         " Where 
             a.Title like :search         
         " : "").
+        "
+        Order by a.CreateTime desc
+        
+        ".
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
         if ($search != null){
