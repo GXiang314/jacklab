@@ -113,14 +113,14 @@ class ProjectRecordService
              or s.Name like :search 
              or t.Name like :search )"
                 : ' ')
-        ." 
+            . " 
         ORDER BY 
             pr.CreateTime desc
         "
-        . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) .             
-        ";");
+            . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) .
+            ";");
         if ($search != null) {
-            $statement->bindValue(':search', "%".$search."%");
+            $statement->bindValue(':search', "%" . $search . "%");
         }
         $statement->execute();
         $data['Record'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -184,13 +184,13 @@ class ProjectRecordService
              or s.Name like :search 
              or t.Name like :search )"
                 : ' ')
-        ." 
+            . " 
         ORDER BY 
             pr.CreateTime desc
-        "        
-        . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
+        "
+            . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
         if ($search != null) {
-            $statement->bindValue(':search', "%".$search."%");
+            $statement->bindValue(':search', "%" . $search . "%");
         }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -247,7 +247,7 @@ class ProjectRecordService
                 : ' '
             ));
         if ($search != null) {
-            $statement->bindValue(':search', "%".$search."%");
+            $statement->bindValue(':search', "%" . $search . "%");
         }
         $statement->execute();
         $count = $statement->fetchColumn();
@@ -266,16 +266,16 @@ class ProjectRecordService
         $statement = DbModel::prepare("
         SELECT DISTINCT Name 
         FROM
-            proj_tag ".
-        ((!empty($search)) ? 
-        "Where 
+            proj_tag " .
+            ((!empty($search)) ?
+                "Where 
             Name like :search 
-        ":"").
-        ";");
-        if(!empty($search)){
-            $statement->bindValue(':search', "%".$search."%");
+        " : "") .
+            ";");
+        if (!empty($search)) {
+            $statement->bindValue(':search', "%" . $search . "%");
         }
-        $statement->execute();        
+        $statement->execute();
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 

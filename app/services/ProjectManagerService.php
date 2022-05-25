@@ -164,8 +164,8 @@ class ProjectManagerService
     {
         $search = $this->addSlashes($search);
         $statement =  DbModel::prepare("
-        SELECT DISTINCT
-            count(*)
+        SELECT 
+            count(DISTINCT p.Id)
         FROM
             project AS p
             LEFT JOIN student AS s ON s.Account = p.Creater
