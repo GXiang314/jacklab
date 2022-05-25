@@ -80,7 +80,7 @@ class AlbumService
         try {
             if ($this->checkExtensions($file)) {
                 $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                $fileName = $file['name'].date("y-m-d h:i:s", time()) . '.' . $extension;
+                $fileName = pathinfo($file['name'], PATHINFO_FILENAME).date("ymdhis", time()) . '.' . $extension;
                 /*
                     temp= explode('.',$file_name);
                     $extension = end($temp);
@@ -112,7 +112,7 @@ class AlbumService
             } else {
                 if ($this->checkExtensions($file)) {
                     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                    $fileName = $file['name'].date("y-m-d h:i:s", time()) . '.' . $extension;
+                    $fileName = pathinfo($file['name'], PATHINFO_FILENAME).date("ymdhis", time()) . '.' . $extension;
                     /*
                         temp= explode('.',$file_name);
                         $extension = end($temp);
