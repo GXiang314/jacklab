@@ -492,8 +492,8 @@ class MemberService
             (($academic != null) ?
                 " and 
              a.Id = '$academic'             
-            " : ' ')            
-            ." 
+            " : ' ')
+            . " 
             ORDER BY 
                 m.CreateTime desc
             "
@@ -501,7 +501,7 @@ class MemberService
             " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
             " ;");
         if ($search != null) {
-            $statement->bindValue(':search', "%".$search."%");
+            $statement->bindValue(':search', "%" . $search . "%");
         }
         $statement->execute();
         $datalist['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -539,7 +539,7 @@ class MemberService
                 : ' '
             ));
         if ($search != null) {
-            $statement->bindValue(':search', "%".$search."%");
+            $statement->bindValue(':search', "%" . $search . "%");
         }
         $statement->execute();
         $count = $statement->fetchColumn();
@@ -677,32 +677,67 @@ class MemberService
 
     /* #endregion */
 
-    /* #region  取得該學生競賽記錄 */
-    public function getStudentGameRecord($student_id)
+    /* #region  取得自己參與的專案 */
+    public function getSelfProject($account, $page = 1)
     {
-        try {
-            $statement = DbModel::prepare("
-            SELECT
-                gr.`Name`,
-                gr.`Game_group`,
-                gr.`Ranking`,
-                gr.`Game_time`,
-                gt.`Name` as Type_name
-                
-            FROM
-                student AS s
-                LEFT JOIN game_member gm ON gm.Student_Id = s.Id
-                LEFT JOIN game_record AS gr ON gr.Id = gm.Game_record 
-                INNER JOIN game_type gt on gt.Id = gr.Game_type
-            WHERE
-                s.Id = '{$student_id}';");
-            $statement->execute();
-            $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-        return $data;
+        $statement = DbModel::prepare("
+        SELECT DISTINCT 
+            pt.Name as Type_name,
+            p.Name,
+            p.CreateTime
+        FROM
+            project as p 
+            INNER JOIN proj_type as pt ON p.proj_type = pt.Id 
+            LEFT JOIN proj_member as pm ON p.Id = pm.Project_Id
+        Where pm.Account = '$account'
+        " .
+            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
+        $statement->execute();
+        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['page'] = $this->getSelfProjectPage($account);
+        return ;
     }
+
+    public function getSelfProjectPage($account)
+    {
+        $statement = DbModel::prepare("
+        SELECT count( DISTINCT p.Id) 
+        FROM
+            project as p 
+            INNER JOIN proj_type as pt ON p.proj_type = pt.Id 
+            LEFT JOIN proj_member as pm ON p.Id = pm.Project_Id
+        Where pm.Account = '$account' ;");
+        $statement->execute();
+        return $statement->fetchColumn();
+    }
+    /* #endregion */
+
+    /* #region  取得該學生競賽記錄 */
+    // public function getStudentGameRecord($student_id)
+    // {
+    //     try {
+    //         $statement = DbModel::prepare("
+    //         SELECT
+    //             gr.`Name`,
+    //             gr.`Game_group`,
+    //             gr.`Ranking`,
+    //             gr.`Game_time`,
+    //             gt.`Name` as Type_name
+
+    //         FROM
+    //             student AS s
+    //             LEFT JOIN game_member gm ON gm.Student_Id = s.Id
+    //             LEFT JOIN game_record AS gr ON gr.Id = gm.Game_record 
+    //             INNER JOIN game_type gt on gt.Id = gr.Game_type
+    //         WHERE
+    //             s.Id = '{$student_id}';");
+    //         $statement->execute();
+    //         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+    //     } catch (Exception $e) {
+    //         return $e->getMessage();
+    //     }
+    //     return $data;
+    // }
     /* #endregion */
 
     /* #region  登入密碼確認 */

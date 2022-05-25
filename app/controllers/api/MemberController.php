@@ -21,7 +21,7 @@ class MemberController extends Controller
     {
         $this->memberService = new MemberService();
         $this->mailService = new MailService();
-        $this->registerMiddleware(new isLoginMiddleware(['updatePassword', 'updateIntroduction', 'updateMemberPhoto']));
+        $this->registerMiddleware(new isLoginMiddleware(['updatePassword', 'updateIntroduction', 'updateMemberPhoto', 'getSelfProject']));
     }
     /**
      * Get all resource in storage.
@@ -36,20 +36,38 @@ class MemberController extends Controller
     }
 
     /**
-     * Get student all game record in storage.
+     * Get student all project record in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function getSelfGameRecord(Request $request)
+    public function getSelfProject(Request $request)
     {
         if ($request->isGet()) {
             $account = $request->getBody()['USER'];
-            $data = $this->memberService->getStudentGameRecord($account);
-            return ($data != []) ? $this->sendResponse($data, '所有競賽記錄') : $this->sendResponse('', '沒有資料');
+            $data = $this->memberService->getSelfProject($account);
+            $page = $request->getBody()['page'] ?? 1;
+            $page = (!is_numeric($page)) ? 1 : intval($page);
+            return ($data != []) ? $this->sendResponse($data, '參與專案記錄') : $this->sendResponse('', '沒有資料');
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
+
+    // /**
+    //  * Get student all game record in storage.
+    //  *
+    //  * @param  \Illuminate\Http\Request  $request
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function getSelfGameRecord(Request $request)
+    // {
+    //     if ($request->isGet()) {
+    //         $account = $request->getBody()['USER'];
+    //         $data = $this->memberService->getStudentGameRecord($account);
+    //         return ($data != []) ? $this->sendResponse($data, '所有競賽記錄') : $this->sendResponse('', '沒有資料');
+    //     }
+    //     return $this->sendError('Method Not Allow', [], 405);
+    // }
 
     /**
      * Get one resource in storage.
