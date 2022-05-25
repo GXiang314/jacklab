@@ -103,7 +103,7 @@ class AlbumService
                 move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
                 album::create('album', [
                     'Title' => $title,
-                    'CreateTime' => date("Y-m-d h:i:s"),
+                    'CreateTime' => date("Y-m-d H:i:s"),
                     'Image' => $path
                 ]);
             } else {
