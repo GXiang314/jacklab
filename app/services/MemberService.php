@@ -675,6 +675,23 @@ class MemberService
         return $statement->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public function getPublicAccountMember($account)
+    {
+        try {
+            $statement = DbModel::prepare("
+            select s.Id, s.Name,s.Introduction, s.Image, s.Account, m.CreateTime, c.Name as ClassName from student as s, member as m, classes as c
+            where 
+                s.Account = m.Account and
+                m.Account = '$account' and
+                s.Class_Id = c.Id 
+            limit 1;");
+            $statement->execute();
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return $statement->fetch(\PDO::FETCH_ASSOC);
+    }
+
     /* #endregion */
 
     /* #region  取得自己參與的專案 */
@@ -682,6 +699,7 @@ class MemberService
     {
         $statement = DbModel::prepare("
         SELECT DISTINCT 
+            p.Id,
             pt.Name as Type_name,
             p.Name,
             p.CreateTime
@@ -689,13 +707,17 @@ class MemberService
             project as p 
             INNER JOIN proj_type as pt ON p.proj_type = pt.Id 
             LEFT JOIN proj_member as pm ON p.Id = pm.Project_Id
-        Where pm.Account = '$account'
+        Where pm.Account = '$account' and
+         (p.Deleted LIKE ''  OR isnull( p.Deleted )) 
+
+        Order By 
+            p.CreateTime desc 
         " .
             " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getSelfProjectPage($account);
-        return ;
+        return $data;
     }
 
     public function getSelfProjectPage($account)
