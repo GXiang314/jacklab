@@ -730,7 +730,9 @@ class MemberService
             LEFT JOIN proj_member as pm ON p.Id = pm.Project_Id
         Where pm.Account = '$account' ;");
         $statement->execute();
-        return $statement->fetchColumn();
+        $count = $statement->fetchColumn();
+        $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        return $page == 0 ? 1 : $page;
     }
     /* #endregion */
 
