@@ -441,7 +441,7 @@ class MeetService
         $allow_extensions = explode(',', $_ENV['ALLOW_EXTENSIONS']);
         $check_Array = [];
         foreach ($file['name'] as $key => $value) {
-            $check_Array[] = pathinfo($value, PATHINFO_EXTENSION);
+            $check_Array[] = strtolower(pathinfo($value, PATHINFO_EXTENSION));
         }
         $diff = array_diff($check_Array, $allow_extensions);
         return empty($diff);
