@@ -40,6 +40,7 @@ $app = new Application($config);
 
 
 $app->router->get('/api/emailvalidate?', [MemberController::class, 'emailvalidate']); //信箱驗證
+$app->router->get('/api/login', [LoginController::class, 'isLogin']); //
 $app->router->post('/api/login', [LoginController::class, 'login']); //登入
 $app->router->post('/api/forgetPassword', [MemberController::class, 'forgetPassword']); //發送重設密碼請求
 $app->router->post('/api/resetCodeValidate', [MemberController::class, 'resetCodeValidate']); //重設密碼驗證
