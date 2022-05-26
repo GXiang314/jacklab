@@ -600,10 +600,14 @@ class MemberService
             t.Title like '%{$search}%' or 
             t.Introduction like '%{$search}%' or 
             t.Account like '%{$search}%'         
-        " :
-                '') .
-            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
-            ";");
+        " :'') 
+        .
+        " Order by 
+            t.Id desc 
+        "
+        .
+        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
+        ";");
 
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -839,7 +843,7 @@ class MemberService
     }
     /* #endregion */
 
-    public function getStudent($academic = '%')
+    public function getStudent($time = '%')
     {
         $statement = DbModel::prepare("
         SELECT
@@ -854,13 +858,27 @@ class MemberService
             INNER JOIN academic AS a ON a.Id = c.Academic_Id
             INNER JOIN member AS m ON m.Account = s.Account 
         WHERE
-            a.Id like :Academic_Id
+            m.CreateTime like :time
         ORDER BY
+            a.Id ASC,
             m.CreateTime DESC;        
         ");
-        $statement->bindValue(":Academic_Id", $academic);
+        $statement->bindValue(":time", "%".$time."%");
         $statement->execute();
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        if ($data) {
+            $index = 0;
+            $time = [];
+            foreach ($data['list'] as $row) {   
+                $createTime = substr($row['CreateTime'], 0, 4);          
+                $data['list'][$index]['CreateTime'] = $createTime;
+                if(!in_array($createTime, $time, true)){
+                    array_push($time, $createTime);
+                }
+                $index++;
+            }
+            $data['time'] = $time;
+        }
         return $data;
     }
 }

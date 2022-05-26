@@ -40,7 +40,12 @@ class RoleService
         (($search != null)?
         " Where 
             r.Name like :search         
-        " : "").
+        " : "")
+        .
+        " Order by 
+            Id desc 
+        "
+        .
         " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
         );
         if ($search != null) {
