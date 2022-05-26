@@ -21,7 +21,7 @@ class hasRoleMiddleware extends Middleware
     public function execute(Request $request)
     {
         if (in_array(Application::$app->controller->action, $this->actions)) {
-            if($request->getBody()['ADMIN'] ?? false) return $request;
+            if ($request->getBody()['ADMIN'] ?? false) return $request;
             $role = $request->getBody()['ROLE'];
             $className = pathinfo(Application::$app->controller::class, PATHINFO_FILENAME);
 
@@ -45,7 +45,7 @@ class hasRoleMiddleware extends Middleware
                 $userPrmUrl[] = $val['Url'];
             }
             // in_array($nowUrl,$userPrmUrl)
-            if (in_array($nowUrl, $userPrmUrl)) {               
+            if (in_array($nowUrl, $userPrmUrl)) {
                 return $request;
             } else {
                 echo Response::json([
