@@ -64,7 +64,7 @@ class MeetController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->meetService->add($data, $requestModel->Files ?? null, $requestModel->Tag ?? null);
-                return ($res == 'success') ? $this->sendResponse($res, '新增成功') : $this->sendError('新增失敗', $res);
+                return ($res == 'success') ? $this->sendResponse($res, '新增成功') : $this->sendError($res);
             } else {
                 return $this->sendError($requestModel->getFirstError());
             }
@@ -86,7 +86,7 @@ class MeetController extends Controller
                     $requestModel->Tag ?? null,
                     $requestModel->IsClearOld ?? [],
                 );
-                return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
+                return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError($res);
             } else {
                 return $this->sendError($requestModel->getFirstError());
             }
@@ -99,7 +99,7 @@ class MeetController extends Controller
         if ($request->isDelete()) {
             $id = $request->getBody()['id'] ?? '';
             $result = $this->meetService->delete($id);
-            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError('刪除失敗', $result);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }

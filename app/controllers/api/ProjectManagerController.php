@@ -24,7 +24,7 @@ class ProjectManagerController extends Controller
     public function selector()
     {
         $data = $this->projectManagerService->getAllNoPaging();
-        return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendError('沒有資料');
+        return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendResponse('', '沒有資料');
     }
 
     public function index(Request $request)
@@ -35,7 +35,7 @@ class ProjectManagerController extends Controller
             $search = $request->getBody()['search'] ?? '';
             $search = (empty(trim($search))) ? null : $search;
             $data = $this->projectManagerService->getAll($page, $search);
-            return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendError('沒有資料');
+            return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendResponse('', '沒有資料');
         }
         return $this->sendError("Method Not Allow", [], 405);
     }
@@ -48,7 +48,7 @@ class ProjectManagerController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->projectManagerService->add($data['Name']);
-                return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError('建立失敗', $res);
+                return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError($res);
             } else {
                 return $this->sendError($requestModel->getFirstError());
             }
@@ -79,7 +79,7 @@ class ProjectManagerController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->projectManagerService->update($data['Id'], $data['Name']);
-                return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
+                return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError($res);
             } else {
                 return $this->sendError($requestModel->getFirstError());
             }
@@ -92,7 +92,7 @@ class ProjectManagerController extends Controller
         if ($request->isDelete()) {
             $id = $request->getBody()['id'] ?? '';
             $result = $this->projectManagerService->delete($id);
-            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError('刪除失敗', $result);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }

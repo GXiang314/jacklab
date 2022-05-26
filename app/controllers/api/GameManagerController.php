@@ -31,9 +31,9 @@ class GameManagerController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->gameManagerService->add($data['Name']);
-                return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError('建立失敗', $res);
+                return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError($res);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
+                return $this->sendError($requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow', [], 405);
@@ -57,9 +57,9 @@ class GameManagerController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $res = $this->gameManagerService->update($data['Id'], $data['Name']);
-                return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError('修改失敗', $res);
+                return ($res == 'success') ? $this->sendResponse($res, '修改成功') : $this->sendError( $res);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
+                return $this->sendError($requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -70,7 +70,7 @@ class GameManagerController extends Controller
         if ($request->isDelete()) {
             $id = $request->getBody()['id'] ?? '';
             $result = $this->gameManagerService->delete($id);
-            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError('刪除失敗', $result);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError( $result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }

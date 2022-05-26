@@ -114,9 +114,9 @@ class MemberController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->memberService->updatePassword($data['USER'], $requestModel->oldpassword, $requestModel->password);
-                return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
+                return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError($result);
             }
-            return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
+            return $this->sendError($requestModel->getFirstError());
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -132,7 +132,7 @@ class MemberController extends Controller
         if ($request->isPut()) {
             $data = $request->getJson();
             $result = $this->memberService->updateIntroduction($data['USER'], $data['text']);
-            return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
+            return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -151,9 +151,9 @@ class MemberController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->memberService->updatePhoto($requestModel->USER, $requestModel->File);
-                return $result == 'success' ? $this->sendResponse($result, '變更成功') : $this->sendError('變更失敗', $result);
+                return $result == 'success' ? $this->sendResponse($result, '變更成功') : $this->sendError($result);
             }
-            return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
+            return $this->sendError($requestModel->getFirstError());
         }
         return $this->sendError('Method Not Allow', [], 405);
     }
@@ -172,9 +172,9 @@ class MemberController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->memberService->emailTokenCheck($data['email'], $data['token']);
-                return $result == 'success' ? $this->sendResponse($result, '驗證成功') : $this->sendError('驗證失敗', $result);
+                return $result == 'success' ? $this->sendResponse($result, '驗證成功') : $this->sendError('驗證失敗');
             } else {
-                return $this->sendError('傳送資料錯誤', $requestModel->getFirstError());
+                return $this->sendError('傳送資料錯誤');
             }
         }
         return $this->sendError('Method Not Allow', [], 405);

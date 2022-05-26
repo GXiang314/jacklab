@@ -45,9 +45,9 @@ class AcademicController extends Controller
             $requestModel->loadData($request->getJson());
             if ($requestModel->validate()) {
                 $result = $this->academicService->add($requestModel->Name);
-                return $result == 'success' ? $this->sendResponse($result, '新增成功') : $this->sendError('新增失敗', $result);
+                return $result == 'success' ? $this->sendResponse($result, '新增成功') : $this->sendError($result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
+                return $this->sendError($requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -60,9 +60,9 @@ class AcademicController extends Controller
             $requestModel->loadData($request->getJson());
             if ($requestModel->validate()) {
                 $result = $this->academicService->update($requestModel->Id, $requestModel->Name);
-                return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError('修改失敗', $result);
+                return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError($result);
             } else {
-                return $this->sendError('欄位格式錯誤', $requestModel->getFirstError());
+                return $this->sendError($requestModel->getFirstError());
             }
         }
         return $this->sendError('Method Not Allow.', [], 405);
@@ -73,7 +73,7 @@ class AcademicController extends Controller
         if ($request->isDelete()) {
             $id = $request->getBody()['id'] ?? '';
             $result = $this->academicService->delete($id);
-            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError('刪除失敗', $result);
+            return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError($result);
         }
         return $this->sendError('Method Not Allow.', [], 405);
     }
