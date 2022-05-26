@@ -23,6 +23,19 @@ class MemberController extends Controller
         $this->mailService = new MailService();
         $this->registerMiddleware(new isLoginMiddleware(['getSelf', 'getSelfProject', 'updatePassword', 'updateIntroduction', 'updateMemberPhoto', 'getSelfProject']));
     }
+
+    public function getAcademicStudent(Request $request)
+    {
+        if($request->isGet()){
+            $academic_id = $request->getBody()['id'] ?? '%';
+            if(empty($academic_id)) $academic_id = 1;
+            $data = $this->memberService->getStudent($academic_id);
+            return $data ? $this->sendResponse($data, '成員列表') : $this->sendResponse('', '沒有資料');
+        }
+        return $this->sendError('Method Not Allow', [], 405);
+    }
+
+
     /**
      * Get all resource in storage.
      *
