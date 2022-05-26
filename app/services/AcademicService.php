@@ -72,7 +72,6 @@ class AcademicService{
     private function install(){
         if(academic::count('academic') == 0){
             $acadmicArray = [
-            '碩士在職專班',
             '碩士班',
             '大學部',
             '二技部',
