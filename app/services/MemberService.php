@@ -723,12 +723,15 @@ class MemberService
     public function getSelfProjectPage($account)
     {
         $statement = DbModel::prepare("
-        SELECT count( DISTINCT p.Id) 
+        SELECT count(DISTINCT p.Id) 
         FROM
             project as p 
             INNER JOIN proj_type as pt ON p.proj_type = pt.Id 
             LEFT JOIN proj_member as pm ON p.Id = pm.Project_Id
-        Where pm.Account = '$account' ;");
+        Where 
+        pm.Account = '$account' 
+        and
+        (p.Deleted LIKE ''  OR isnull( p.Deleted )) ;");
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
@@ -835,4 +838,29 @@ class MemberService
         return $res ?? false;
     }
     /* #endregion */
+
+    public function getStudent($academic = '%')
+    {
+        $statement = DbModel::prepare("
+        SELECT
+            s.Id,
+            s.Name,
+            a.NAME AS Academic_name,
+            s.Image,
+            m.CreateTime 
+        FROM
+            student AS s
+            INNER JOIN classes AS c ON c.Id = s.Class_Id
+            INNER JOIN academic AS a ON a.Id = c.Academic_Id
+            INNER JOIN member AS m ON m.Account = s.Account 
+        WHERE
+            a.Id like :Academic_Id
+        ORDER BY
+            m.CreateTime DESC;        
+        ");
+        $statement->bindValue(":Academic_Id", $academic);
+        $statement->execute();
+        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        return $data;
+    }
 }
