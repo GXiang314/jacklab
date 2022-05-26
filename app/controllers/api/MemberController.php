@@ -27,9 +27,9 @@ class MemberController extends Controller
     public function getAcademicStudent(Request $request)
     {
         if($request->isGet()){
-            $academic_id = $request->getBody()['id'] ?? '%';
-            if(empty($academic_id)) $academic_id = 1;
-            $data = $this->memberService->getStudent($academic_id);
+            $time = $request->getBody()['time'] ?? '%';
+            if(empty($time)) $time = '%';
+            $data = $this->memberService->getStudent($time);
             return $data ? $this->sendResponse($data, '成員列表') : $this->sendResponse('', '沒有資料');
         }
         return $this->sendError('Method Not Allow', [], 405);
