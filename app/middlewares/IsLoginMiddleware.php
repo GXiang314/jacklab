@@ -38,6 +38,7 @@ class isLoginMiddleware extends Middleware
                         $request->addKeys([
                             'ROLE' => $roledata['Role_Id'] ?? null,
                             'USER' => $result['account'],
+                            'TOKEN' => $token,
                             'ADMIN' => $data['IsAdmin'] ?? false
                         ]);
                         return $request;
