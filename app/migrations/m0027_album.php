@@ -2,7 +2,7 @@
 
 use app\core\Application;
 
-class m0026_album{
+class m0027_album{
 
     public function up()
     {

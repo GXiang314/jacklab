@@ -2,7 +2,7 @@
 
 use app\core\Application;
 
-class m0027_reset_password{
+class m0029_reset_password{
 
     public function up()
     {

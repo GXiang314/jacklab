@@ -2,7 +2,7 @@
 
 use app\core\Application;
 
-class m0024_permission{
+class m0025_permission{
 
     public function up()
     {
@@ -12,6 +12,7 @@ class m0024_permission{
             `Id` int UNSIGNED NOT NULL COMMENT 'PK',
             `Name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '權限名稱',
             `Url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '路由',
+            `Permission_group` varchar(20) NOT NULL COMMENT 'permission_group.Id',
             PRIMARY KEY (`Id`) USING BTREE
           ) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact;
         ";
