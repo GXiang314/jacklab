@@ -4,22 +4,20 @@ namespace app\model;
 
 use app\core\DbModel;
 
-class permission extends DbModel{
+class permission_group extends DbModel{
 
-    public int $Id;
-    public string $Permission_group;    
+    public string $Id;
     public string $Name;    
-    public string $Url;    
 
 
     public function table(): string
     {
-        return 'permission';
+        return 'permission_group';
     }
 
     public function attributes(): array
     {
-        return ['Permission_group','Name', 'Url'];
+        return ['Id','Name'];
     }
 
     public function save()
@@ -30,7 +28,7 @@ class permission extends DbModel{
     public function rules(): array
     {            
         return [
-            'Permission_group' => [
+            'Id' => [
                 self::RULE_REQUIRED,
                 [self::RULE_MAX,'max'=>20], 
             ],
@@ -38,9 +36,6 @@ class permission extends DbModel{
                 self::RULE_REQUIRED,
                 [self::RULE_MAX,'max'=>20],                
             ],
-            'Url' => [
-                self::RULE_REQUIRED
-            ]
         ];
     }
 
