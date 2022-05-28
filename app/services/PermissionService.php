@@ -16,7 +16,20 @@ class PermissionService
 
     public function getAll()
     {
-        $data = permission::get('permission');
+        $statement = DbModel::prepare("
+        select 
+            pg.*
+        from 
+            permission_group as pg;
+        ");
+        $statement->execute();
+        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $index = 0;
+        foreach ($data as $row) {
+            $data[$index++]['list'] = permission::get('permission', [
+                'Permission_group' => $row['Id']
+            ]);
+        }
         return $data;
     }
 
@@ -38,7 +51,7 @@ class PermissionService
             '編輯專案' => ['ProjectRecordController@update', 'P001'],
             '刪除專案記錄' => ['ProjectRecordController@destroyRecord', 'P001'],
 
-            '刪除專案' => ['ProjectRecordController@destroy', 'P002'],           
+            '刪除專案' => ['ProjectRecordController@destroy', 'P002'],
 
             '新增會議記錄' => ['MeetController@store', 'M001'],
             '編輯會議記錄' => ['MeetController@update', 'M001'],
@@ -51,7 +64,7 @@ class PermissionService
         if ($dbCount == 0) {
             foreach ($permission_Group as $pKey => $pValue) {
                 permission_group::create('permission_group', [
-                    'Id' => $pValue,                    
+                    'Id' => $pValue,
                     'Name' => $pKey,
                 ]);
                 $index += 1;
@@ -76,7 +89,7 @@ class PermissionService
         if ($dbCount == 0) {
             foreach ($permission_Array as $pKey => $pValue) {
                 permission::create('permission', [
-                    'Id' => $index,                    
+                    'Id' => $index,
                     'Name' => $pKey,
                     'Url' => $pValue[0],
                     'Permission_group' => $pValue[1],
