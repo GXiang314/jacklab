@@ -52,11 +52,11 @@ class ProjectManagerService
             }
             $statement->execute();
             $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = null;
             $data['page'] = $this->getAllTypePage($search);
         } catch (Exception $e) {
             return $e->getMessage();
         }
-
         return $data;
     }
 
@@ -78,6 +78,7 @@ class ProjectManagerService
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        $statement = null;
         return $page == 0 ? 1 : $page;
     }
 
@@ -127,6 +128,7 @@ class ProjectManagerService
         }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement = null;
         if (!empty($data)) {
             $index = 0;
             foreach ($data['list'] as $row) {
@@ -160,6 +162,7 @@ class ProjectManagerService
                 $index++;
             }
         }
+        $statement = null;
         $data['page'] = $this->getProjectListPage($id, $search);
         return $data;
     }
@@ -197,6 +200,7 @@ class ProjectManagerService
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        $statement = null;
         return $page == 0 ? 1 : $page;
     }
     public function add(string $name)
@@ -279,6 +283,7 @@ class ProjectManagerService
         ");
         $statement->execute();
         $id = $statement->fetch();
+        $statement = null;
         return (isset($id['Id'])) ? $id['Id'] + 1 : 1;
     }
 }

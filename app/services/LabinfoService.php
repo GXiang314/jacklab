@@ -39,6 +39,7 @@ class LabinfoService{
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getAllInfoPage($search);
+        $statement = null;
         return $data;
     }
 
@@ -69,6 +70,7 @@ class LabinfoService{
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        $statement = null;
         return $page == 0 ? 1 : $page;
     }
 

@@ -43,6 +43,7 @@ class ProjectRecordService
             ;");
         $statement->execute();
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
+        $statement = null;
         if (empty($data)) return "";
 
         $statement = project::prepare("
@@ -68,6 +69,7 @@ class ProjectRecordService
             p.id = '{$project_Id}';");
         $statement->execute();
         $member = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement = null;
         $data['Member'] = $member;
 
         $statement = project::prepare("
@@ -80,6 +82,7 @@ class ProjectRecordService
             p.id = '{$project_Id}';");
         $statement->execute();
         $tag = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement = null;
         $data['Tag'] = $tag ?? [];
 
         $statement = proj_record::prepare("
@@ -124,6 +127,7 @@ class ProjectRecordService
         }
         $statement->execute();
         $data['Record'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement = null;
         $data['page'] = $this->getRecordListPage($project_Id, $search);
         if (!empty($data['Record'])) {
             $index = 0;
@@ -145,6 +149,7 @@ class ProjectRecordService
                     $data['Record'][$index]['File'] = [];
                 }
                 $index++;
+                $statement = null;
             }
         }
         return $data;
@@ -194,6 +199,7 @@ class ProjectRecordService
         }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement = null;
         $data['page'] = $this->getRecordListPage($project_Id, $search);
         if (!empty($data['list'])) {
             $index = 0;
@@ -209,6 +215,7 @@ class ProjectRecordService
                     pf.Proj_record = '{$row['Id']}';");
                 $statement->execute();
                 $file = $statement->fetch(\PDO::FETCH_ASSOC);
+                $statement = null;
                 if (!empty($file)) {
                     $data['list'][$index]['File'] = $file;
                 } else {
@@ -251,6 +258,7 @@ class ProjectRecordService
         }
         $statement->execute();
         $count = $statement->fetchColumn();
+        $statement = null;
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
         return $page == 0 ? 1 : $page;
     }
@@ -276,7 +284,9 @@ class ProjectRecordService
             $statement->bindValue(':search', "%" . $search . "%");
         }
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement = null;
+        return $data;
     }
 
     public function create($request, $tags = null)

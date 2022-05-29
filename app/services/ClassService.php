@@ -104,6 +104,7 @@ class ClassService{
         ");
         $statement->execute();
         $id = $statement->fetch();
+        $statement = null;
         return (isset($id['Id'])) ? $id['Id'] + 1 : 1;
     }
 }

@@ -82,6 +82,7 @@ class MeetService
                 $index++;
             }
         }
+        $statement = null;
         return $data;
     }
 
@@ -151,6 +152,7 @@ class MeetService
             }
         }
 
+        $statement = null;
         return $data;
     }
 
@@ -186,6 +188,7 @@ class MeetService
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        $statement = null;
         return $page == 0 ? 1 : $page;
     }
 
@@ -262,7 +265,9 @@ class MeetService
             $statement->bindValue(':search', "%".$search."%");
         }
         $statement->execute();        
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement = null;
+        return $data;
     }
 
     public function fileUploadValidate($addArray = [], $nowArray = [], $clearOldArray = [])
@@ -424,6 +429,7 @@ class MeetService
         ");
         $statement->execute();
         $id = $statement->fetch();
+        $statement = null;
         return (isset($id['Id'])) ? $id['Id'] + 1 : 1;
     }
 

@@ -282,6 +282,7 @@ class MemberService
         } catch (PDOException $e) {
             return $e->getMessage();
         }
+        $statement = null;
         return intval($str . str_pad('0', 3, STR_PAD_LEFT)) + 1;
     }
     /* #endregion */
@@ -300,6 +301,7 @@ class MemberService
         if (!empty($data)) {
             return intval($data['Id']) + 1;
         }
+        $statement = null;
         return intval($str) + 1;
     }
     /* #endregion */
@@ -350,6 +352,7 @@ class MemberService
             limit 1;");
             $statement->execute();
             $data = $statement->fetch(\PDO::FETCH_ASSOC);
+            $statement = null;
             if (!empty($data)) {
                 $roldSelect = DbModel::prepare("         
                 select r.* from role as r, member_role as mr, student as s
@@ -378,6 +381,7 @@ class MemberService
             limit 1;");
             $statement->execute();
             $data =  $statement->fetch(\PDO::FETCH_ASSOC); //member
+            $statement = null;
             if (!empty($data)) {
                 $roldSelect = DbModel::prepare("         
                 select r.* from role as r, member_role as mr 
@@ -408,6 +412,7 @@ class MemberService
             limit 1;");
             $statement->execute();
             $data = $statement->fetch(\PDO::FETCH_ASSOC);
+            $statement = null;
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -452,6 +457,7 @@ class MemberService
         } catch (Exception $e) {
             return $e->getMessage();
         }
+        $statement = null;
         return $data;
     }
     /* #endregion */
@@ -506,6 +512,7 @@ class MemberService
         $statement->execute();
         $datalist['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $datalist['page'] = $this->getAllMemberPage($search);
+        $statement = null;
         return $datalist;
     }
     /* #endregion */
@@ -544,6 +551,7 @@ class MemberService
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        $statement = null;
         return $page == 0 ? 1 : $page;
     }
     /* #endregion */
@@ -612,6 +620,7 @@ class MemberService
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getTeacherPage($search);
+        $statement = null;
         return $data;
     }
     /* #endregion */
@@ -638,6 +647,7 @@ class MemberService
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        $statement = null;
         return $page == 0 ? 1 : $page;
     }
 
@@ -673,10 +683,13 @@ class MemberService
                 s.Class_Id = c.Id 
             limit 1;");
             $statement->execute();
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
+            $statement = null;
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return $statement->fetch(\PDO::FETCH_ASSOC);
+        $statement = null;
+        return $data;
     }
 
     public function getPublicAccountMember($account)
@@ -690,10 +703,12 @@ class MemberService
                 s.Class_Id = c.Id 
             limit 1;");
             $statement->execute();
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
+            $statement = null;
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return $statement->fetch(\PDO::FETCH_ASSOC);
+        return $data;
     }
 
     /* #endregion */
@@ -721,6 +736,7 @@ class MemberService
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getSelfProjectPage($account);
+        $statement = null;
         return $data;
     }
 
@@ -739,6 +755,7 @@ class MemberService
         $statement->execute();
         $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
+        $statement = null;
         return $page == 0 ? 1 : $page;
     }
     /* #endregion */
@@ -866,6 +883,7 @@ class MemberService
         $statement->bindValue(":time", "%".$time."%");
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement = null;
         if ($data) {
             $index = 0;
             $time = [];

@@ -64,6 +64,7 @@ class GameRecordService
                 $index++;
             }
         }
+        $statement = null;
         return $data;
     }
 
@@ -132,6 +133,7 @@ class GameRecordService
                 $data['File'] = [];
             }
         }
+        $statement = null;
         return $data;
     }
 

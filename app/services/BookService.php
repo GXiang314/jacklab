@@ -35,6 +35,7 @@ class BookService{
         }
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement = null;
         if(!empty($data['list'])){
             $index = 0;
             foreach($data['list'] as $row){
@@ -78,7 +79,9 @@ class BookService{
                 b.Id = '{$id}';
             ");
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_ASSOC) ?? [];
+        $data = $statement->fetchAll(\PDO::FETCH_ASSOC) ?? [];
+        $statement = null;
+        return $data;
     }
 
     public function getAllBookPage($search = null)
@@ -101,6 +104,7 @@ class BookService{
         }
         $statement->execute();
         $count = $statement->fetchColumn();
+        $statement = null;
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
         return $page == 0 ? 1 : $page;
     }

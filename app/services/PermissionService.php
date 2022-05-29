@@ -24,12 +24,16 @@ class PermissionService
         ");
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $index = 0;
-        foreach ($data as $row) {
-            $data[$index++]['list'] = permission::get('permission', [
-                'Permission_group' => $row['Id']
-            ]);
+        $statement = null;
+        if(!empty($data)){
+            $index = 0;
+            foreach ($data as $row) {
+                $data[$index++]['list'] = permission::get('permission', [
+                    'Permission_group' => $row['Id']
+                ]);
+            }
         }
+        
         return $data;
     }
 
