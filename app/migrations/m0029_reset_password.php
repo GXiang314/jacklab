@@ -10,12 +10,12 @@ class m0029_reset_password{
         $sql = "
         CREATE TABLE `reset_password`  (
             `Id` int NOT NULL AUTO_INCREMENT,
-            `Account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL,
+            `Account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
             `Update_at` datetime NOT NULL,
-            `Code` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL,
+            `Code` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
             PRIMARY KEY (`Id`) USING BTREE,
             INDEX `foreign_reset_member`(`Account`) USING BTREE
-          ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_ci ROW_FORMAT = Dynamic;
+          ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
         ";
         $db->pdo->exec($sql);
     }
