@@ -25,6 +25,7 @@ abstract class DbModel extends Model
                 $statement->bindValue(":$attr", $this->{$attr});
             }
             $statement->execute();
+            $statement = null;
         } catch (Exception) {
             return false;
         }
@@ -40,6 +41,7 @@ abstract class DbModel extends Model
                 $statement->bindValue(":$key", "$value");
             }
             $statement->execute();
+            $statement = null;
         }catch(Exception){
             return false;
         }
@@ -106,6 +108,7 @@ abstract class DbModel extends Model
                 $statement->bindValue(":$key", $value);
             }
             $statement->execute();
+            $statement = null;
         } catch (Exception) {
             return false;
         }
@@ -122,6 +125,7 @@ abstract class DbModel extends Model
                 $statement->bindValue(":$key", $value);
             }
             $statement->execute();
+            $statement = null;
         } catch (Exception) {
             return false;
         }
