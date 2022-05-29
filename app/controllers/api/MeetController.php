@@ -18,8 +18,8 @@ class MeetController extends Controller
     public function __construct()
     {
         $this->meetService = new MeetService();
-        $this->registerMiddleware(new isLoginMiddleware(['index', 'store', 'show', 'update', 'destroy']));
-        $this->registerMiddleware(new hasRoleMiddleware(['index', 'store', 'show', 'update', 'destroy']));
+        $this->registerMiddleware(new isLoginMiddleware(['store', 'update', 'destroy']));
+        $this->registerMiddleware(new hasRoleMiddleware(['store', 'update', 'destroy']));
     }
 
     public function index(Request $request)
