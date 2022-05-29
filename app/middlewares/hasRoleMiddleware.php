@@ -31,15 +31,18 @@ class hasRoleMiddleware extends Middleware
                 p.Url 
             FROM
                 role AS r,
-                role_permission AS rp,
+                role_permission_group AS rp,
+                permission_group as pg,
                 permission AS p 
             WHERE
                 r.Id = rp.Role_Id 
-                AND rp.Permission_Id = p.Id 
+                AND rp.Permission_group = pg.Id
+                AND p.Permission_group = pg.Id
                 AND r.Id = '{$role}';
             ");
             $statement->execute();
             $userPrm = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = null;
             $userPrmUrl = [];
             foreach ($userPrm as $key => $val) {
                 $userPrmUrl[] = $val['Url'];
