@@ -4,11 +4,11 @@ namespace app\model;
 
 use app\core\DbModel;
 
-class role_permission extends DbModel{
+class role_permission_group extends DbModel{
 
     public int $Id;
     public int $Role_Id;
-    public int $Permission_Id;
+    public int $Permission_group;
 
 
     public function table(): string
@@ -18,7 +18,7 @@ class role_permission extends DbModel{
 
     public function attributes(): array
     {
-        return ['Role_Id', 'Permission_Id'];
+        return ['Role_Id', 'Permission_group'];
     }
 
     public function save()
@@ -32,7 +32,7 @@ class role_permission extends DbModel{
             'Role_Id' => [
                 self::RULE_REQUIRED,
             ],
-            'Permission_Id' => [
+            'Permission_group' => [
                 self::RULE_REQUIRED,
             ]
         ];
