@@ -7,7 +7,7 @@ use app\model\member;
 use app\model\member_role;
 use app\model\permission;
 use app\model\role;
-use app\model\role_permission;
+use app\model\role_permission_group;
 use Exception;
 
 class RoleService
@@ -90,10 +90,10 @@ class RoleService
             $data = role::findOne('role', [
                 'Name' => $name
             ]);
-            foreach ($permissionList as $p) {
-                role_permission::create('role_permission', [
+            foreach ($permissionList as $p) {                
+                role_permission_group::create('role_permission_group', [
                     'Role_Id' => $data['Id'],
-                    'Permission_Id' => $p
+                    'Permission_group' => $p
                 ]);
             }
         } catch (Exception $e) {
@@ -111,11 +111,11 @@ class RoleService
                 'Id' => $id
             ]);
             if(!empty($role)){
-                role_permission::delete('role_permission', [
+                role_permission_group::delete('role_permission_group_', [
                     'Role_Id' => $id
                 ]);
                 foreach ($permissionList as $p) {
-                    role_permission::create('role_permission', [
+                    role_permission_group::create('role_permission_group', [
                         'Role_Id' => $id,
                         'Permission_Id' => $p,
                     ]);
@@ -176,7 +176,7 @@ class RoleService
                 member_role::delete('member_role', [
                     'Role_Id' => $id
                 ]);
-                role_permission::delete('role_permission', [
+                role_permission_group::delete('role_permission_group', [
                     'Role_Id' => $id
                 ]);
                 role::delete('role', [
@@ -191,23 +191,30 @@ class RoleService
     }
     /* #endregion */
 
-    /* #region 取得角色對應權限  */
+    /* #region 取得角色對應權限組  */
 
     public function getRole_Permission(int $id)
     {
         $statement = DbModel::prepare("
         SELECT
-            P.Id,
-            P.Name 
+            Pg.Id,
+            Pg.Name 
         FROM
-            PERMISSION AS P
-            INNER JOIN role_permission AS RP ON RP.Permission_Id = P.Id
+            permission_group AS pg
+            INNER JOIN role_permission_group AS RP ON RP.Permission_group = Pg.Id
             INNER JOIN role AS R ON R.Id = RP.Role_Id 
         WHERE
             R.Id = '{$id}';        
         ");
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement = null;
+        if(!empty($data)){
+            $index = 0;
+            foreach($data as $row){
+                $data[$index++]['list'] = permission::get('permission', [ 'Permission_group' => $row['Id']]);
+            }
+        }
         return $data;
     }
 
@@ -253,7 +260,7 @@ class RoleService
                 ]);
             }
             foreach ($permissionList as $p) {
-                role_permission::create('role_permission', [
+                role_permission_group::create('role_permission_group', [
                     'Role_Id' => 1,
                     'Permission_Id' => $p['Id']
                 ]);
