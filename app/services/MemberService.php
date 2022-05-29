@@ -40,16 +40,11 @@ class MemberService
             $student->loadData($request);
             $member_rold->loadData($request);
 
-            $name = $student->Name;
-            $acc = $member->Account;
-            $pwd = $member->Password;
-            $token = $member->AuthToken;
-
             if ($res = $member->save()) {
                 $mailService = new MailService();
                 $student->save();
                 $member_rold->save();
-                $mailService->sendRegisterMail($name, $acc, $pwd, $token);
+                $mailService->sendRegisterMail($student->Name, $member->Account, $member->Password, $member->AuthToken);
             }
         } catch (Exception $e) {
             return $e->getMessage();
@@ -276,13 +271,13 @@ class MemberService
             );
             $statement->execute();
             $data = $statement->fetch(\PDO::FETCH_ASSOC);
+            $statement = null;
             if (!empty($data)) {
                 return intval($data['Id']) + 1;
             }
         } catch (PDOException $e) {
             return $e->getMessage();
         }
-        $statement = null;
         return intval($str . str_pad('0', 3, STR_PAD_LEFT)) + 1;
     }
     /* #endregion */
@@ -298,10 +293,10 @@ class MemberService
         );
         $statement->execute();
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
+        $statement = null;
         if (!empty($data)) {
             return intval($data['Id']) + 1;
         }
-        $statement = null;
         return intval($str) + 1;
     }
     /* #endregion */
@@ -411,12 +406,10 @@ class MemberService
                 t.Id = '$teacher_Id' 
             limit 1;");
             $statement->execute();
-            $data = $statement->fetch(\PDO::FETCH_ASSOC);
-            $statement = null;
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return $data;
+        return $statement->fetch(\PDO::FETCH_ASSOC);
     }
     /* #endregion */
 
@@ -683,13 +676,10 @@ class MemberService
                 s.Class_Id = c.Id 
             limit 1;");
             $statement->execute();
-            $data = $statement->fetch(\PDO::FETCH_ASSOC);
-            $statement = null;
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        $statement = null;
-        return $data;
+        return $statement->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function getPublicAccountMember($account)
@@ -703,12 +693,10 @@ class MemberService
                 s.Class_Id = c.Id 
             limit 1;");
             $statement->execute();
-            $data = $statement->fetch(\PDO::FETCH_ASSOC);
-            $statement = null;
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return $data;
+        return $statement->fetch(\PDO::FETCH_ASSOC);
     }
 
     /* #endregion */
