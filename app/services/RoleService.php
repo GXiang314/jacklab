@@ -218,6 +218,22 @@ class RoleService
         return $data;
     }
 
+    public function getPublicRole_Permission(int $id)
+    {
+        $statement = DbModel::prepare("
+        SELECT
+            Pg.Id
+        FROM
+            permission_group AS Pg
+            INNER JOIN role_permission_group AS RP ON RP.Permission_group = Pg.Id
+            INNER JOIN role AS R ON R.Id = RP.Role_Id 
+        WHERE
+            R.Id = '{$id}';        
+        ");
+        $statement->execute();        
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     /* #endregion */
 
     /* #region  取得使用者對應角色 */

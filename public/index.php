@@ -76,6 +76,9 @@ $app->router->put('/api/manager/role/user', [RoleController::class, 'updateMembe
 $app->router->put('/api/manager/role', [RoleController::class, 'update']); //修改角色權限
 $app->router->delete('/api/manager/role?', [RoleController::class, 'destroy']); //刪除角色資料
 
+$app->router->get('/api/role?', [RoleController::class, 'getGroup']); //取得公開角色資料
+
+
 $app->router->get('/api/manager/user', [UserController::class, 'index']); //取得所有會員資料
 $app->router->get('/api/manager/user?', [UserController::class, 'index']); //取得所有會員資料
 $app->router->post('/api/manager/useradd', [UserController::class, 'useradd']); //加入學生

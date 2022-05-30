@@ -51,6 +51,16 @@ class RoleController extends Controller
         return $this->sendError('Method Not Allow.', [], 405);
     }
 
+    public function getGroup(Request $request)
+    {
+        if ($request->isGet()) {
+            $id = $request->getBody()['id'] ?? '';
+            $data = $this->roleService->getPublicRole_Permission($id);
+            return (!empty($data)) ? $this->sendResponse($data, 'p') : $this->sendResponse('', 'none');
+        }
+        return $this->sendError('Method Not Allow.', [], 405);
+    }
+
     public function getMember_Role(Request $request)
     {
         if ($request->isGet()) {
