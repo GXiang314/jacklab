@@ -21,10 +21,10 @@ class MemberController extends Controller
     {
         $this->memberService = new MemberService();
         $this->mailService = new MailService();
-        $this->registerMiddleware(new isLoginMiddleware(['getSelf', 'getSelfProject', 'updatePassword', 'updateIntroduction', 'updateMemberPhoto', 'getSelfProject']));
+        $this->registerMiddleware(new isLoginMiddleware(['index', 'getSelf', 'getSelfProject', 'updatePassword', 'updateIntroduction', 'updateMemberPhoto', 'getSelfProject']));
     }
 
-    public function getAcademicStudent(Request $request)
+    public function getPastStudent(Request $request)
     {
         if($request->isGet()){
             $time = $request->getBody()['time'] ?? '%';
