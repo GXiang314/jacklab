@@ -39,12 +39,12 @@ class MemberService
             $member->loadData($request);
             $student->loadData($request);
             $member_rold->loadData($request);
-
+            $password = $member->Password;
             if ($res = $member->save()) {
                 $mailService = new MailService();
                 $student->save();
                 $member_rold->save();
-                $mailService->sendRegisterMail($student->Name, $member->Account, $member->Password, $member->AuthToken);
+                $mailService->sendRegisterMail($student->Name, $member->Account, $password, $member->AuthToken);
             }
         } catch (Exception $e) {
             return $e->getMessage();
@@ -561,7 +561,11 @@ class MemberService
                 WHEN s.`Name` THEN
                 s.`Name` ELSE t.NAME 
             END AS `Name`,
-            role.NAME AS Role_Name,
+        CASE
+            s.`Image` 
+            WHEN s.`Image` THEN
+            s.`Image` ELSE t.Image 
+        END AS `Image`,
             m.CreateTime AS CreateTime,
         CASE
                 s.`Image` 
@@ -570,8 +574,6 @@ class MemberService
             END AS Image 
         FROM
             member AS m
-            LEFT JOIN member_role AS mr ON mr.Account = m.Account
-            LEFT JOIN role ON role.Id = mr.Role_Id
             LEFT JOIN student AS s ON s.Account = m.Account
             LEFT JOIN teacher AS t ON t.Account = m.Account        
         ORDER BY 
