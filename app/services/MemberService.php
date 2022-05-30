@@ -874,7 +874,7 @@ class MemberService
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $statement = null;
-        if ($data) {
+        if ($data && $time == '%') {
             $index = 0;
             $time = [];
             foreach ($data['list'] as $row) {   
