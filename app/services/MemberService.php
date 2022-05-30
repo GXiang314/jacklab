@@ -603,14 +603,14 @@ class MemberService
             t.Title like '%{$search}%' or 
             t.Introduction like '%{$search}%' or 
             t.Account like '%{$search}%'         
-        " :'') 
-        .
-        " Order by 
+        " : '')
+            .
+            " Order by 
             t.Id desc 
         "
-        .
-        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
-        ";");
+            .
+            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
+            ";");
 
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -870,22 +870,27 @@ class MemberService
             a.Id ASC,
             m.CreateTime DESC;        
         ");
-        $statement->bindValue(":time", "%".$time."%");
+        $statement->bindValue(":time", "%" . $time . "%");
         $statement->execute();
         $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $statement = null;
-        if ($data && $time == '%') {
+        if ($data) {
             $index = 0;
-            $time = [];
-            foreach ($data['list'] as $row) {   
-                $createTime = substr($row['CreateTime'], 0, 4);          
-                $data['list'][$index]['CreateTime'] = $createTime;
-                if(!in_array($createTime, $time, true)){
-                    array_push($time, $createTime);
-                }
-                $index++;
+            foreach ($data['list'] as $row) {
+                $createTime = substr($row['CreateTime'], 0, 4);
+                $data['list'][$index++]['CreateTime'] = $createTime;
             }
-            $data['time'] = $time;
+            $statement = DbModel::prepare("
+            SELECT DISTINCT
+                SUBSTR( m.CreateTime FROM 1 FOR 4 ) AS CreateTime 
+            FROM
+                member AS m
+                INNER JOIN student AS s ON s.Account = m.Account 
+            ORDER BY
+                CreateTime DESC;
+            ");
+            $statement->execute();
+            $data['time'] = $statement->fetchColumn();
         }
         return $data;
     }
