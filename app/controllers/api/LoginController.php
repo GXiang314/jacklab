@@ -3,6 +3,8 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
+use app\core\Exception\MethodNotAllowException;
+use app\core\Exception\UnauthorizedException;
 use app\core\Request;
 use app\middlewares\isLoginMiddleware;
 use app\requestModel\Login;
@@ -59,7 +61,7 @@ class LoginController extends Controller
                         $res['account'] = $member['Account'];
                         return $this->sendResponse($res, "登入成功");
                     } else {
-                        return $this->sendError('信箱未完成驗證，請查看信箱', [], 401);
+                        throw new UnauthorizedException('信箱未完成驗證，請查看信箱');
                     }
                 } else {
                     return $this->sendError('帳號或密碼輸入錯誤');
@@ -68,6 +70,6 @@ class LoginController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError("Method Not Allow.", [], 405);
+        throw new MethodNotAllowException();
     }
 }

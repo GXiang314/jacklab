@@ -3,6 +3,7 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
+use app\core\Exception\MethodNotAllowException;
 use app\core\Request;
 use app\middlewares\hasRoleMiddleware;
 use app\middlewares\isLoginMiddleware;
@@ -40,7 +41,7 @@ class AlbumController extends Controller
             $data = $this->albumService->getAll($page, $search);
             return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function show(Request $request)
@@ -50,7 +51,7 @@ class AlbumController extends Controller
             $data = $this->albumService->getOne($id);
             return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function store(Request $request)
@@ -66,7 +67,7 @@ class AlbumController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function update(Request $request)
@@ -82,7 +83,7 @@ class AlbumController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function destroy(Request $request)
@@ -92,6 +93,6 @@ class AlbumController extends Controller
             $result = $this->albumService->delete($id);
             return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError($result);
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 }

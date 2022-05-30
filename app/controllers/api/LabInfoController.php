@@ -4,6 +4,7 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\core\Request;
+use app\core\Exception\MethodNotAllowException;
 use app\middlewares\hasRoleMiddleware;
 use app\middlewares\isLoginMiddleware;
 use app\model\lab_info;
@@ -32,7 +33,7 @@ class LabInfoController extends Controller
             $data = $this->labinfoService->getAll($page, $search);
             return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function show(Request $request)
@@ -42,7 +43,7 @@ class LabInfoController extends Controller
             $data = $this->labinfoService->getOne($id);
             return $data ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function store(Request $request)
@@ -57,7 +58,7 @@ class LabInfoController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function update(Request $request)
@@ -72,7 +73,7 @@ class LabInfoController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function destroy(Request $request)
@@ -82,6 +83,6 @@ class LabInfoController extends Controller
             $result = $this->labinfoService->delete($id);
             return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError($result);
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 }

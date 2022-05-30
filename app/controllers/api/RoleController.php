@@ -3,6 +3,7 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
+use app\core\Exception\MethodNotAllowException;
 use app\core\Request;
 use app\middlewares\hasRoleMiddleware;
 use app\middlewares\isLoginMiddleware;
@@ -38,7 +39,7 @@ class RoleController extends Controller
             $data = $this->roleService->getAll($page, $search);
             return $data ? $this->sendResponse($data, '所有角色資料') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function show(Request $request)
@@ -48,7 +49,7 @@ class RoleController extends Controller
             $data = $this->roleService->getRole_Permission($id);
             return (!empty($data)) ? $this->sendResponse($data, '該角色的權限') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function getGroup(Request $request)
@@ -58,7 +59,7 @@ class RoleController extends Controller
             $data = $this->roleService->getPublicRole_Permission($id);
             return (!empty($data)) ? $this->sendResponse($data, 'p') : $this->sendResponse('', 'none');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function getMember_Role(Request $request)
@@ -68,7 +69,7 @@ class RoleController extends Controller
             $data = $this->roleService->getMember_Role($account);
             return (!empty($data)) ? $this->sendResponse($data, '該使用者的角色') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function store(Request $request)
@@ -84,7 +85,7 @@ class RoleController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function update(Request $request)
@@ -100,7 +101,7 @@ class RoleController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function updateMemberRole(Request $request)
@@ -116,7 +117,7 @@ class RoleController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function destroy(Request $request)
@@ -126,6 +127,6 @@ class RoleController extends Controller
             $result = $this->roleService->delete($id);
             return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError($result);
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 }

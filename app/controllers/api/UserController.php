@@ -3,6 +3,7 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
+use app\core\Exception\MethodNotAllowException;
 use app\core\Request;
 use app\middlewares\hasRoleMiddleware;
 use app\middlewares\isLoginMiddleware;
@@ -41,7 +42,7 @@ class UserController extends Controller
             $data = $this->memberService->getAllMember($page, $search, $academic);
             return ($data != []) ? $this->sendResponse($data, '所有成員') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);        
+        throw new MethodNotAllowException();        
     }
 
     public function getAllTeacher(Request $request)
@@ -53,7 +54,7 @@ class UserController extends Controller
             $data = $this->memberService->getTeacher($page, $search);
             return $data ? $this->sendResponse($data, '所有教師') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);        
+        throw new MethodNotAllowException();        
     }
 
     public function getTeacher(Request $request)
@@ -63,7 +64,7 @@ class UserController extends Controller
             $data = $this->memberService->getTeacherData($id);
             return $data ? $this->sendResponse($data, '所有教師') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);        
+        throw new MethodNotAllowException();        
     }
 
     public function useradd(Request $request)
@@ -79,7 +80,7 @@ class UserController extends Controller
                 return $this->sendError($userAddModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function teacheradd(Request $request)
@@ -95,7 +96,7 @@ class UserController extends Controller
                 return $this->sendError($teachererAddModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function updateTeacherInfo(Request $request)
@@ -111,7 +112,7 @@ class UserController extends Controller
                 return $this->sendError($teachererAddModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function updateTeacherPhoto(Request $request)
@@ -126,7 +127,7 @@ class UserController extends Controller
             }
             return $this->sendError($requestModel->getFirstError());
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function changeUserPassword(Request $request)
@@ -141,7 +142,7 @@ class UserController extends Controller
             }
             return $this->sendError($requestModel->getFirstError());
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function updateUserClass(Request $request)
@@ -156,7 +157,7 @@ class UserController extends Controller
             }
             return $this->sendError($requestModel->getFirstError());
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function destroyTeacher(Request $request)
@@ -168,7 +169,7 @@ class UserController extends Controller
             }
             return $this->sendError($result);
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function destroy(Request $request)
@@ -180,6 +181,6 @@ class UserController extends Controller
             }
             return $this->sendError($result);
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 }

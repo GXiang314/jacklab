@@ -12,6 +12,7 @@ use app\requestModel\UpdateGame_record;
 use app\requestModel\UpdateProject;
 use app\requestModel\UpdateProject_record;
 use app\services\ProjectRecordService;
+use app\core\Exception\MethodNotAllowException;
 
 class ProjectRecordController extends Controller
 {
@@ -61,7 +62,7 @@ class ProjectRecordController extends Controller
             $data = $this->projectRecordService->getOne($id, $page, $search);
             return (!empty($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function store(Request $request)
@@ -77,7 +78,7 @@ class ProjectRecordController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function storeRecord(Request $request)
@@ -93,7 +94,7 @@ class ProjectRecordController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function update(Request $request)
@@ -114,7 +115,7 @@ class ProjectRecordController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function updateRecord(Request $request)
@@ -134,7 +135,7 @@ class ProjectRecordController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function destroy(Request $request)
@@ -144,7 +145,7 @@ class ProjectRecordController extends Controller
             $result = $this->projectRecordService->delete($id);
             return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError($result);
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function destroyRecord(Request $request)
@@ -154,6 +155,6 @@ class ProjectRecordController extends Controller
             $result = $this->projectRecordService->deleteRecord($id);
             return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError($result);
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 }

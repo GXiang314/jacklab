@@ -12,6 +12,7 @@ use app\requestModel\ResetPassword;
 use app\requestModel\UpdateMemberPhoto;
 use app\services\MailService;
 use app\services\MemberService;
+use app\core\Exception\MethodNotAllowException;
 
 class MemberController extends Controller
 {
@@ -32,7 +33,7 @@ class MemberController extends Controller
             $data = $this->memberService->getStudent($time);
             return $data ? $this->sendResponse($data, '成員列表') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
 
@@ -61,7 +62,7 @@ class MemberController extends Controller
             $data = $this->memberService->getPublicAccountMember($account);
             return ($data != []) ? $this->sendResponse($data, '參與專案記錄') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     /**
@@ -79,7 +80,7 @@ class MemberController extends Controller
             $data = $this->memberService->getSelfProject($account, $page);
             return ($data != []) ? $this->sendResponse($data, '參與專案記錄') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     // /**
@@ -95,7 +96,7 @@ class MemberController extends Controller
     //         $data = $this->memberService->getStudentGameRecord($account);
     //         return ($data != []) ? $this->sendResponse($data, '所有競賽記錄') : $this->sendResponse('', '沒有資料');
     //     }
-    //     return $this->sendError('Method Not Allow', [], 405);
+    //     throw new MethodNotAllowException();
     // }
 
     /**
@@ -131,7 +132,7 @@ class MemberController extends Controller
             }
             return $this->sendError($requestModel->getFirstError());
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     /**
@@ -147,7 +148,7 @@ class MemberController extends Controller
             $result = $this->memberService->updateIntroduction($data['USER'], $data['text']);
             return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError($result);
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     /**
@@ -168,7 +169,7 @@ class MemberController extends Controller
             }
             return $this->sendError($requestModel->getFirstError());
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     /**
@@ -190,7 +191,7 @@ class MemberController extends Controller
                 return $this->sendError('傳送資料錯誤');
             }
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
 
@@ -226,7 +227,7 @@ class MemberController extends Controller
             }
             return $this->sendError('無此會員帳號');
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     /**
@@ -254,7 +255,7 @@ class MemberController extends Controller
             }
             return $this->sendError('驗證失敗');
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     /**
@@ -291,6 +292,6 @@ class MemberController extends Controller
                 return $this->sendError('請重新驗證');
             }
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 }

@@ -10,6 +10,7 @@ use app\requestModel\AddMeeting;
 use app\requestModel\UpdateMeeting;
 use app\requestModel\UpdateName;
 use app\services\MeetService;
+use app\core\Exception\MethodNotAllowException;
 
 class MeetController extends Controller
 {
@@ -32,7 +33,7 @@ class MeetController extends Controller
             $data = $this->meetService->getAll($page, $search);
             return (isset($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function getTag(Request $request)
@@ -43,7 +44,7 @@ class MeetController extends Controller
             $data = $this->meetService->getMeetingTag($search);
             return $data ? $this->sendResponse($data, '標籤列表') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function show(Request $request)
@@ -53,7 +54,7 @@ class MeetController extends Controller
             $data = $this->meetService->getOne($id);
             return (!empty($data)) ? $this->sendResponse($data, 'success') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function store(Request $request)
@@ -69,7 +70,7 @@ class MeetController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function update(Request $request)
@@ -91,7 +92,7 @@ class MeetController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function destroy(Request $request)
@@ -101,6 +102,6 @@ class MeetController extends Controller
             $result = $this->meetService->delete($id);
             return $result == 'success' ? $this->sendResponse($result, '刪除成功') : $this->sendError($result);
         }
-        return $this->sendError('Method Not Allow.', [], 405);
+        throw new MethodNotAllowException();
     }
 }
