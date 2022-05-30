@@ -57,9 +57,9 @@ class Router
         header("Access-Control-Allow-Origin: *");
         header('Access-Control-Max-Age: 86400');    // cache for 1 dayself::setStatusCode($status);
         header("Access-Control-Allow-Headers:Origin,Content-Type, access-control-allow-origin, Authorization, X-Requested-With");
-            if($_SERVER['REQUEST_METHOD'] == 'OPTIONS'){
-                header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-                exit();
+        if($_SERVER['REQUEST_METHOD'] == 'OPTIONS'){
+            header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+            exit();
         }
         return (call_user_func($callback, $this->request));
     }
