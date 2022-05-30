@@ -8,14 +8,17 @@ use app\middlewares\isLoginMiddleware;
 use app\requestModel\Login;
 use app\services\JwtService;
 use app\services\MemberService;
+use app\services\RoleService;
 
 class LoginController extends Controller
 {
     private $memberService;
+    private $roleService;
     private $jwtService;
     public function __construct()
     {
         $this->memberService = new MemberService();
+        $this->roleService = new RoleService();
         $this->jwtService = new JwtService();
         $this->registerMiddleware(new isLoginMiddleware(['isLogin']));
     }
@@ -26,7 +29,7 @@ class LoginController extends Controller
         if($data['USER'] ?? false){            
             $res['token'] = $data['TOKEN'];
             $res['admin'] = $data['ADMIN'];
-            $res['role'] = $data['ROLE'];
+            $res['permission'] = $this->roleService->getPublicRole_Permission($data['ROLE'] ?? '');
             $res['account'] = $data['USER'];
             return $this->sendResponse($res, "登入成功");
         }else{
@@ -52,7 +55,7 @@ class LoginController extends Controller
                         $member = $this->memberService->getAccount($data['Account']);
                         $res['token'] = $this->jwtService->Jwt_user_encode($member['Account'], $member['Role']);
                         $res['admin'] = $member['IsAdmin'];
-                        $res['role'] = $member['Role']['Id'] ?? null;
+                        $res['permission'] = $this->roleService->getPublicRole_Permission($member['Role']['Id'] ?? '');
                         $res['account'] = $member['Account'];
                         return $this->sendResponse($res, "登入成功");
                     } else {
