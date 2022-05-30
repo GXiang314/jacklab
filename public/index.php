@@ -47,8 +47,8 @@ $app->router->post('/api/resetCodeValidate', [MemberController::class, 'resetCod
 $app->router->post('/api/resetPassword', [MemberController::class, 'resetPassword']); //重設密碼
 
 
-$app->router->get('/api/student', [MemberController::class, 'getAcademicStudent']); //取得所有學生公開資料
-$app->router->get('/api/student?', [MemberController::class, 'getAcademicStudent']); //取得該學制學生公開資料
+$app->router->get('/api/student', [MemberController::class, 'getPastStudent']); //取得所有學生公開資料
+$app->router->get('/api/student?', [MemberController::class, 'getPastStudent']); //取得該學制學生公開資料
 
 $app->router->get('/api/member', [MemberController::class, 'index']); //取得所有會員公開資料
 $app->router->get('/api/member?', [MemberController::class, 'show']); //取得該會員公開資料
