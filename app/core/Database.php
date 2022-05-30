@@ -2,17 +2,25 @@
 
 namespace app\core;
 
+use app\core\Exception\InternalServerErrorException;
+use Exception;
+
 class Database
 {
 
     public \PDO $pdo;
     public function __construct(array $config)
     {
-        $dsn = $config['dsn'] ?? '';
-        $user = $config['user'] ?? '';
-        $password = $config['password'] ?? '';
-        $this->pdo = new \PDO($dsn, $user, $password);
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        try{
+            $dsn = $config['dsn'] ?? '';
+            $user = $config['user'] ?? '';
+            $password = $config['password'] ?? '';
+            $this->pdo = new \PDO($dsn, $user, $password);
+            $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        }catch(Exception){
+            throw new InternalServerErrorException();
+        }
+        
     }
 
     public function applyMigrations()
