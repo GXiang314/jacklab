@@ -193,7 +193,7 @@ class RoleService
 
     /* #region 取得角色對應權限組  */
 
-    public function getRole_Permission(int $id)
+    public function getRole_Permission($id = '')
     {
         $statement = DbModel::prepare("
         SELECT
@@ -204,8 +204,9 @@ class RoleService
             INNER JOIN role_permission_group AS RP ON RP.Permission_group = Pg.Id
             INNER JOIN role AS R ON R.Id = RP.Role_Id 
         WHERE
-            R.Id = '{$id}';        
+            R.Id = :id ;        
         ");
+        $statement->bindValue(':id', $id);
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $statement = null;
@@ -218,7 +219,7 @@ class RoleService
         return $data;
     }
 
-    public function getPublicRole_Permission(int $id)
+    public function getPublicRole_Permission($id = '')
     {
         $statement = DbModel::prepare("
         SELECT
@@ -228,10 +229,11 @@ class RoleService
             INNER JOIN role_permission_group AS RP ON RP.Permission_group = Pg.Id
             INNER JOIN role AS R ON R.Id = RP.Role_Id 
         WHERE
-            R.Id = '{$id}';        
+            R.Id = :id ;        
         ");
+        $statement->bindValue(':id', $id);
         $statement->execute();        
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        return $statement->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     /* #endregion */
