@@ -890,7 +890,7 @@ class MemberService
                 CreateTime DESC;
             ");
             $statement->execute();
-            $data['time'] = $statement->fetchColumn();
+            $data['time'] = $statement->fetchAll(\PDO::FETCH_COLUMN);
         }
         return $data;
     }
