@@ -3,6 +3,7 @@
 namespace app\services;
 
 use app\core\DbModel;
+use app\core\Exception\InternalServerErrorException;
 use app\model\game_file;
 use app\model\game_member;
 use app\model\game_record;
@@ -15,35 +16,94 @@ class GameRecordService
 
     public function getAll()
     {
-        $statement = game_record::prepare("
-        SELECT
-            gr.Id AS Id,
-            gr.NAME AS G_name,
-            gr.Ranking AS G_ranking,
-            gr.Game_group AS G_group,
-            gr.Game_time AS G_time,
-            gr.Uploader,
-        CASE
-                s.`Name` 
-                WHEN s.`Name` THEN
-                s.`Name` ELSE t.NAME 
-            END AS Uploader_name,
-            gt.NAME AS Type_name 
-        FROM
-            game_record AS gr
-            INNER JOIN game_type AS gt ON gt.Id = gr.Game_type
-            INNER JOIN member AS m ON m.Account = gr.Uploader
-            LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN teacher AS t ON t.Account = m.Account 
-        WHERE
-            (
-            gr.Deleted LIKE '' 
-            OR isnull( gr.Deleted ));");
-        $statement->execute();
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        if (!empty($data)) {
-            $index = 0;
-            foreach ($data as $row) {
+        try{
+            $statement = game_record::prepare("
+            SELECT
+                gr.Id AS Id,
+                gr.NAME AS G_name,
+                gr.Ranking AS G_ranking,
+                gr.Game_group AS G_group,
+                gr.Game_time AS G_time,
+                gr.Uploader,
+            CASE
+                    s.`Name` 
+                    WHEN s.`Name` THEN
+                    s.`Name` ELSE t.NAME 
+                END AS Uploader_name,
+                gt.NAME AS Type_name 
+            FROM
+                game_record AS gr
+                INNER JOIN game_type AS gt ON gt.Id = gr.Game_type
+                INNER JOIN member AS m ON m.Account = gr.Uploader
+                LEFT JOIN student AS s ON s.Account = m.Account
+                LEFT JOIN teacher AS t ON t.Account = m.Account 
+            WHERE
+                (
+                gr.Deleted LIKE '' 
+                OR isnull( gr.Deleted ));");
+            $statement->execute();
+            $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            if (!empty($data)) {
+                $index = 0;
+                foreach ($data as $row) {
+                    $statement = game_member::prepare("
+                    SELECT
+                        s.Id,
+                        s.Name	
+                    FROM
+                        game_member AS gm,
+                        student as s
+                    WHERE
+                        gm.Game_record = '{$row['Id']}' and
+                        gm.Student_Id = s.Id;");
+                    $statement->execute();
+                    $member = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                    if (!empty($member)) {
+                        $data[$index]['Member'] = $member;
+                    } else {
+                        $data[$index]['Member'] = [];
+                    }
+                    $index++;
+                }
+            }
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }        
+        $statement = null;
+        return $data;
+    }
+
+    public function getOne($id)
+    {
+        try{
+            $statement = game_record::prepare("
+            SELECT
+                gr.Id AS Id,
+                gr.NAME AS G_name,
+                gr.Ranking AS G_ranking,
+                gr.Game_group AS G_group,
+                gr.Game_time AS G_time,
+                gr.Uploader,
+            CASE
+                    s.`Name` 
+                    WHEN s.`Name` THEN
+                    s.`Name` ELSE t.NAME 
+                END AS Uploader_name,
+                gt.NAME AS Type_name 
+            FROM
+                game_record AS gr
+                INNER JOIN game_type AS gt ON gt.Id = gr.Game_type
+                INNER JOIN member AS m ON m.Account = gr.Uploader
+                LEFT JOIN student AS s ON s.Account = m.Account
+                LEFT JOIN teacher AS t ON t.Account = m.Account 
+            WHERE
+                (
+                gr.Deleted LIKE '' 
+                OR isnull( gr.Deleted ));");
+            $statement->execute();
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
+
+            if (!empty($data)) {
                 $statement = game_member::prepare("
                 SELECT
                     s.Id,
@@ -52,87 +112,36 @@ class GameRecordService
                     game_member AS gm,
                     student as s
                 WHERE
-                    gm.Game_record = '{$row['Id']}' and
+                    gm.Game_record = '{$id}' and
                     gm.Student_Id = s.Id;");
                 $statement->execute();
                 $member = $statement->fetchAll(\PDO::FETCH_ASSOC);
                 if (!empty($member)) {
-                    $data[$index]['Member'] = $member;
+                    $date['Member'] = $member;
                 } else {
-                    $data[$index]['Member'] = [];
+                    $data['Member'] = [];
                 }
-                $index++;
-            }
-        }
-        $statement = null;
-        return $data;
-    }
 
-    public function getOne($id)
-    {
-        $statement = game_record::prepare("
-        SELECT
-            gr.Id AS Id,
-            gr.NAME AS G_name,
-            gr.Ranking AS G_ranking,
-            gr.Game_group AS G_group,
-            gr.Game_time AS G_time,
-            gr.Uploader,
-        CASE
-                s.`Name` 
-                WHEN s.`Name` THEN
-                s.`Name` ELSE t.NAME 
-            END AS Uploader_name,
-            gt.NAME AS Type_name 
-        FROM
-            game_record AS gr
-            INNER JOIN game_type AS gt ON gt.Id = gr.Game_type
-            INNER JOIN member AS m ON m.Account = gr.Uploader
-            LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN teacher AS t ON t.Account = m.Account 
-        WHERE
-            (
-            gr.Deleted LIKE '' 
-            OR isnull( gr.Deleted ));");
-        $statement->execute();
-        $data = $statement->fetch(\PDO::FETCH_ASSOC);
-
-        if (!empty($data)) {
-            $statement = game_member::prepare("
-            SELECT
-                s.Id,
-                s.Name	
-            FROM
-                game_member AS gm,
-                student as s
-            WHERE
-                gm.Game_record = '{$id}' and
-                gm.Student_Id = s.Id;");
-            $statement->execute();
-            $member = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            if (!empty($member)) {
-                $date['Member'] = $member;
-            } else {
-                $data['Member'] = [];
+                $statement = game_file::prepare("
+                SELECT
+                    gf.Id,
+                    gf.Name,
+                    gf.Size 
+                FROM
+                    game_file AS gf 
+                WHERE
+                    gf.Game_record = '{$id}';");
+                $statement->execute();
+                $file = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                if (!empty($file)) {
+                    $data['File'] = $file;
+                } else {
+                    $data['File'] = [];
+                }
             }
-
-            $statement = game_file::prepare("
-            SELECT
-                gf.Id,
-                gf.Name,
-                gf.Size 
-            FROM
-                game_file AS gf 
-            WHERE
-                gf.Game_record = '{$id}';");
-            $statement->execute();
-            $file = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            if (!empty($file)) {
-                $data['File'] = $file;
-            } else {
-                $data['File'] = [];
-            }
-        }
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }        
         $statement = null;
         return $data;
     }
@@ -180,8 +189,8 @@ class GameRecordService
             } else {
                 return '不支援該檔案格式';
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
@@ -266,25 +275,21 @@ class GameRecordService
             } else {
                 return '不支援該檔案格式';
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
 
     public function delete($idList)
     {
-        try {
-            $idlist = explode(',', $idList);
-            foreach ($idlist as $id) {
-                game_record::update('game_record', [
-                    'Deleted' => date('Y-m-d H:i:s', time())
-                ], [
-                    'Id' => $id
-                ]);
-            }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        $idlist = explode(',', $idList);
+        foreach ($idlist as $id) {
+            game_record::update('game_record', [
+                'Deleted' => date('Y-m-d H:i:s', time())
+            ], [
+                'Id' => $id
+            ]);
         }
         return 'success';
     }
@@ -313,11 +318,16 @@ class GameRecordService
 
     private function newId()
     {
-        $statement = game_record::prepare("
-            select Id from game_record order by Id desc limit 1;
-        ");
-        $statement->execute();
-        $id = $statement->fetch();
+        try{
+            $statement = game_record::prepare("
+                select Id from game_record order by Id desc limit 1;
+            ");
+            $statement->execute();
+            $id = $statement->fetch();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }        
+        $statement = null;
         return (isset($id['Id'])) ? $id['Id'] + 1 : 1;
     }
 

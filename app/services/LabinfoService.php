@@ -3,6 +3,7 @@
 namespace app\services;
 
 use app\core\DbModel;
+use app\core\Exception\InternalServerErrorException;
 use app\model\lab_info;
 use Exception;
 
@@ -15,29 +16,34 @@ class LabinfoService{
 
     public function getAll($page = 1, $search = null)
     {
-        $search = $this->addSlashes($search);
-        $statement = DbModel::prepare("
-        select 
-            l.* 
-        from 
-            lab_info as l ".
-        (($search != null)?
-        " Where 
-            l.Title like :search  or 
-            l.Content like :search  
-        " : "")
-        .
-        " Order by 
-            l.Id desc 
-        "
-        .
-        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
-        );
-        if ($search != null){
-            $statement->bindValue(':search', "%".$search."%");
+        try{
+            $search = $this->addSlashes($search);
+            $statement = DbModel::prepare("
+            select 
+                l.* 
+            from 
+                lab_info as l ".
+            (($search != null)?
+            " Where 
+                l.Title like :search  or 
+                l.Content like :search  
+            " : "")
+            .
+            " Order by 
+                l.Id desc 
+            "
+            .
+            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
+            );
+            if ($search != null){
+                $statement->bindValue(':search', "%".$search."%");
+            }
+            $statement->execute();
+            $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
-        $statement->execute();
-        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $data['page'] = $this->getAllInfoPage($search);
         $statement = null;
         return $data;
@@ -53,22 +59,26 @@ class LabinfoService{
 
     public function getAllInfoPage($search = null)
     {
-        $search = $this->addSlashes($search);
-        $statement =  DbModel::prepare("
-        select count(*) from lab_info "
-        .
-        (($search != null) ?
-            " 
-        where 
-        Title like :search  or
-        Content like :search 
-        " : ""
-        ));
-        if ($search != null){
-            $statement->bindValue(':search', "%".$search."%");
-        }
-        $statement->execute();
-        $count = $statement->fetchColumn();
+        try{
+            $search = $this->addSlashes($search);
+            $statement =  DbModel::prepare("
+            select count(*) from lab_info "
+            .
+            (($search != null) ?
+                " 
+            where 
+            Title like :search  or
+            Content like :search 
+            " : ""
+            ));
+            if ($search != null){
+                $statement->bindValue(':search', "%".$search."%");
+            }
+            $statement->execute();
+            $count = $statement->fetchColumn();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }        
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
         $statement = null;
         return $page == 0 ? 1 : $page;
@@ -76,44 +86,29 @@ class LabinfoService{
 
     public function add(string $title,string $content)
     {
-        try{
-            lab_info::create('lab_info', [
-                'Title' => $title,
-                'Content' => $content,
-            ]);
-        }
-        catch(Exception $e){
-            return $e->getMessage();
-        }
+        lab_info::create('lab_info', [
+            'Title' => $title,
+            'Content' => $content,
+        ]);
         return 'success';
     }
     public function update($id, $title, $content)
     {
-        try{
-            lab_info::update('lab_info', [
-                'Title' => $title,
-                'Content' => $content
-            ],[
-                'Id' => $id
-            ]);
-        }
-        catch(Exception $e){
-            return $e->getMessage();
-        }
+        lab_info::update('lab_info', [
+            'Title' => $title,
+            'Content' => $content
+        ],[
+            'Id' => $id
+        ]);
         return 'success';
     }
     public function delete($idList)
     {
-        try{
-            $idList = explode(',', $idList);
-            foreach($idList as $id){
-                lab_info::delete('lab_info', [
-                    'Id' => $id
-                ]);   
-            }
-        }
-        catch(Exception $e){
-            return $e->getMessage();
+        $idList = explode(',', $idList);
+        foreach($idList as $id){
+            lab_info::delete('lab_info', [
+                'Id' => $id
+            ]);   
         }
         return 'success';
     }
@@ -129,6 +124,7 @@ class LabinfoService{
             ]);
             }
         }
+        
     }
 
     public function addSlashes($string = null)

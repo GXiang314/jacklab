@@ -3,7 +3,7 @@
 namespace app\services;
 
 use app\core\DbModel;
-
+use app\core\Exception\InternalServerErrorException;
 use app\model\member;
 use app\model\proj_file;
 use app\model\proj_member;
@@ -18,246 +18,261 @@ class ProjectRecordService
     public function getAll($project_Id, $page = 1, $search = null)
     {
         $search = $this->addSlashes($search);
-        $statement = project::prepare("
-        SELECT
-            p.Id,
-            p.Name,
-            p.Description,
-            p.Creater,
-            p.CreateTime,
-            pt.Id as Type_id,
-        CASE
-                s.`Name` 
-                WHEN s.`Name` THEN
-                s.`Name` ELSE t.NAME 
-            END AS Creater_name 
-        FROM
-            project AS p
-            LEFT JOIN student AS s ON s.Account = p.Creater
-            LEFT JOIN teacher AS t ON t.Account = p.Creater
-            LEFT JOIN proj_type AS pt ON pt.Id = p.Proj_type
-        WHERE
-            p.Id = '{$project_Id}' and (
-            ISNULL(p.Deleted) or p.Deleted like ''	
-            )
-            ;");
-        $statement->execute();
-        $data = $statement->fetch(\PDO::FETCH_ASSOC);
-        $statement = null;
-        if (empty($data)) return "";
-
-        $statement = project::prepare("
-        SELECT
-        CASE
-                s.`Name` 
-                WHEN s.`Name` THEN
-                s.`Name` ELSE t.NAME 
-            END AS Name,
-            m.Account,
+        try{
+            $statement = project::prepare("
+            SELECT
+                p.Id,
+                p.Name,
+                p.Description,
+                p.Creater,
+                p.CreateTime,
+                pt.Id as Type_id,
             CASE
-                s.`Image` 
-                WHEN s.`Image` THEN
-                s.`Image` ELSE t.Image 
-            END AS Image
-        FROM
-            member AS m
-            INNER JOIN proj_member AS pm ON pm.Account = m.Account
-            INNER JOIN project AS p ON p.Id = pm.Project_Id
-            LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN teacher AS t ON t.Account = m.Account 
-        WHERE
-            p.id = '{$project_Id}';");
-        $statement->execute();
-        $member = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $statement = null;
-        $data['Member'] = $member;
+                    s.`Name` 
+                    WHEN s.`Name` THEN
+                    s.`Name` ELSE t.NAME 
+                END AS Creater_name 
+            FROM
+                project AS p
+                LEFT JOIN student AS s ON s.Account = p.Creater
+                LEFT JOIN teacher AS t ON t.Account = p.Creater
+                LEFT JOIN proj_type AS pt ON pt.Id = p.Proj_type
+            WHERE
+                p.Id = '{$project_Id}' and (
+                ISNULL(p.Deleted) or p.Deleted like ''	
+                )
+                ;");
+            $statement->execute();
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
+            $statement = null;
+            if (empty($data)) return "";
 
-        $statement = project::prepare("
-        SELECT
-        pt.`Name`
-        FROM
-            proj_tag AS pt
-            INNER JOIN project AS p ON p.Id = pt.Project_Id
-        WHERE
-            p.id = '{$project_Id}';");
-        $statement->execute();
-        $tag = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $statement = null;
-        $data['Tag'] = $tag ?? [];
+            $statement = project::prepare("
+            SELECT
+            CASE
+                    s.`Name` 
+                    WHEN s.`Name` THEN
+                    s.`Name` ELSE t.NAME 
+                END AS Name,
+                m.Account,
+                CASE
+                    s.`Image` 
+                    WHEN s.`Image` THEN
+                    s.`Image` ELSE t.Image 
+                END AS Image
+            FROM
+                member AS m
+                INNER JOIN proj_member AS pm ON pm.Account = m.Account
+                INNER JOIN project AS p ON p.Id = pm.Project_Id
+                LEFT JOIN student AS s ON s.Account = m.Account
+                LEFT JOIN teacher AS t ON t.Account = m.Account 
+            WHERE
+                p.id = '{$project_Id}';");
+            $statement->execute();
+            $member = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = null;
+            $data['Member'] = $member;
 
-        $statement = proj_record::prepare("
-        SELECT
-            pr.Id AS Id,
-            pr.Remark AS Remark,
-            pr.CreateTime AS CreateTime,
-            pr.Uploader,
-        CASE
-                s.`Name` 
-                WHEN s.`Name` THEN
-                s.`Name` ELSE t.NAME 
-            END AS Uploader_name,
-            p.`Name` AS Project_name 
-        FROM
-            proj_record AS pr
-            INNER JOIN project AS p ON p.Id = pr.Project_Id
-            INNER JOIN member AS m ON m.Account = pr.Uploader
-            LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN teacher AS t ON t.Account = m.Account 
-        WHERE
-            pr.Project_Id = '{$project_Id}' 
-            AND (
-            pr.Deleted LIKE '' 
-            OR isnull( pr.Deleted )) "
-            .
-            ((!empty($search))
-                ?
-                "and (pr.Remark like :search 
-             or pr.CreateTime like :search 
-             or s.Name like :search 
-             or t.Name like :search )"
-                : ' ')
-            . " 
-        ORDER BY 
-            pr.CreateTime desc
-        "
-            . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) .
-            ";");
-        if ($search != null) {
-            $statement->bindValue(':search', "%" . $search . "%");
-        }
-        $statement->execute();
-        $data['Record'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $statement = null;
-        $data['page'] = $this->getRecordListPage($project_Id, $search);
-        if (!empty($data['Record'])) {
-            $index = 0;
-            foreach ($data['Record'] as $row) {
-                $statement = proj_file::prepare("
-                SELECT
-                    pf.Id,
-                    pf.Name,
-                    pf.Size 
-                FROM
-                    proj_file AS pf 
-                WHERE
-                    pf.Proj_record = '{$row['Id']}';");
-                $statement->execute();
-                $file = $statement->fetch(\PDO::FETCH_ASSOC);
-                if (!empty($file)) {
-                    $data['Record'][$index]['File'] = $file;
-                } else {
-                    $data['Record'][$index]['File'] = [];
-                }
-                $index++;
-                $statement = null;
+            $statement = project::prepare("
+            SELECT
+            pt.`Name`
+            FROM
+                proj_tag AS pt
+                INNER JOIN project AS p ON p.Id = pt.Project_Id
+            WHERE
+                p.id = '{$project_Id}';");
+            $statement->execute();
+            $tag = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = null;
+            $data['Tag'] = $tag ?? [];
+
+            $statement = proj_record::prepare("
+            SELECT
+                pr.Id AS Id,
+                pr.Remark AS Remark,
+                pr.CreateTime AS CreateTime,
+                pr.Uploader,
+            CASE
+                    s.`Name` 
+                    WHEN s.`Name` THEN
+                    s.`Name` ELSE t.NAME 
+                END AS Uploader_name,
+                p.`Name` AS Project_name 
+            FROM
+                proj_record AS pr
+                INNER JOIN project AS p ON p.Id = pr.Project_Id
+                INNER JOIN member AS m ON m.Account = pr.Uploader
+                LEFT JOIN student AS s ON s.Account = m.Account
+                LEFT JOIN teacher AS t ON t.Account = m.Account 
+            WHERE
+                pr.Project_Id = '{$project_Id}' 
+                AND (
+                pr.Deleted LIKE '' 
+                OR isnull( pr.Deleted )) "
+                .
+                ((!empty($search))
+                    ?
+                    "and (pr.Remark like :search 
+                or pr.CreateTime like :search 
+                or s.Name like :search 
+                or t.Name like :search )"
+                    : ' ')
+                . " 
+            ORDER BY 
+                pr.CreateTime desc
+            "
+                . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) .
+                ";");
+            if ($search != null) {
+                $statement->bindValue(':search', "%" . $search . "%");
             }
+            $statement->execute();
+            $data['Record'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = null;
+            $data['page'] = $this->getRecordListPage($project_Id, $search);
+            if (!empty($data['Record'])) {
+                $index = 0;
+                foreach ($data['Record'] as $row) {
+                    $statement = proj_file::prepare("
+                    SELECT
+                        pf.Id,
+                        pf.Name,
+                        pf.Size 
+                    FROM
+                        proj_file AS pf 
+                    WHERE
+                        pf.Proj_record = '{$row['Id']}';");
+                    $statement->execute();
+                    $file = $statement->fetch(\PDO::FETCH_ASSOC);
+                    if (!empty($file)) {
+                        $data['Record'][$index]['File'] = $file;
+                    } else {
+                        $data['Record'][$index]['File'] = [];
+                    }
+                    $index++;
+                }
+            }
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
+
+        
+        $statement = null;
         return $data;
     }
 
     public function getOne($project_Id, $page = 1, $search = null)
     {
         $search = $this->addSlashes($search);
-        $statement = proj_record::prepare("
-        SELECT
-            pr.Id AS Id,
-            pr.Remark AS Remark,
-            pr.CreateTime AS CreateTime,
-            pr.Uploader,
-        CASE
-                s.`Name` 
-                WHEN s.`Name` THEN
-                s.`Name` ELSE t.NAME 
-            END AS Uploader_name,
-            p.`Name` AS Project_name 
-        FROM
-            proj_record AS pr
-            INNER JOIN project AS p ON p.Id = pr.Project_Id
-            INNER JOIN member AS m ON m.Account = pr.Uploader
-            LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN teacher AS t ON t.Account = m.Account 
-        WHERE
-            pr.Project_Id = '{$project_Id}' 
-            AND (
-            pr.Deleted LIKE '' 
-            OR isnull( pr.Deleted )) "
-            .
-            ((!empty($search))
-                ?
-                "and (pr.Remark like :search 
-             or pr.CreateTime like :search 
-             or s.Name like :search 
-             or t.Name like :search )"
-                : ' ')
-            . " 
-        ORDER BY 
-            pr.CreateTime desc
-        "
-            . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
-        if ($search != null) {
-            $statement->bindValue(':search', "%" . $search . "%");
-        }
-        $statement->execute();
-        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $statement = null;
-        $data['page'] = $this->getRecordListPage($project_Id, $search);
-        if (!empty($data['list'])) {
-            $index = 0;
-            foreach ($data['list'] as $row) {
-                $statement = proj_file::prepare("
-                SELECT
-                    pf.Id,
-                    pf.Name,
-                    pf.Size 
-                FROM
-                    proj_file AS pf 
-                WHERE
-                    pf.Proj_record = '{$row['Id']}';");
-                $statement->execute();
-                $file = $statement->fetch(\PDO::FETCH_ASSOC);
-                $statement = null;
-                if (!empty($file)) {
-                    $data['list'][$index]['File'] = $file;
-                } else {
-                    $data['list'][$index]['File'] = [];
-                }
-                $index++;
+        try{
+            $statement = proj_record::prepare("
+            SELECT
+                pr.Id AS Id,
+                pr.Remark AS Remark,
+                pr.CreateTime AS CreateTime,
+                pr.Uploader,
+            CASE
+                    s.`Name` 
+                    WHEN s.`Name` THEN
+                    s.`Name` ELSE t.NAME 
+                END AS Uploader_name,
+                p.`Name` AS Project_name 
+            FROM
+                proj_record AS pr
+                INNER JOIN project AS p ON p.Id = pr.Project_Id
+                INNER JOIN member AS m ON m.Account = pr.Uploader
+                LEFT JOIN student AS s ON s.Account = m.Account
+                LEFT JOIN teacher AS t ON t.Account = m.Account 
+            WHERE
+                pr.Project_Id = '{$project_Id}' 
+                AND (
+                pr.Deleted LIKE '' 
+                OR isnull( pr.Deleted )) "
+                .
+                ((!empty($search))
+                    ?
+                    "and (pr.Remark like :search 
+                or pr.CreateTime like :search 
+                or s.Name like :search 
+                or t.Name like :search )"
+                    : ' ')
+                . " 
+            ORDER BY 
+                pr.CreateTime desc
+            "
+                . " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
+            if ($search != null) {
+                $statement->bindValue(':search', "%" . $search . "%");
             }
+            $statement->execute();
+            $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = null;
+            $data['page'] = $this->getRecordListPage($project_Id, $search);
+            if (!empty($data['list'])) {
+                $index = 0;
+                foreach ($data['list'] as $row) {
+                    $statement = proj_file::prepare("
+                    SELECT
+                        pf.Id,
+                        pf.Name,
+                        pf.Size 
+                    FROM
+                        proj_file AS pf 
+                    WHERE
+                        pf.Proj_record = '{$row['Id']}';");
+                    $statement->execute();
+                    $file = $statement->fetch(\PDO::FETCH_ASSOC);
+                    $statement = null;
+                    if (!empty($file)) {
+                        $data['list'][$index]['File'] = $file;
+                    } else {
+                        $data['list'][$index]['File'] = [];
+                    }
+                    $index++;
+                }
+            }
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
+        $statement = null;
         return $data;
     }
 
     public function getRecordListPage($id, $search = null)
     {
         $search = $this->addSlashes($search);
-        $statement =  DbModel::prepare("
-        SELECT
-            count(*) 
-        FROM
-            proj_record AS pr
-            INNER JOIN project AS p ON p.Id = pr.Project_Id
-            INNER JOIN member AS m ON m.Account = pr.Uploader
-            LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN teacher AS t ON t.Account = m.Account 
-        WHERE
-            pr.Project_Id = '{$id}' 
-            AND (
-            pr.Deleted LIKE '' 
-            OR isnull( pr.Deleted )) "
-            .
-            ((!empty($search))
-                ?
-                "and (pr.Remark like :search 
-             or pr.CreateTime like :search 
-             or s.Name like :search 
-             or t.Name like :search )"
-                : ' '
-            ));
-        if ($search != null) {
-            $statement->bindValue(':search', "%" . $search . "%");
-        }
-        $statement->execute();
-        $count = $statement->fetchColumn();
+        try{
+            $statement =  DbModel::prepare("
+            SELECT
+                count(*) 
+            FROM
+                proj_record AS pr
+                INNER JOIN project AS p ON p.Id = pr.Project_Id
+                INNER JOIN member AS m ON m.Account = pr.Uploader
+                LEFT JOIN student AS s ON s.Account = m.Account
+                LEFT JOIN teacher AS t ON t.Account = m.Account 
+            WHERE
+                pr.Project_Id = '{$id}' 
+                AND (
+                pr.Deleted LIKE '' 
+                OR isnull( pr.Deleted )) "
+                .
+                ((!empty($search))
+                    ?
+                    "and (pr.Remark like :search 
+                or pr.CreateTime like :search 
+                or s.Name like :search 
+                or t.Name like :search )"
+                    : ' '
+                ));
+            if ($search != null) {
+                $statement->bindValue(':search', "%" . $search . "%");
+            }
+            $statement->execute();
+            $count = $statement->fetchColumn();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }        
         $statement = null;
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
         return $page == 0 ? 1 : $page;
@@ -271,20 +286,24 @@ class ProjectRecordService
 
     public function getProjectTag($search = null)
     {
-        $statement = DbModel::prepare("
-        SELECT DISTINCT Name 
-        FROM
-            proj_tag " .
-            ((!empty($search)) ?
-                "Where 
-            Name like :search 
-        " : "") .
-            ";");
-        if (!empty($search)) {
-            $statement->bindValue(':search', "%" . $search . "%");
-        }
-        $statement->execute();
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        try{
+            $statement = DbModel::prepare("
+            SELECT DISTINCT Name 
+            FROM
+                proj_tag " .
+                ((!empty($search)) ?
+                    "Where 
+                Name like :search 
+            " : "") .
+                ";");
+            if (!empty($search)) {
+                $statement->bindValue(':search', "%" . $search . "%");
+            }
+            $statement->execute();
+            $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }        
         $statement = null;
         return $data;
     }
@@ -319,8 +338,8 @@ class ProjectRecordService
                     ]);
                 }
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
@@ -360,8 +379,8 @@ class ProjectRecordService
             } else {
                 return '不支援該檔案格式';
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
@@ -400,8 +419,8 @@ class ProjectRecordService
                     ]);
                 }
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
@@ -446,8 +465,8 @@ class ProjectRecordService
             } else {
                 return '不支援該檔案格式';
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
@@ -463,8 +482,8 @@ class ProjectRecordService
                     'Id' => $id
                 ]);
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
@@ -480,8 +499,8 @@ class ProjectRecordService
                     'Id' => $id
                 ]);
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
@@ -515,11 +534,16 @@ class ProjectRecordService
 
     private function newId()
     {
+        try{
         $statement = proj_record::prepare("
             select Id from proj_record order by Id desc limit 1;
         ");
         $statement->execute();
         $id = $statement->fetch();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }
+        $statement = null;
         return (isset($id['Id'])) ? $id['Id'] + 1 : 1;
     }
 

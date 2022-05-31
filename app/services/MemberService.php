@@ -4,6 +4,7 @@ namespace app\services;
 
 use app\core\Application;
 use app\core\DbModel;
+use app\core\Exception\InternalServerErrorException;
 use app\model\member;
 use app\model\member_role;
 use app\model\student;
@@ -32,22 +33,18 @@ class MemberService
     /* #region  加入學生 */
     public function studentAdd($request)
     {
-        try {
-            $member = new member();
-            $student = new student();
-            $member_rold = new member_role();
-            $member->loadData($request);
-            $student->loadData($request);
-            $member_rold->loadData($request);
-            $password = $member->Password;
-            if ($res = $member->save()) {
-                $mailService = new MailService();
-                $student->save();
-                $member_rold->save();
-                $mailService->sendRegisterMail($student->Name, $member->Account, $password, $member->AuthToken);
-            }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        $member = new member();
+        $student = new student();
+        $member_rold = new member_role();
+        $member->loadData($request);
+        $student->loadData($request);
+        $member_rold->loadData($request);
+        $password = $member->Password;
+        if ($res = $member->save()) {
+            $mailService = new MailService();
+            $student->save();
+            $member_rold->save();
+            $mailService->sendRegisterMail($student->Name, $member->Account, $password, $member->AuthToken);
         }
         return $res ? 'success' : false;
     }
@@ -56,17 +53,13 @@ class MemberService
     /* #region  加入教師 */
     public function teacherAdd($request)
     {
-        try {
-            $member = new member();
-            $teacher = new teacher();
-            $member->loadData($request);
-            $member->AuthToken = '';
-            $teacher->loadData($request);
-            if ($res = $member->save()) {
-                $teacher->save();
-            }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        $member = new member();
+        $teacher = new teacher();
+        $member->loadData($request);
+        $member->AuthToken = '';
+        $teacher->loadData($request);
+        if ($res = $member->save()) {
+            $teacher->save();
         }
         return $res ? 'success' : false;
     }
@@ -75,11 +68,7 @@ class MemberService
     /* #region  修改個人簡介 */
     public function updateIntroduction(string $account, string $text)
     {
-        try {
-            $res = DbModel::update('student', ['Introduction' => $text], ['Account' => $account]);
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
+        $res = DbModel::update('student', ['Introduction' => $text], ['Account' => $account]);        
         return $res ? 'success' : 'error';
     }
     /* #endregion */
@@ -87,17 +76,13 @@ class MemberService
     /* #region  修改教師介紹 */
     public function updateTeacherInfo($id, $request)
     {
-        try {
-            $res = DbModel::update('teacher', [
-                'Introduction' => $request['Introduction'],
-                'Title' => $request['Title'],
-                'Name' => $request['Name'],
-            ], [
-                'Id' => $id
-            ]);
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
+        $res = DbModel::update('teacher', [
+            'Introduction' => $request['Introduction'],
+            'Title' => $request['Title'],
+            'Name' => $request['Name'],
+        ], [
+            'Id' => $id
+        ]);
         return $res ? 'success' : 'error';
     }
     /* #endregion */
@@ -126,8 +111,8 @@ class MemberService
             } else {
                 return "不支援該檔案格式";
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return $res ? 'success' : 'error';
     }
@@ -154,8 +139,8 @@ class MemberService
                 }
                 $res = DbModel::update('teacher', ['Image' => $path], ['Id' => $id]);
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return $res ? 'success' : 'error';
     }
@@ -169,7 +154,7 @@ class MemberService
         ], [
             'Account' => $account
         ]);
-        return $res;
+        return $res ?? false;
     }
 
     public function updatePassword(string $account, string $old, string $new)
@@ -180,7 +165,7 @@ class MemberService
             ], [
                 'Account' => $account
             ]);
-            return ($res) ? 'success' : 'error';
+            return ($res) ?? 'error';
         }
         return '舊密碼輸入錯誤';
     }
@@ -203,21 +188,17 @@ class MemberService
     public function delete($idList)
     {
         $idList = explode(',', $idList);
-        try {
-            foreach ($idList as $id) {
-                $data = $this->getMemberData($id);
-                if (isset($data['Account'])) {
-                    Application::$app->db->pdo->exec("
-                        delete from game_member where Student_Id = '{$id}';
-                        delete from meeting_member where Account = '{$data['Account']}';
-                        delete from member_role where Account = '{$data['Account']}';
-                        delete from student where Account = '{$data['Account']}';
-                        delete from member where Account = '{$data['Account']}';
-                    ");
-                }
+        foreach ($idList as $id) {
+            $data = $this->getMemberData($id);
+            if (isset($data['Account'])) {
+                Application::$app->db->pdo->exec("
+                    delete from game_member where Student_Id = '{$id}';
+                    delete from meeting_member where Account = '{$data['Account']}';
+                    delete from member_role where Account = '{$data['Account']}';
+                    delete from student where Account = '{$data['Account']}';
+                    delete from member where Account = '{$data['Account']}';
+                ");
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
         }
         return 'success';
     }
@@ -225,22 +206,17 @@ class MemberService
     public function deleteTeacher($idList)
     {
         $idList = explode(',', $idList);
-        try {
-
-            foreach ($idList as $id) {
-                $data = $this->getTeacherData($id);
-                if (isset($data['Account'])) {
-                    Application::$app->db->pdo->exec("
-                        delete from game_member where Student_Id = '{$id}';
-                        delete from meeting_member where Account = '{$data['Account']}';
-                        delete from member_role where Account = '{$data['Account']}';
-                        delete from teacher where Account = '{$data['Account']}';
-                        delete from member where Account = '{$data['Account']}';
-                    ");
-                }
+        foreach ($idList as $id) {
+            $data = $this->getTeacherData($id);
+            if (isset($data['Account'])) {
+                Application::$app->db->pdo->exec("
+                    delete from game_member where Student_Id = '{$id}';
+                    delete from meeting_member where Account = '{$data['Account']}';
+                    delete from member_role where Account = '{$data['Account']}';
+                    delete from teacher where Account = '{$data['Account']}';
+                    delete from member where Account = '{$data['Account']}';
+                ");
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
         }
         return 'success';
     }
@@ -264,8 +240,7 @@ class MemberService
     {
         $str = (intval(date("Y")) - 1911) . str_pad($class_Id, 2, '0', STR_PAD_LEFT);
         try {
-            $student = new student();
-            $statement = $student->prepare(
+            $statement = DbModel::prepare(
                 "
                 select Id from student where Id like '%$str%' order by Id desc limit 1;"
             );
@@ -275,8 +250,8 @@ class MemberService
             if (!empty($data)) {
                 return intval($data['Id']) + 1;
             }
-        } catch (PDOException $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return intval($str . str_pad('0', 3, STR_PAD_LEFT)) + 1;
     }
@@ -286,13 +261,16 @@ class MemberService
     public static function generateTeacherId()
     {
         $str = str_pad('1', 8, '0', STR_PAD_RIGHT);
-        $teacher = new teacher();
-        $statement = $teacher->prepare(
-            "
-            select Id from teacher where Id order by Id desc limit 1;"
-        );
-        $statement->execute();
-        $data = $statement->fetch(\PDO::FETCH_ASSOC);
+        try {
+            $statement = DbModel::prepare(
+                "
+                select Id from teacher where Id order by Id desc limit 1;"
+            );
+            $statement->execute();
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }
         $statement = null;
         if (!empty($data)) {
             return intval($data['Id']) + 1;
@@ -318,17 +296,13 @@ class MemberService
 
     public function emailTokenCheck($account, $token)
     {
-        try {
-            $data = $this->getAccountData($account);
-            if (!empty($data)) {
-                if ($data['AuthToken'] == $token) {
-                    DbModel::update('member', ['AuthToken' => ''], ['Account' => $account]);
-                } else {
-                    return '驗證碼錯誤，請重新驗證';
-                }
+        $data = $this->getAccountData($account);
+        if (!empty($data)) {
+            if ($data['AuthToken'] == $token) {
+                DbModel::update('member', ['AuthToken' => ''], ['Account' => $account]);
+            } else {
+                return '驗證碼錯誤，請重新驗證';
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
         }
         return 'success';
     }
@@ -359,8 +333,8 @@ class MemberService
                 $roldSelect->execute();
                 $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC); //role
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return $data;
     }
@@ -387,8 +361,8 @@ class MemberService
                 $roldSelect->execute();
                 $data['role'] = $roldSelect->fetchAll(\PDO::FETCH_ASSOC); //role
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return $data;
     }
@@ -447,8 +421,8 @@ class MemberService
                 $role =  $statement->fetch(\PDO::FETCH_ASSOC); //member
                 $data['Role'] = $role ? $role : '';
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         $statement = null;
         return $data;
@@ -458,52 +432,55 @@ class MemberService
     /* #region  取得所有會員資料 */
     public function getAllMember($page = 1, $search = null, $academic = null)
     {
-        $member = new Member();
         $search = $this->addSlashes($search);
-        $statement = $member->prepare("
-        SELECT
-            s.Id,
-            s.Name,
-            s.Account,
-            s.Class_Id,
-            c.NAME AS Class_Name, 
-            m.CreateTime AS CreateTime,
-            r.Id AS Role_Id,
-            r.`Name` AS Role_Name
-        FROM
-            member AS m
-            LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN member_role AS mr ON mr.Account = m.Account
-            LEFT JOIN role AS r ON r.Id = mr.Role_Id
-            LEFT JOIN classes AS c ON c.Id = s.Class_Id 
-            LEFT JOIN academic AS a ON a.Id = c.Academic_Id
-        WHERE
-            s.Account = m.Account " .
-            (($search != null) ?
-                " and (
-                s.Id like :search  or 
-                s.Name like :search  or 
-                s.Account like :search  or 
-                c.Name like :search  or 
-                m.CreateTime like :search  or 
-                r.Name like :search  ) " : "")
-            .
-            (($academic != null) ?
-                " and 
-             a.Id = '$academic'             
-            " : ' ')
-            . " 
-            ORDER BY 
-                m.CreateTime desc
-            "
-            .
-            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
-            " ;");
-        if ($search != null) {
-            $statement->bindValue(':search', "%" . $search . "%");
+        try {
+            $statement = DbModel::prepare("
+            SELECT
+                s.Id,
+                s.Name,
+                s.Account,
+                s.Class_Id,
+                c.NAME AS Class_Name, 
+                m.CreateTime AS CreateTime,
+                r.Id AS Role_Id,
+                r.`Name` AS Role_Name
+            FROM
+                member AS m
+                LEFT JOIN student AS s ON s.Account = m.Account
+                LEFT JOIN member_role AS mr ON mr.Account = m.Account
+                LEFT JOIN role AS r ON r.Id = mr.Role_Id
+                LEFT JOIN classes AS c ON c.Id = s.Class_Id 
+                LEFT JOIN academic AS a ON a.Id = c.Academic_Id
+            WHERE
+                s.Account = m.Account " .
+                (($search != null) ?
+                    " and (
+                    s.Id like :search  or 
+                    s.Name like :search  or 
+                    s.Account like :search  or 
+                    c.Name like :search  or 
+                    m.CreateTime like :search  or 
+                    r.Name like :search  ) " : "")
+                .
+                (($academic != null) ?
+                    " and 
+                a.Id = '$academic'             
+                " : ' ')
+                . " 
+                ORDER BY 
+                    m.CreateTime desc
+                "
+                .
+                " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
+                " ;");
+            if ($search != null) {
+                $statement->bindValue(':search', "%" . $search . "%");
+            }
+            $statement->execute();
+            $datalist['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
-        $statement->execute();
-        $datalist['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $datalist['page'] = $this->getAllMemberPage($search);
         $statement = null;
         return $datalist;
@@ -514,35 +491,39 @@ class MemberService
     public function getAllMemberPage($search = null)
     {
         $search = $this->addSlashes($search);
-        $statement =  DbModel::prepare("
-        SELECT 
-            count(*)
-        FROM
-            member AS m
-            LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN member_role AS mr ON mr.Account = m.Account
-            LEFT JOIN role AS r ON r.Id = mr.Role_Id
-            LEFT JOIN classes AS c ON c.Id = s.Class_Id 
-            LEFT JOIN academic AS a ON a.Id = c.Academic_Id
-        WHERE
-            s.Account = m.Account " .
-            ((!empty($search))
-                ?
-                " and (
-                s.Id like :search  or 
-                s.Name like :search  or 
-                s.Account like :search  or 
-                c.Name like :search  or 
-                m.CreateTime like :search  or 
-                r.Name like :search  
-             )"
-                : ' '
-            ));
-        if ($search != null) {
-            $statement->bindValue(':search', "%" . $search . "%");
+        try {
+            $statement =  DbModel::prepare("
+            SELECT 
+                count(*)
+            FROM
+                member AS m
+                LEFT JOIN student AS s ON s.Account = m.Account
+                LEFT JOIN member_role AS mr ON mr.Account = m.Account
+                LEFT JOIN role AS r ON r.Id = mr.Role_Id
+                LEFT JOIN classes AS c ON c.Id = s.Class_Id 
+                LEFT JOIN academic AS a ON a.Id = c.Academic_Id
+            WHERE
+                s.Account = m.Account " .
+                ((!empty($search))
+                    ?
+                    " and (
+                    s.Id like :search  or 
+                    s.Name like :search  or 
+                    s.Account like :search  or 
+                    c.Name like :search  or 
+                    m.CreateTime like :search  or 
+                    r.Name like :search  
+                )"
+                    : ' '
+                ));
+            if ($search != null) {
+                $statement->bindValue(':search', "%" . $search . "%");
+            }
+            $statement->execute();
+            $count = $statement->fetchColumn();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
-        $statement->execute();
-        $count = $statement->fetchColumn();
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
         $statement = null;
         return $page == 0 ? 1 : $page;
@@ -552,36 +533,39 @@ class MemberService
     /* #region  取得所有會員公開資料 */
     public function getPublicAllMember()
     {
-        $member = new Member();
-        $statement = $member->prepare("
-        SELECT
-            m.Account,
-        CASE
-                s.`Name` 
-                WHEN s.`Name` THEN
-                s.`Name` ELSE t.NAME 
-            END AS `Name`,
-        CASE
-            s.`Image` 
-            WHEN s.`Image` THEN
-            s.`Image` ELSE t.Image 
-        END AS `Image`,
-            m.CreateTime AS CreateTime,
-        CASE
+        try {
+            $statement = DbModel::prepare("
+            SELECT
+                m.Account,
+            CASE
+                    s.`Name` 
+                    WHEN s.`Name` THEN
+                    s.`Name` ELSE t.NAME 
+                END AS `Name`,
+            CASE
                 s.`Image` 
                 WHEN s.`Image` THEN
-                s.`Image` ELSE t.`Image` 
-            END AS Image 
-        FROM
-            member AS m
-            LEFT JOIN student AS s ON s.Account = m.Account
-            LEFT JOIN teacher AS t ON t.Account = m.Account        
-        ORDER BY 
-            m.CreateTime desc;
-             
-        ");
-        $statement->execute();
-        $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                s.`Image` ELSE t.Image 
+            END AS `Image`,
+                m.CreateTime AS CreateTime,
+            CASE
+                    s.`Image` 
+                    WHEN s.`Image` THEN
+                    s.`Image` ELSE t.`Image` 
+                END AS Image 
+            FROM
+                member AS m
+                LEFT JOIN student AS s ON s.Account = m.Account
+                LEFT JOIN teacher AS t ON t.Account = m.Account        
+            ORDER BY 
+                m.CreateTime desc;
+                
+            ");
+            $statement->execute();
+            $datalist = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }
         return $datalist;
     }
     /* #endregion */
@@ -590,30 +574,34 @@ class MemberService
     public function getTeacher($page = 1, $search = null)
     {
         $search = $this->addSlashes($search);
-        $statement = DbModel::prepare("
-        Select 
-            t.*
-        From
-            teacher as t "
-            .
-            (($search) ? "
-        Where 
-            t.Id like '%{$search}%' or 
-            t.Name like '%{$search}%' or 
-            t.Title like '%{$search}%' or 
-            t.Introduction like '%{$search}%' or 
-            t.Account like '%{$search}%'         
-        " : '')
-            .
-            " Order by 
-            t.Id desc 
-        "
-            .
-            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
-            ";");
+        try {
+            $statement = DbModel::prepare("
+            Select 
+                t.*
+            From
+                teacher as t "
+                .
+                (($search) ? "
+            Where 
+                t.Id like '%{$search}%' or 
+                t.Name like '%{$search}%' or 
+                t.Title like '%{$search}%' or 
+                t.Introduction like '%{$search}%' or 
+                t.Account like '%{$search}%'         
+            " : '')
+                .
+                " Order by 
+                t.Id desc 
+            "
+                .
+                " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) .
+                ";");
 
-        $statement->execute();
-        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement->execute();
+            $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }
         $data['page'] = $this->getTeacherPage($search);
         $statement = null;
         return $data;
@@ -624,23 +612,27 @@ class MemberService
     public function getTeacherPage($search = null)
     {
         $search = $this->addSlashes($search);
-        $statement = DbModel::prepare("
-        Select 
-            count(*)
-        From
-            teacher as t "
-            .
-            (($search) ? "
-        Where 
-            t.Id like '%{$search}%' or 
-            t.Name like '%{$search}%' or 
-            t.Title like '%{$search}%' or 
-            t.Introduction like '%{$search}%' or 
-            t.Account like '%{$search}%'         
-        " :
-                '') . ";");
-        $statement->execute();
-        $count = $statement->fetchColumn();
+        try {
+            $statement = DbModel::prepare("
+            Select 
+                count(*)
+            From
+                teacher as t "
+                .
+                (($search) ? "
+            Where 
+                t.Id like '%{$search}%' or 
+                t.Name like '%{$search}%' or 
+                t.Title like '%{$search}%' or 
+                t.Introduction like '%{$search}%' or 
+                t.Account like '%{$search}%'         
+            " :
+                    '') . ";");
+            $statement->execute();
+            $count = $statement->fetchColumn();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
         $statement = null;
         return $page == 0 ? 1 : $page;
@@ -651,17 +643,23 @@ class MemberService
     /* #region  取得教師公開資料 */
     public function getPublicTeacher()
     {
-        $statement = DbModel::prepare("
-        select 
-            t.Id,
-            t.Name,
-            t.Title,
-            t.Introduction,
-            t.Image
-        from teacher as t;
-        ");
-        $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $statement = DbModel::prepare("
+            select 
+                t.Id,
+                t.Name,
+                t.Title,
+                t.Introduction,
+                t.Image
+            from teacher as t;
+            ");
+            $statement->execute();
+            $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }
+        $statement = null;
+        return $data;
     }
     /* #endregion */
 
@@ -678,10 +676,12 @@ class MemberService
                 s.Class_Id = c.Id 
             limit 1;");
             $statement->execute();
-        } catch (Exception $e) {
-            return $e->getMessage();
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
-        return $statement->fetch(\PDO::FETCH_ASSOC);
+        $statement = null;
+        return $data;
     }
 
     public function getPublicAccountMember($account)
@@ -695,10 +695,12 @@ class MemberService
                 s.Class_Id = c.Id 
             limit 1;");
             $statement->execute();
+            $data = $statement->fetch(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return $statement->fetch(\PDO::FETCH_ASSOC);
+        $statement = null;
+        return $data;
     }
 
     /* #endregion */
@@ -706,25 +708,29 @@ class MemberService
     /* #region  取得自己參與的專案 */
     public function getSelfProject($account, $page = 1)
     {
-        $statement = DbModel::prepare("
-        SELECT DISTINCT 
-            p.Id,
-            pt.Name as Type_name,
-            p.Name,
-            p.CreateTime
-        FROM
-            project as p 
-            INNER JOIN proj_type as pt ON p.proj_type = pt.Id 
-            LEFT JOIN proj_member as pm ON p.Id = pm.Project_Id
-        Where pm.Account = '$account' and
-         (p.Deleted LIKE ''  OR isnull( p.Deleted )) 
+        try {
+            $statement = DbModel::prepare("
+            SELECT DISTINCT 
+                p.Id,
+                pt.Name as Type_name,
+                p.Name,
+                p.CreateTime
+            FROM
+                project as p 
+                INNER JOIN proj_type as pt ON p.proj_type = pt.Id 
+                LEFT JOIN proj_member as pm ON p.Id = pm.Project_Id
+            Where pm.Account = '$account' and
+            (p.Deleted LIKE ''  OR isnull( p.Deleted )) 
 
-        Order By 
-            p.CreateTime desc 
-        " .
-            " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
-        $statement->execute();
-        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            Order By 
+                p.CreateTime desc 
+            " .
+                " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";");
+            $statement->execute();
+            $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }
         $data['page'] = $this->getSelfProjectPage($account);
         $statement = null;
         return $data;
@@ -732,18 +738,22 @@ class MemberService
 
     public function getSelfProjectPage($account)
     {
-        $statement = DbModel::prepare("
-        SELECT count(DISTINCT p.Id) 
-        FROM
-            project as p 
-            INNER JOIN proj_type as pt ON p.proj_type = pt.Id 
-            LEFT JOIN proj_member as pm ON p.Id = pm.Project_Id
-        Where 
-        pm.Account = '$account' 
-        and
-        (p.Deleted LIKE ''  OR isnull( p.Deleted )) ;");
-        $statement->execute();
-        $count = $statement->fetchColumn();
+        try {
+            $statement = DbModel::prepare("
+            SELECT count(DISTINCT p.Id) 
+            FROM
+                project as p 
+                INNER JOIN proj_type as pt ON p.proj_type = pt.Id 
+                LEFT JOIN proj_member as pm ON p.Id = pm.Project_Id
+            Where 
+            pm.Account = '$account' 
+            and
+            (p.Deleted LIKE ''  OR isnull( p.Deleted )) ;");
+            $statement->execute();
+            $count = $statement->fetchColumn();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
         $statement = null;
         return $page == 0 ? 1 : $page;
@@ -850,48 +860,55 @@ class MemberService
     }
     /* #endregion */
 
+    /* #region  取得學生(年份篩選) */
     public function getStudent($time = '%')
     {
-        $statement = DbModel::prepare("
-        SELECT
-            s.Id,
-            s.Name,
-            a.NAME AS Academic_name,
-            s.Image,
-            m.CreateTime 
-        FROM
-            student AS s
-            INNER JOIN classes AS c ON c.Id = s.Class_Id
-            INNER JOIN academic AS a ON a.Id = c.Academic_Id
-            INNER JOIN member AS m ON m.Account = s.Account 
-        WHERE
-            m.CreateTime like :time
-        ORDER BY
-            a.Id ASC,
-            m.CreateTime DESC;        
-        ");
-        $statement->bindValue(":time", "%" . $time . "%");
-        $statement->execute();
-        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $statement = null;
-        if ($data) {
-            $index = 0;
-            foreach ($data['list'] as $row) {
-                $createTime = substr($row['CreateTime'], 0, 4);
-                $data['list'][$index++]['CreateTime'] = $createTime;
-            }
+        try {
             $statement = DbModel::prepare("
-            SELECT DISTINCT
-                SUBSTR( m.CreateTime FROM 1 FOR 4 ) AS CreateTime 
+            SELECT
+                s.Id,
+                s.Name,
+                a.NAME AS Academic_name,
+                s.Image,
+                m.CreateTime 
             FROM
-                member AS m
-                INNER JOIN student AS s ON s.Account = m.Account 
+                student AS s
+                INNER JOIN classes AS c ON c.Id = s.Class_Id
+                INNER JOIN academic AS a ON a.Id = c.Academic_Id
+                INNER JOIN member AS m ON m.Account = s.Account 
+            WHERE
+                m.CreateTime like :time
             ORDER BY
-                CreateTime DESC;
+                a.Id ASC,
+                m.CreateTime DESC;        
             ");
+            $statement->bindValue(":time", "%" . $time . "%");
             $statement->execute();
-            $data['time'] = $statement->fetchAll(\PDO::FETCH_COLUMN);
+            $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = null;
+            if ($data) {
+                $index = 0;
+                foreach ($data['list'] as $row) {
+                    $createTime = substr($row['CreateTime'], 0, 4);
+                    $data['list'][$index++]['CreateTime'] = $createTime;
+                }
+                $statement = DbModel::prepare("
+                SELECT DISTINCT
+                    SUBSTR( m.CreateTime FROM 1 FOR 4 ) AS CreateTime 
+                FROM
+                    member AS m
+                    INNER JOIN student AS s ON s.Account = m.Account 
+                ORDER BY
+                    CreateTime DESC;
+                ");
+                $statement->execute();
+                $data['time'] = $statement->fetchAll(\PDO::FETCH_COLUMN);
+            }
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
+        $statement = null;
         return $data;
     }
+    /* #endregion */
 }

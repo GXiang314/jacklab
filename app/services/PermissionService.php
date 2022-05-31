@@ -3,9 +3,11 @@
 namespace app\services;
 
 use app\core\DbModel;
+use app\core\Exception\InternalServerErrorException;
 use app\model\member_role;
 use app\model\permission;
 use app\model\permission_group;
+use Exception;
 
 class PermissionService
 {
@@ -16,24 +18,27 @@ class PermissionService
 
     public function getAll()
     {
-        $statement = DbModel::prepare("
-        select 
-            pg.*
-        from 
-            permission_group as pg;
-        ");
-        $statement->execute();
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $statement = null;
-        if(!empty($data)){
-            $index = 0;
-            foreach ($data as $row) {
-                $data[$index++]['list'] = permission::get('permission', [
-                    'Permission_group' => $row['Id']
-                ]);
+        try{
+            $statement = DbModel::prepare("
+            select 
+                pg.*
+            from 
+                permission_group as pg;
+            ");
+            $statement->execute();
+            $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = null;
+            if(!empty($data)){
+                $index = 0;
+                foreach ($data as $row) {
+                    $data[$index++]['list'] = permission::get('permission', [
+                        'Permission_group' => $row['Id']
+                    ]);
+                }
             }
-        }
-        
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }        
         return $data;
     }
 

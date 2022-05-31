@@ -3,6 +3,7 @@
 namespace app\services;
 
 use app\core\DbModel;
+use app\core\Exception\InternalServerErrorException;
 use app\model\album;
 use Exception;
 use php_user_filter;
@@ -12,58 +13,67 @@ class AlbumService
 
     public function select()
     {
-        $statement = DbModel::prepare("
-        select 
-            a.* 
-        from 
-            album as a
-        order by 
-            a.CreateTime desc;    
-        ");
-        $statement->execute();
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $statement = null;
+        try {
+            $statement = DbModel::prepare("
+                select 
+                    a.* 
+                from 
+                    album as a
+                order by 
+                    a.CreateTime desc;    
+                ");
+            $statement->execute();
+            $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = null;
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }
         return $data;
     }
 
     public function getAll($page = 1, $search = null)
     {
-        $search = $this->addSlashes($search);
-        $statement = DbModel::prepare("
-        select 
-            a.* 
-        from 
-            album as a ".
-        (($search != null)?
-        " Where 
-            a.Title like :search         
-        " : "").
-        "
-        Order by a.CreateTime desc
-        
-        ".
-        " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
-        );
-        if ($search != null){
-            $statement->bindValue(':search', "%".$search."%");
-        }
-        $statement->execute();
-        $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $statement = null;
-        $index = 0;
-        if($data['list']){
-            foreach($data['list'] as $row){
-                $data['list'][$index]['File'] = pathinfo($row['Image'], PATHINFO_FILENAME).".".pathinfo($row['Image'], PATHINFO_EXTENSION) ;
-                $index++;
+        try {
+            $search = $this->addSlashes($search);
+            $statement = DbModel::prepare(
+                "
+            select 
+                a.* 
+            from 
+                album as a " .
+                    (($search != null) ?
+                        " Where 
+                a.Title like :search         
+            " : "") .
+                    "
+            Order by a.CreateTime desc
+            
+            " .
+                    " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($_ENV['PAGE_ITEM_NUM']) . ";"
+            );
+            if ($search != null) {
+                $statement->bindValue(':search', "%" . $search . "%");
             }
-        }        
-        $data['page'] = $this->getAllAlbumPage($search);
+            $statement->execute();
+            $data['list'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement = null;
+            $index = 0;
+            if ($data['list']) {
+                foreach ($data['list'] as $row) {
+                    $data['list'][$index]['File'] = pathinfo($row['Image'], PATHINFO_FILENAME) . "." . pathinfo($row['Image'], PATHINFO_EXTENSION);
+                    $index++;
+                }
+            }
+            $data['page'] = $this->getAllAlbumPage($search);
+        } catch (Exception) {
+            throw new InternalServerErrorException();
+        }
+
         return $data;
     }
 
     public function getOne($id)
-    {
-
+    {        
         $data = album::findOne('album', [
             'Id' => $id
         ]);
@@ -72,22 +82,26 @@ class AlbumService
 
     public function getAllAlbumPage($search = null)
     {
-        $search = $this->addSlashes($search);
-        $statement =  DbModel::prepare("
-        select count(*) from album "
-        .
-        (($search != null) ?
-            " 
-        where 
-            Title like :search 
-        " : ""
-        ));
-        if ($search != null){
-            $statement->bindValue(':search', "%".$search."%");
+        try {
+            $search = $this->addSlashes($search);
+            $statement =  DbModel::prepare("
+            select count(*) from album "
+                .
+                (($search != null) ?
+                    " 
+            where 
+                Title like :search 
+            " : ""
+                ));
+            if ($search != null) {
+                $statement->bindValue(':search', "%" . $search . "%");
+            }
+            $statement->execute();
+            $count = $statement->fetchColumn();
+            $statement = null;
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
-        $statement->execute();
-        $count = $statement->fetchColumn();
-        $statement = null;
         $page = ceil((float)$count / $_ENV['PAGE_ITEM_NUM']);
         return $page == 0 ? 1 : $page;
     }
@@ -97,13 +111,13 @@ class AlbumService
         try {
             if ($this->checkExtensions($file)) {
                 $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                $fileName = pathinfo($file['name'], PATHINFO_FILENAME).date("ymdhis", time()) . '.' . $extension;
+                $fileName = pathinfo($file['name'], PATHINFO_FILENAME) . date("ymdhis", time()) . '.' . $extension;
                 /*
                     temp= explode('.',$file_name);
                     $extension = end($temp);
                 */
-                $path = "\storage\album\\" . $fileName ;
-                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path); //upload files
+                $path = "\storage\album\\" . $fileName;
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
                 album::create('album', [
                     'Title' => $title,
                     'CreateTime' => date("Y-m-d H:i:s"),
@@ -112,8 +126,8 @@ class AlbumService
             } else {
                 return "不支援該檔案格式";
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
@@ -129,13 +143,13 @@ class AlbumService
             } else {
                 if ($this->checkExtensions($file)) {
                     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                    $fileName = pathinfo($file['name'], PATHINFO_FILENAME).date("ymdhis", time()) . '.' . $extension;
+                    $fileName = pathinfo($file['name'], PATHINFO_FILENAME) . date("ymdhis", time()) . '.' . $extension;
                     /*
                         temp= explode('.',$file_name);
                         $extension = end($temp);
                     */
                     $path = "\storage\album\\" . $fileName;
-                    move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public".$path);
+                    move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path);
                     unlink(
                         dirname(dirname(__DIR__)) . "\public" . album::findOne('album', [
                             'Id' => $id
@@ -151,8 +165,8 @@ class AlbumService
                     return "不支援該檔案格式";
                 }
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
@@ -164,16 +178,16 @@ class AlbumService
                 $url = album::findOne('album', [
                     'Id' => $id
                 ])['Image'] ?? '';
-                if(file_exists(dirname(dirname(__DIR__)) . "\public".$url)){
-                    unlink(dirname(dirname(__DIR__)) . "\public".$url);
+                if (file_exists(dirname(dirname(__DIR__)) . "\public" . $url)) {
+                    unlink(dirname(dirname(__DIR__)) . "\public" . $url);
                 }
 
                 album::delete('album', [
                     'Id' => $id
                 ]);
             }
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            throw new InternalServerErrorException();
         }
         return 'success';
     }
