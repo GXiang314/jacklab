@@ -37,7 +37,7 @@ class ProjectRecordController extends Controller
             $data = $this->projectRecordService->getAll($id, $page, $search);
             return $data ? $this->sendResponse($data, '專案內容') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function getTag(Request $request)
@@ -48,7 +48,7 @@ class ProjectRecordController extends Controller
             $data = $this->projectRecordService->getProjectTag($search);
             return $data ? $this->sendResponse($data, '標籤列表') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function show(Request $request)

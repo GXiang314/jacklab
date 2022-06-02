@@ -38,7 +38,7 @@ class ProjectManagerController extends Controller
             $data = $this->projectManagerService->getAll($page, $search);
             return ($data != []) ? $this->sendResponse($data, '所有專案性質') : $this->sendResponse('', '沒有資料');
         }
-        return $this->sendError("Method Not Allow", [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function store(Request $request)
@@ -54,7 +54,7 @@ class ProjectManagerController extends Controller
                 return $this->sendError($requestModel->getFirstError());
             }
         }
-        return $this->sendError('Method Not Allow', [], 405);
+        throw new MethodNotAllowException();
     }
 
     public function show(Request $request)
