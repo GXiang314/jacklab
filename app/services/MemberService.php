@@ -300,11 +300,11 @@ class MemberService
         if (!empty($data)) {
             if ($data['AuthToken'] == $token) {
                 DbModel::update('member', ['AuthToken' => ''], ['Account' => $account]);
-            } else {
-                return '驗證碼錯誤，請重新驗證';
+            }else if(empty($data['AuthToken'])){
+                return 'success';
             }
         }
-        return 'success';
+        return '傳送資料錯誤，請聯繫網站管理員';
     }
     /* #endregion */
 
