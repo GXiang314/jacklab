@@ -22,7 +22,7 @@ class MemberController extends Controller
     {
         $this->memberService = new MemberService();
         $this->mailService = new MailService();
-        $this->registerMiddleware(new isLoginMiddleware(['index', 'getSelf', 'getSelfProject', 'updatePassword', 'updateIntroduction', 'updateMemberPhoto', 'getSelfProject']));
+        $this->registerMiddleware(new isLoginMiddleware(['index', 'show', 'getSelf', 'getSelfProject', 'updatePassword', 'updateIntroduction', 'updateMemberPhoto', 'getSelfProject']));
     }
 
     public function getPastStudent(Request $request)
@@ -186,7 +186,7 @@ class MemberController extends Controller
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->memberService->emailTokenCheck($data['email'], $data['token']);
-                return $result == 'success' ? $this->sendResponse($result, '驗證成功') : $this->sendError('驗證失敗');
+                return $result == 'success' ? $this->sendResponse($result, '信箱驗證成功') : $this->sendError($result);
             } else {
                 return $this->sendError('傳送資料錯誤');
             }
