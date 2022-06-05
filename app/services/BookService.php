@@ -255,7 +255,7 @@ class BookService
         if ($file == null) return false;
         $allow_extensions = explode(',', "png,jpeg,jpg");
         $check_Array = [];
-        $check_Array[] = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $check_Array[] = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $diff = array_diff($check_Array, $allow_extensions);
         return empty($diff);
     }
