@@ -14,8 +14,22 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
+    RewriteCond %{HTTP_USER_AGENT} ^(java|curl|wget).* [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*(libwww-perl|curl|wget|python|nikto|wkito|pikto|scan|acunetix).* [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*(winhttp|HTTrack|clshttp|archiver|loader|email|harvest|extract|grab|miner).* [NC,OR]
+
+    #擋掉百度
+    SetEnvIfNoCase User-Agent "^Baidu" bad_bot
+    SetEnvIfNoCase User-Agent "^sogou" bad_bot
+    SetEnvIfNoCase User-Agent "^Bloghoo" bad_bot
+    SetEnvIfNoCase User-Agent "^Scooter" bad_bot
+    Deny from env=bad_bot
+    #擋掉Google
+    SetEnvIf User-Agent "^Googlebot" google
+    Deny from env=google
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^public
     RewriteRule ^ index.php [L]
 </IfModule>
