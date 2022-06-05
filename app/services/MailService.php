@@ -24,11 +24,13 @@ class MailService
         $temp = fopen($filepath, "r");
         $content = fread($temp, filesize($filepath));
         $content = str_replace([
+            '{{domain}}',
             '{{username}}',
             '{{account}}',
             '{{password}}',
             '{{validateurl}}'
         ], [
+            $_ENV['HOST'],
             $name,
             $account,
             $password,
