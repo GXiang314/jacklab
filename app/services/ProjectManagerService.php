@@ -98,7 +98,7 @@ class ProjectManagerService
                 p.Description,
                 p.Creater,
                 p.CreateTime,
-                Type.`Name` as Type_name,						
+                type.`Name` as Type_name,						
             CASE
                 s.`Name` 
                 WHEN s.`Name` THEN
@@ -111,7 +111,7 @@ class ProjectManagerService
                 LEFT JOIN proj_tag AS pt ON pt.Project_Id = p.Id 
                 LEFT JOIN proj_type AS type ON type.Id = p.Proj_type
             WHERE
-                p.Proj_type like '{$id}'  and (
+                p.Proj_type like :id  and (
                     ISNULL(p.Deleted) or p.Deleted like ''	
                     ) " .
                 ((!empty($search))
@@ -129,6 +129,7 @@ class ProjectManagerService
                 p.CreateTime DESC "
                 .
                 " limit " . (($page - 1) * $_ENV['PAGE_ITEM_NUM']) . ", " . ($page * $_ENV['PAGE_ITEM_NUM']) . ";");
+            $statement->bindValue(':id', $id);
             if ($search != null) {
                 $statement->bindValue(':search', "%" . $search . "%");
             }

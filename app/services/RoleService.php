@@ -208,15 +208,16 @@ class RoleService
                 Pg.Id,
                 Pg.Name 
             FROM
-                permission_group AS pg
+                permission_group AS Pg
                 INNER JOIN role_permission_group AS RP ON RP.Permission_group = Pg.Id
                 INNER JOIN role AS R ON R.Id = RP.Role_Id 
             WHERE
-                R.Id = :id ;        
+                R.Id = :id;        
             ");
             $statement->bindValue(':id', $id);
             $statement->execute();
             $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
         } catch (Exception) {
             throw new InternalServerErrorException();
         }
