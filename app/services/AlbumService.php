@@ -117,7 +117,6 @@ class AlbumService
                     $extension = end($temp);
                 */
                 $path = "\storage\album\\" . $fileName;
-                return var_dump($file);
                 move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
                 album::create('album', [
                     'Title' => $title,
