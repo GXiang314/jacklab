@@ -365,6 +365,7 @@ class ProjectRecordService
                             $extension = end($temp);
                         */
                         $path = "\storage\project\\" . $fileName;
+                        $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                         move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
 
                         proj_file::create('proj_file', [
@@ -440,7 +441,7 @@ class ProjectRecordService
                         'Proj_record' => $id
                     ]);
                     if (!empty($data)) {
-                        unlink($data['Url']);
+                        unlink(str_replace("\\", DIRECTORY_SEPARATOR, $data['Url']));
                         proj_file::delete('proj_file', [
                             'Proj_record' => $id
                         ]);
@@ -452,6 +453,7 @@ class ProjectRecordService
                         $extension = end($temp);
                     */
                     $path = "\storage\project\\" . $fileName;
+                    $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                     move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
 
                     proj_file::create('proj_file', [

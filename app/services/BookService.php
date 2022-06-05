@@ -133,6 +133,7 @@ class BookService
                     $extension = end($temp);
                 */
                 $path = "\storage\book\\" . $fileName;
+                $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                 move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
                 $res = book::create('book', [
                     'Title' => $book['Title'],
@@ -201,10 +202,11 @@ class BookService
                     $extension = end($temp);
                 */
                 $path = "\storage\book\\" . $fileName;
+                $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                 move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
-                unlink(
+                unlink(str_replace("\\", DIRECTORY_SEPARATOR, 
                     dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" .
-                        book::findOne('book', ['Id' => $id])['Image'] ?? ''
+                        book::findOne('book', ['Id' => $id])['Image'] ?? '')
                 );
                 book::update('book', [
                     'Image' => $path

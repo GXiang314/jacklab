@@ -175,6 +175,7 @@ class GameRecordService
                             $extension = end($temp);
                         */
                         $path = "\storage\game\\" . $fileName;
+                        $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                         move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public".$path); //upload files
 
                         game_file::create('game_file', [
@@ -214,7 +215,7 @@ class GameRecordService
                         ]);
                         if (!empty($data)) {
                             $directory = $data['Url'];
-                            unlink($directory);
+                            unlink(str_replace("\\", DIRECTORY_SEPARATOR, $directory));
                             game_file::delete('game_file', [
                                 'Game_record' => $id,
                                 'Name' => $fileName
@@ -251,7 +252,7 @@ class GameRecordService
                                 game_file::delete('game_file', [
                                     'Id' => $existFile['Id']
                                 ]);
-                                unlink($existFile['Url']);
+                                unlink(str_replace("\\", DIRECTORY_SEPARATOR, $existFile['Url']));
                             }
                             $extension = pathinfo($value, PATHINFO_EXTENSION);
                             $fileName = md5($value . time()) . '.' . $extension;
@@ -260,6 +261,7 @@ class GameRecordService
                                 $extension = end($temp);
                             */
                             $path = "\storage\game\\" . $fileName;
+                            $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                             move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
 
                             game_file::create('game_file', [

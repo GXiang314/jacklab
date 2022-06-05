@@ -99,12 +99,13 @@ class MemberService
                     $extension = end($temp);
                 */
                 $path = "\storage\member\\" . $fileName;
+                $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                 move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
                 $url = DbModel::findOne('student', [
                     'Account' => $account
                 ])['Image'] ?? '';
                 if (file_exists($url) && !str_contains($url, 'man.png')) {
-                    unlink($url);
+                    unlink(str_replace("\\", DIRECTORY_SEPARATOR, $url));
                 }
 
                 $res = DbModel::update('student', ['Image' => $path], ['Account' => $account]);
@@ -130,12 +131,13 @@ class MemberService
                     $extension = end($temp);
                 */
                 $path = "\storage\member\\" . $fileName;
+                $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                 move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
                 $url = DbModel::findOne('teacher', [
                     'Id' => $id
                 ])['Image'] ?? '';
                 if (file_exists($url) && !str_contains($url, 'man.png')) {
-                    unlink($url);
+                    unlink(str_replace("\\", DIRECTORY_SEPARATOR, $url));
                 }
                 $res = DbModel::update('teacher', ['Image' => $path], ['Id' => $id]);
             }

@@ -117,6 +117,7 @@ class AlbumService
                     $extension = end($temp);
                 */
                 $path = "\storage\album\\" . $fileName;
+                $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                 move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
                 album::create('album', [
                     'Title' => $title,
@@ -149,11 +150,12 @@ class AlbumService
                         $extension = end($temp);
                     */
                     $path = "\storage\album\\" . $fileName;
+                    $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                     move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path);
-                    unlink(
+                    unlink(str_replace("\\", DIRECTORY_SEPARATOR, 
                         dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . album::findOne('album', [
                             'Id' => $id
-                        ])['Image'] ?? ''
+                        ])['Image'] ?? '')
                     );
                     album::update('album', [
                         'Title' => $title,

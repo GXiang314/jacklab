@@ -233,6 +233,7 @@ class MeetService
                             $extension = end($temp);
                         */
                         $path = "\storage\meeting\\" . $fileName;
+                        $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                         move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
 
                         meeting_file::create('meeting_file', [
@@ -323,7 +324,7 @@ class MeetService
 
                     if (!empty($data)) {
                         $directory = $data['Url'];
-                        unlink(dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $directory);
+                        unlink(str_replace("\\", DIRECTORY_SEPARATOR, dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $directory));
                         meeting_file::delete('meeting_file', [
                             'Meet_Id' => $id,
                             'Name' => $fileName
@@ -361,7 +362,7 @@ class MeetService
                             meeting_file::delete('meeting_file', [
                                 'Id' => $existFile['Id']
                             ]);
-                            unlink(dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $existFile['Url']);
+                            unlink(str_replace("\\", DIRECTORY_SEPARATOR, dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $existFile['Url']));
                         }
                         $extension = pathinfo($value, PATHINFO_EXTENSION);
                         $fileName = md5($value . time()) . '.' . $extension;
@@ -370,6 +371,7 @@ class MeetService
                             $extension = end($temp);
                         */
                         $path = "\storage\meeting\\" . $fileName;
+                        $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
                         move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
 
                         meeting_file::create('meeting_file', [
