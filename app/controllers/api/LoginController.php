@@ -11,6 +11,7 @@ use app\requestModel\Login;
 use app\services\JwtService;
 use app\services\MemberService;
 use app\services\RoleService;
+use Exception;
 
 class LoginController extends Controller
 {
@@ -35,7 +36,7 @@ class LoginController extends Controller
             $res['account'] = $data['USER'];
             return $this->sendResponse($res, "登入成功");
         }else{
-            return $this->sendError("請先登入", [], 401);
+            throw new UnauthorizedException("請先登入");
         }
     }
     /**
