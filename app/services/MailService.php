@@ -47,9 +47,11 @@ class MailService
         $content = fread($temp, filesize($filepath));
         $content = str_replace([
             '{{code}}',
+            '{{domain}}',
             '{{username}}',
         ], [
             $code,
+            $_ENV['HOST'],
             $name
         ], $content);
         mail($email, $subject, $content, $this->headers);
