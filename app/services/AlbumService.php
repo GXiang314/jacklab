@@ -117,7 +117,8 @@ class AlbumService
                     $extension = end($temp);
                 */
                 $path = "\storage\album\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
+                return var_dump($file);
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
                 album::create('album', [
                     'Title' => $title,
                     'CreateTime' => date("Y-m-d H:i:s"),
@@ -149,9 +150,9 @@ class AlbumService
                         $extension = end($temp);
                     */
                     $path = "\storage\album\\" . $fileName;
-                    move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path);
+                    move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path);
                     unlink(
-                        dirname(dirname(__DIR__)) . "\public" . album::findOne('album', [
+                        dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . album::findOne('album', [
                             'Id' => $id
                         ])['Image'] ?? ''
                     );
@@ -178,8 +179,8 @@ class AlbumService
                 $url = album::findOne('album', [
                     'Id' => $id
                 ])['Image'] ?? '';
-                if (file_exists(dirname(dirname(__DIR__)) . "\public" . $url)) {
-                    unlink(dirname(dirname(__DIR__)) . "\public" . $url);
+                if (file_exists(dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $url)) {
+                    unlink(dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $url);
                 }
 
                 album::delete('album', [

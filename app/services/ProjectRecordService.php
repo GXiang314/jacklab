@@ -365,7 +365,7 @@ class ProjectRecordService
                             $extension = end($temp);
                         */
                         $path = "\storage\project\\" . $fileName;
-                        move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
+                        move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
 
                         proj_file::create('proj_file', [
                             'Name' => $file['name'],
@@ -452,7 +452,7 @@ class ProjectRecordService
                         $extension = end($temp);
                     */
                     $path = "\storage\project\\" . $fileName;
-                    move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
+                    move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
 
                     proj_file::create('proj_file', [
                         'Name' => $file['name'],

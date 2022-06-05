@@ -99,7 +99,7 @@ class MemberService
                     $extension = end($temp);
                 */
                 $path = "\storage\member\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
                 $url = DbModel::findOne('student', [
                     'Account' => $account
                 ])['Image'] ?? '';
@@ -130,7 +130,7 @@ class MemberService
                     $extension = end($temp);
                 */
                 $path = "\storage\member\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
                 $url = DbModel::findOne('teacher', [
                     'Id' => $id
                 ])['Image'] ?? '';

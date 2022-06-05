@@ -133,7 +133,7 @@ class BookService
                     $extension = end($temp);
                 */
                 $path = "\storage\book\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
                 $res = book::create('book', [
                     'Title' => $book['Title'],
                     'Publisher' => $book['Publisher'],
@@ -201,9 +201,9 @@ class BookService
                     $extension = end($temp);
                 */
                 $path = "\storage\book\\" . $fileName;
-                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
+                move_uploaded_file($file['tmp_name'], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
                 unlink(
-                    dirname(dirname(__DIR__)) . "\public" .
+                    dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" .
                         book::findOne('book', ['Id' => $id])['Image'] ?? ''
                 );
                 book::update('book', [
@@ -228,8 +228,8 @@ class BookService
                 $url = book::findOne('book', [
                     'Id' => $id
                 ])['Image'] ?? '';
-                if (file_exists(dirname(dirname(__DIR__)) . "\public" . $url)) {
-                    unlink(dirname(dirname(__DIR__)) . "\public" . $url);
+                if (file_exists(dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $url)) {
+                    unlink(dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $url);
                 }
                 author::delete('author', [
                     'Book_Id' => $id

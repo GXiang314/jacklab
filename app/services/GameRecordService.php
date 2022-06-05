@@ -175,7 +175,7 @@ class GameRecordService
                             $extension = end($temp);
                         */
                         $path = "\storage\game\\" . $fileName;
-                        move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public".$path); //upload files
+                        move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public".$path); //upload files
 
                         game_file::create('game_file', [
                             'Name' => $value,
@@ -260,7 +260,7 @@ class GameRecordService
                                 $extension = end($temp);
                             */
                             $path = "\storage\game\\" . $fileName;
-                            move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) . "\public" . $path); //upload files
+                            move_uploaded_file($files['tmp_name'][$key], dirname(dirname(__DIR__)) .  DIRECTORY_SEPARATOR. "public" . $path); //upload files
 
                             game_file::create('game_file', [
                                 'Name' => $value,
