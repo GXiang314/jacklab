@@ -296,11 +296,11 @@ class MemberService
 
     public function emailTokenCheck($account, $token)
     {
-        return $account."///$token";
         $data = $this->getAccountData($account);
         if (!empty($data)) {
             if ($data['AuthToken'] == $token) {
                 DbModel::update('member', ['AuthToken' => ''], ['Account' => $account]);
+                return 'success';
             }else if(empty($data['AuthToken'])){
                 return 'success';
             }
