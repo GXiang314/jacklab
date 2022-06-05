@@ -9,7 +9,7 @@ use app\middlewares\hasRoleMiddleware;
 use app\middlewares\isLoginMiddleware;
 use app\model\lab_info;
 use app\requestModel\UpdateLabinfo;
-use app\services\labinfoService;
+use app\services\LabinfoService;
 
 class LabInfoController extends Controller
 {
@@ -18,7 +18,7 @@ class LabInfoController extends Controller
 
     public function __construct()
     {
-        $this->labinfoService = new labinfoService();
+        $this->labinfoService = new LabinfoService();
         $this->registerMiddleware(new isLoginMiddleware(['store', 'update', 'destroy']));
         $this->registerMiddleware(new hasRoleMiddleware(['store', 'update', 'destroy']));
     }
