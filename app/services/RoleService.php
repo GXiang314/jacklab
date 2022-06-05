@@ -118,7 +118,7 @@ class RoleService
                 'Id' => $id
             ]);
             if(!empty($role)){
-                role_permission_group::delete('role_permission_group_', [
+                role_permission_group::delete('role_permission_group', [
                     'Role_Id' => $id
                 ]);
                 foreach ($permissionList as $p) {
