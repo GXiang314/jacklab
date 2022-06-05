@@ -296,6 +296,7 @@ class MemberService
 
     public function emailTokenCheck($account, $token)
     {
+        return $account."///$token";
         $data = $this->getAccountData($account);
         if (!empty($data)) {
             if ($data['AuthToken'] == $token) {
