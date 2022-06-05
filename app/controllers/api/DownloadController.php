@@ -37,7 +37,7 @@ class DownloadController extends Controller{
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
                     header('Content-Length: ' . filesize($url));
-                    readfile($root.$file['Url']);
+                    readfile($url);
                     exit;
                 }
             }            
@@ -61,7 +61,7 @@ class DownloadController extends Controller{
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
                     header('Content-Length: ' . filesize($url));
-                    readfile($root.$file['Url']);
+                    readfile($url);
                     exit;
                 }
             }            
@@ -86,7 +86,7 @@ class DownloadController extends Controller{
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
                     header('Content-Length: ' . filesize($url));
-                    readfile($root.$file['Url']);
+                    readfile($url);
                     exit;
                     return $this->sendResponse('success', '下載成功');
                 }
