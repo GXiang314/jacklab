@@ -11,7 +11,7 @@ class MailService
     public function __construct()
     {
         $this->headers = [
-            'From' => 'Jacklab_Web@gmail.com',
+            'From' => 'JackLAB 會員中心 <Jacklab_Web@gmail.com>',
             'Content-type' => 'text/html'
         ];
     }
@@ -41,7 +41,7 @@ class MailService
 
     public function sendForgetPasswordMail($name, $email, $code)
     {
-        $subject = "{$code} 是你的 Jacklab 驗證碼";
+        $subject = "{$code} 是你的 JackLAB 驗證碼";
         $filepath = dirname(dirname(__DIR__)) . "/view/template/forgetpassword.html";
         $temp = fopen($filepath, "r");
         $content = fread($temp, filesize($filepath));
