@@ -13,6 +13,7 @@ use app\requestModel\UpdateProject;
 use app\requestModel\UpdateProject_record;
 use app\services\ProjectRecordService;
 use app\core\Exception\MethodNotAllowException;
+use app\middlewares\hasRoleMiddleware;
 
 class ProjectRecordController extends Controller
 {
@@ -22,7 +23,10 @@ class ProjectRecordController extends Controller
     {
         $this->projectRecordService = new ProjectRecordService();
         $this->registerMiddleware(new isLoginMiddleware([
-            'index', 'store', 'storeRecord', 'update', 'updateRecord', 'destroy', 'destroyRecord'
+            'index', 'show','store', 'storeRecord', 'update', 'updateRecord', 'destroy', 'destroyRecord'
+        ]));
+        $this->registerMiddleware(new hasRoleMiddleware([
+            'store', 'update', 'destroy', 'destroyRecord'
         ]));
     }
 
