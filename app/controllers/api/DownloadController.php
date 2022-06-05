@@ -26,16 +26,17 @@ class DownloadController extends Controller{
         if($request->isGet()){
             $id = $request->getBody()['id'] ?? '';
             $file = $this->meetService->getFile($id);    
-            $root = dirname(dirname(dirname(__DIR__))). "\public";   
+            $root = dirname(dirname(dirname(__DIR__))). DIRECTORY_SEPARATOR. "public";   
             if(!empty($file)){
-                if (file_exists($root.$file['Url'])) {
+                $url = str_replace('\\', DIRECTORY_SEPARATOR, $root.$file['Url']); 
+                if (file_exists($url)) {
                     header('Content-Description: File Transfer');
                     header('Content-Type: application/octet-stream');
                     header('Content-Disposition: attachment; filename="'.basename($file['Name']).'"');
                     header('Expires: 0');
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
-                    header('Content-Length: ' . filesize($root.$file['Url']));
+                    header('Content-Length: ' . filesize($url));
                     readfile($root.$file['Url']);
                     exit;
                 }
@@ -49,16 +50,17 @@ class DownloadController extends Controller{
         if($request->isGet()){
             $id = $request->getBody()['id'] ?? '';
             $file = $this->gameRecordService->getFile($id);
-            $root = dirname(dirname(dirname(__DIR__))). "\public";   
+            $root = dirname(dirname(dirname(__DIR__))). DIRECTORY_SEPARATOR. "public";   
             if(!empty($file)){
-                if (file_exists($root.$file['Url'])) {
+                $url = str_replace('\\', DIRECTORY_SEPARATOR, $root.$file['Url']); 
+                if (file_exists($url)) {
                     header('Content-Description: File Transfer');
                     header('Content-Type: application/octet-stream');
                     header('Content-Disposition: attachment; filename="'.basename($file['Name']).'"');
                     header('Expires: 0');
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
-                    header('Content-Length: ' . filesize($root.$file['Url']));
+                    header('Content-Length: ' . filesize($url));
                     readfile($root.$file['Url']);
                     exit;
                 }
@@ -73,16 +75,17 @@ class DownloadController extends Controller{
         if($request->isGet()){
             $id = $request->getBody()['id'] ?? '';
             $file = $this->projectRecordService->getFile($id);
-            $root = dirname(dirname(dirname(__DIR__))). "\public";   
+            $root = dirname(dirname(dirname(__DIR__))). DIRECTORY_SEPARATOR. "public";   
             if(!empty($file)){
-                if (file_exists($root.$file['Url'])) {
+                $url = str_replace('\\', DIRECTORY_SEPARATOR, $root.$file['Url']); 
+                if (file_exists($url)) {
                     header('Content-Description: File Transfer');
                     header('Content-Type: application/octet-stream');
                     header('Content-Disposition: attachment; filename="'.basename($file['Name']).'"');
                     header('Expires: 0');
                     header('Cache-Control: must-revalidate');
                     header('Pragma: public');
-                    header('Content-Length: ' . filesize($root.$file['Url']));
+                    header('Content-Length: ' . filesize($url));
                     readfile($root.$file['Url']);
                     exit;
                     return $this->sendResponse('success', '下載成功');
