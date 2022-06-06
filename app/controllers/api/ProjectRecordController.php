@@ -76,6 +76,7 @@ class ProjectRecordController extends Controller
             $requestModel = new AddProject();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
+                if(!in_array($request['USER'], $requestModel->Member)) return $this->sendError("不要排擠自己");
                 $res = $this->projectRecordService->create($data, $requestModel->Tag ?? null);
                 return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError($res);
             } else {
@@ -109,6 +110,7 @@ class ProjectRecordController extends Controller
             $requestModel->loadData($data);
 
             if ($requestModel->validate()) {
+                if(!in_array($request['USER'], $requestModel->Member)) return $this->sendError("不要排擠自己");
                 $res = $this->projectRecordService->update(
                     $requestModel->Id,
                     $data,
