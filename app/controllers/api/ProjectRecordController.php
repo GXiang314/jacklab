@@ -110,7 +110,7 @@ class ProjectRecordController extends Controller
             $requestModel->loadData($data);
 
             if ($requestModel->validate()) {
-                if(!in_array($data['USER'], $requestModel->Member)) return $this->sendError("不要排擠自己");
+                if(!in_array($data['USER'], $requestModel->Member) && !$data['ADMIN']) return $this->sendError("不要排擠自己");
                 $res = $this->projectRecordService->update(
                     $requestModel->Id,
                     $data,
