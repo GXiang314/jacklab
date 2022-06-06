@@ -266,16 +266,16 @@ class MemberService
         try {
             $statement = DbModel::prepare(
                 "
-                select Id from teacher where Id order by Id desc limit 1;"
+                select Id from teacher order by Id desc limit 1;"
             );
             $statement->execute();
-            $data = $statement->fetch(\PDO::FETCH_ASSOC);
+            $data = $statement->fetch(\PDO::FETCH_COLUMN);
         } catch (Exception) {
             throw new InternalServerErrorException();
         }
         $statement = null;
-        if (!empty($data)) {
-            return intval($data['Id']) + 1;
+        if (!empty($data)) {         
+            return intval($data) + 1;
         }
         return intval($str) + 1;
     }
