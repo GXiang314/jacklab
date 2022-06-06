@@ -31,7 +31,7 @@ class MeetService
             END AS Name 
             FROM
                 meeting AS meet
-                INNER JOIN member AS m ON m.Account = meet.Uploader
+                LEFT JOIN member AS m ON m.Account = meet.Uploader
                 LEFT JOIN student AS s ON s.Account = m.Account
                 LEFT JOIN teacher AS t ON t.Account = m.Account 
                 LEFT JOIN meeting_tag AS mt ON mt.Meet_Id = meet.Id 
@@ -169,7 +169,7 @@ class MeetService
             $statement =  DbModel::prepare("
             select count(DISTINCT meet.Id) from 
             meeting AS meet
-                INNER JOIN member AS m ON m.Account = meet.Uploader
+                LEFT JOIN member AS m ON m.Account = meet.Uploader
                 LEFT JOIN student AS s ON s.Account = m.Account
                 LEFT JOIN teacher AS t ON t.Account = m.Account 
                 LEFT JOIN meeting_tag AS mt ON mt.Meet_Id = meet.Id 

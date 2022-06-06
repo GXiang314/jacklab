@@ -101,7 +101,7 @@ class ProjectRecordService
             FROM
                 proj_record AS pr
                 INNER JOIN project AS p ON p.Id = pr.Project_Id
-                INNER JOIN member AS m ON m.Account = pr.Uploader
+                LEFT JOIN member AS m ON m.Account = pr.Uploader
                 LEFT JOIN student AS s ON s.Account = m.Account
                 LEFT JOIN teacher AS t ON t.Account = m.Account 
             WHERE
@@ -180,7 +180,7 @@ class ProjectRecordService
             FROM
                 proj_record AS pr
                 INNER JOIN project AS p ON p.Id = pr.Project_Id
-                INNER JOIN member AS m ON m.Account = pr.Uploader
+                LEFT JOIN member AS m ON m.Account = pr.Uploader
                 LEFT JOIN student AS s ON s.Account = m.Account
                 LEFT JOIN teacher AS t ON t.Account = m.Account 
             WHERE
@@ -248,7 +248,7 @@ class ProjectRecordService
             FROM
                 proj_record AS pr
                 INNER JOIN project AS p ON p.Id = pr.Project_Id
-                INNER JOIN member AS m ON m.Account = pr.Uploader
+                LEFT JOIN member AS m ON m.Account = pr.Uploader
                 LEFT JOIN student AS s ON s.Account = m.Account
                 LEFT JOIN teacher AS t ON t.Account = m.Account 
             WHERE

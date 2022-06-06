@@ -34,7 +34,7 @@ class GameRecordService
             FROM
                 game_record AS gr
                 INNER JOIN game_type AS gt ON gt.Id = gr.Game_type
-                INNER JOIN member AS m ON m.Account = gr.Uploader
+                LEFT JOIN member AS m ON m.Account = gr.Uploader
                 LEFT JOIN student AS s ON s.Account = m.Account
                 LEFT JOIN teacher AS t ON t.Account = m.Account 
             WHERE
@@ -93,7 +93,7 @@ class GameRecordService
             FROM
                 game_record AS gr
                 INNER JOIN game_type AS gt ON gt.Id = gr.Game_type
-                INNER JOIN member AS m ON m.Account = gr.Uploader
+                LEFT JOIN member AS m ON m.Account = gr.Uploader
                 LEFT JOIN student AS s ON s.Account = m.Account
                 LEFT JOIN teacher AS t ON t.Account = m.Account 
             WHERE
