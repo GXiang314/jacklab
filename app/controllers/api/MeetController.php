@@ -81,7 +81,7 @@ class MeetController extends Controller
             $requestModel = new UpdateMeeting();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                if(!in_array($request['USER'], $requestModel->Member)) return $this->sendError("不要排擠自己");
+                if(!in_array($data['USER'], $requestModel->Member)) return $this->sendError("不要排擠自己");
                 $res = $this->meetService->update(
                     $requestModel->Id,
                     $data,
