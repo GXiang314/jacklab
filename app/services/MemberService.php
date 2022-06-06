@@ -57,12 +57,12 @@ class MemberService
         $teacher = new teacher();
         $member->loadData($request);
         $member->AuthToken = '';
-        $member->IsAdmin = true;
+        $member->IsAdmin = 0;
         $teacher->loadData($request);
         if ($res = $member->save()) {
             $teacher->save();
         }
-        return $res ? $res : false;
+        return $res ? 'success' : false;
     }
     /* #endregion */
 
@@ -847,7 +847,7 @@ class MemberService
             'Account' => 'jacklab',
             'Password' => '0921730662',
             'AuthToken' => '',
-            'IsAdmin' => true,
+            'IsAdmin' => 1,
             'Name' => '姜琇森',
             'Title' => '教授',
             'Role_Id' => 1
