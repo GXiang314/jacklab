@@ -394,7 +394,6 @@ class ProjectRecordService
                 'Name' => $request['Name'],
                 'Description' => $request['Description'],
                 'Proj_type' => $request['Proj_type'],
-                'Creater' => $request['USER'],
             ], [
                 'Id' => $id
             ]);
