@@ -165,7 +165,7 @@ class UserController extends Controller
         if ($request->isDelete()) {
             $data = $request->getBody();
             $USER_ID = $this->memberService->getAccount($data['USER'])['Id'] ?? '0';
-            if(!in_array($USER_ID, $data['id'] ?? [])){
+            if(!in_array($USER_ID, explode(',',  $data['id']) ?? [])){
                 $result = $this->memberService->deleteTeacher($data['id']);
             }else{
                 $result = "不可刪除自己！";
