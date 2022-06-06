@@ -441,7 +441,7 @@ class MeetService
             'Id' => $proj_id
         ]);
         if($data){
-            return in_array($data['Uploader'], $member);
+            return !in_array($data['Uploader'], $member);
         }
         return false;
     }

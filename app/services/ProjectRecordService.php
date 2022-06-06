@@ -513,7 +513,7 @@ class ProjectRecordService
             'Id' => $proj_id
         ]);
         if($data){
-            return in_array($data['Creater'], $member);
+            return !in_array($data['Creater'], $member);
         }
         return false;
     }
