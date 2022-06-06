@@ -24,8 +24,8 @@ class UserController extends Controller
     {
         $this->memberService = new MemberService();
         $this->mailService = new MailService();
-        $this->registerMiddleware(new isLoginMiddleware(['index', 'useradd', 'changeUserPassword', 'updateUserClass', 'destroy']));
-        $this->registerMiddleware(new hasRoleMiddleware(['index', 'useradd', 'changeUserPassword', 'updateUserClass', 'destroy']));
+        $this->registerMiddleware(new isLoginMiddleware(['index', 'useradd', 'teacheradd', 'updateTeacherInfo', 'changeUserPassword', 'updateUserClass', 'destroy', 'destroyTeacher']));
+        $this->registerMiddleware(new hasRoleMiddleware(['index', 'useradd', 'teacheradd', 'updateTeacherInfo', 'changeUserPassword', 'updateUserClass', 'destroy', 'destroyTeacher']));
         // $this->registerMiddleware(new hasRoleMiddleware(['index', 'useradd', 'destroy']));
     }
 
