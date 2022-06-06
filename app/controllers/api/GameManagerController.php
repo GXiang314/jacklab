@@ -27,7 +27,7 @@ class GameManagerController extends Controller
     public function store(Request $request)
     {
         if ($request->isPost()) {
-            $data = $request->getJson();
+            $data = $request->getbody();
             $requestModel = new AddName();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
@@ -53,7 +53,7 @@ class GameManagerController extends Controller
     public function update(Request $request)
     {
         if ($request->isPut()) {
-            $data = $request->getJson();
+            $data = $request->getbody();
             $requestModel = new UpdateName();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {

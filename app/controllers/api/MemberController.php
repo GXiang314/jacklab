@@ -124,7 +124,7 @@ class MemberController extends Controller
     {
         if ($request->isPut()) {
             $requestModel = new ChangePassword();
-            $data = $request->getJson();
+            $data = $request->getbody();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
                 $result = $this->memberService->updatePassword($data['USER'], $requestModel->oldpassword, $requestModel->password);
@@ -144,7 +144,7 @@ class MemberController extends Controller
     public function updateIntroduction(Request $request)
     {
         if ($request->isPut()) {
-            $data = $request->getJson();
+            $data = $request->getbody();
             $result = $this->memberService->updateIntroduction($data['USER'], $data['text']);
             return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError($result);
         }
@@ -204,7 +204,7 @@ class MemberController extends Controller
     public function forgetPassword(Request $request)
     {
         if ($request->isPost()) {
-            $account = $request->getJson()['Account'] ?? '';
+            $account = $request->getbody()['Account'] ?? '';
             $data = $this->memberService->getAccountData($account);
             if (!empty($data)) {
                 $checkdata = DbModel::findOne('reset_password', [
@@ -239,7 +239,7 @@ class MemberController extends Controller
     public function resetCodeValidate(Request $request)
     {
         if ($request->isPost()) {
-            $data = $request->getJson() ?? '';
+            $data = $request->getbody() ?? '';
             if (!empty($data)) {
                 $checkdata = DbModel::findOne('reset_password', [
                     'Account' => $data['Account'],
@@ -267,7 +267,7 @@ class MemberController extends Controller
     public function resetPassword(Request $request)
     {
         if ($request->isPost()) {
-            $data = $request->getJson() ?? '';
+            $data = $request->getbody() ?? '';
             $checkdata = DbModel::findOne('reset_password', [
                 'Account' => $data['account'],
                 'Code' => $data['code'],

@@ -67,7 +67,7 @@ class BookController extends Controller
     public function update(Request $request)
     {
         if ($request->isPut()) {
-            $data = $request->getJson();
+            $data = $request->getbody();
             $requestModel = new UpdateBook();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {

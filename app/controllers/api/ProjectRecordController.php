@@ -72,11 +72,11 @@ class ProjectRecordController extends Controller
     public function store(Request $request)
     {
         if ($request->isPost()) {
-            $data =  $request->getJson() ?? '';
+            $data =  $request->getbody() ?? '';
             $requestModel = new AddProject();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                if(!in_array($request['USER'], $requestModel->Member)) return $this->sendError("不要排擠自己");
+                if(!in_array($data['USER'], $requestModel->Member)) return $this->sendError("不要排擠自己");
                 $res = $this->projectRecordService->create($data, $requestModel->Tag ?? null);
                 return ($res == 'success') ? $this->sendResponse($res, '建立成功') : $this->sendError($res);
             } else {
@@ -105,7 +105,7 @@ class ProjectRecordController extends Controller
     public function update(Request $request)
     {
         if ($request->isPut()) {
-            $data =  $request->getJson() ?? '';
+            $data =  $request->getbody() ?? '';
             $requestModel = new UpdateProject();
             $requestModel->loadData($data);
 

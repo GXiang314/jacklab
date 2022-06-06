@@ -75,7 +75,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         if ($request->isPost()) {
-            $data = $request->getJson();
+            $data = $request->getbody();
             $requestModel = new AddRole();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
@@ -91,7 +91,7 @@ class RoleController extends Controller
     public function update(Request $request)
     {
         if ($request->isPut()) {
-            $data = $request->getJson();
+            $data = $request->getbody();
             $requestModel = new UpdateRole();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
@@ -107,7 +107,7 @@ class RoleController extends Controller
     public function updateMemberRole(Request $request)
     {
         if ($request->isPut()) {
-            $data = $request->getJson();
+            $data = $request->getbody();
             $requestModel = new UpdateMemberRole();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {

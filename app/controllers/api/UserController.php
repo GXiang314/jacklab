@@ -71,7 +71,7 @@ class UserController extends Controller
     {
         if ($request->isPost()) {
             $userAddModel = new Useradd();
-            $data = $request->getJson();
+            $data = $request->getbody();
             $userAddModel->loadData($data);
             if ($userAddModel->validate()) {
                 $res = $this->memberService->studentAdd($data);
@@ -87,7 +87,7 @@ class UserController extends Controller
     {
         if ($request->isPost()) {
             $teachererAddModel = new Teacheradd();
-            $data = $request->getJson();
+            $data = $request->getbody();
             $teachererAddModel->loadData($data);
             if ($teachererAddModel->validate()) {
                 $res = $this->memberService->teacherAdd($teachererAddModel);
@@ -103,7 +103,7 @@ class UserController extends Controller
     {
         if ($request->isPut()) {
             $teachererAddModel = new UpdateTeacherInfo();
-            $data = $request->getJson();
+            $data = $request->getbody();
             $teachererAddModel->loadData($data);
             if ($teachererAddModel->validate()) {
                 $res = $this->memberService->updateTeacherInfo($teachererAddModel->Id, $data);
@@ -133,7 +133,7 @@ class UserController extends Controller
     public function changeUserPassword(Request $request)
     {
         if ($request->isPut()) {
-            $data = $request->getJson();
+            $data = $request->getbody();
             $requestModel = new UpdateUserPassword();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
@@ -148,7 +148,7 @@ class UserController extends Controller
     public function updateUserClass(Request $request)
     {
         if ($request->isPut()) {
-            $data = $request->getJson();
+            $data = $request->getbody();
             $requestModel = new UpdateStudentClass();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {

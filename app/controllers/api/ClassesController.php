@@ -43,7 +43,7 @@ class ClassesController extends Controller
     {
         if ($request->isPost()) {
             $requestModel = new AddClassName();
-            $requestModel->loadData($request->getJson());
+            $requestModel->loadData($request->getbody());
             if ($requestModel->validate()) {
                 $result = $this->classService->add($requestModel->Name, $requestModel->Academic_Id);
                 return $result == 'success' ? $this->sendResponse($result, '新增成功') : $this->sendError($result);
@@ -58,7 +58,7 @@ class ClassesController extends Controller
     {
         if ($request->isPut()) {
             $requestModel = new UpdateName();
-            $requestModel->loadData($request->getJson());
+            $requestModel->loadData($request->getbody());
             if ($requestModel->validate()) {
                 $result = $this->classService->update($requestModel->Id, $requestModel->Name);
                 return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError($result);

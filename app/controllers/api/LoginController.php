@@ -49,7 +49,7 @@ class LoginController extends Controller
     {        
         if ($request->isPost()) {
             $requestModel = new Login();
-            $data = $request->getJson();
+            $data = $request->getbody();
             $requestModel->loadData($data);
 
             if ($requestModel->validate()) {

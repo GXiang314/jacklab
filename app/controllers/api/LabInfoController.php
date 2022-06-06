@@ -50,7 +50,7 @@ class LabInfoController extends Controller
     {
         if ($request->isPost()) {
             $requestModel = new lab_info();
-            $requestModel->loadData($request->getJson());
+            $requestModel->loadData($request->getbody());
             if ($requestModel->validate()) {
                 $result = $this->labinfoService->add($requestModel->Title, $requestModel->Content);
                 return $result == 'success' ? $this->sendResponse($result, '建立成功') : $this->sendError($result);
@@ -65,7 +65,7 @@ class LabInfoController extends Controller
     {
         if ($request->isPut()) {
             $requestModel = new UpdateLabinfo();
-            $requestModel->loadData($request->getJson());
+            $requestModel->loadData($request->getbody());
             if ($requestModel->validate()) {
                 $result = $this->labinfoService->update($requestModel->Id, $requestModel->Title, $requestModel->Content);
                 return $result == 'success' ? $this->sendResponse($result, '修改成功') : $this->sendError($result);
