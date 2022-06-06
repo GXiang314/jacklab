@@ -25,7 +25,7 @@ class Teacheradd extends Model{
                 $this->{$key} = $value;
             }            
         }
-        $this->IsAdmin = true;
+        $this->IsAdmin = 1;
     }
 
     public function rules(): array
