@@ -57,6 +57,7 @@ class MemberService
         $teacher = new teacher();
         $member->loadData($request);
         $member->AuthToken = '';
+        $member->IsAdmin = true;
         $teacher->loadData($request);
         if ($res = $member->save()) {
             $teacher->save();
