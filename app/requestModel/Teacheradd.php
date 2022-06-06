@@ -37,6 +37,7 @@ class Teacheradd extends Model{
                 [self::RULE_UNIQUE,'class'=>member::class]
             ],
             'Name' => [self::RULE_REQUIRED],
+            'Password' => [self::RULE_REQUIRED],
             'Title' => [
                 self::RULE_REQUIRED,
                 [self::RULE_MAX, 'max' => 100]
