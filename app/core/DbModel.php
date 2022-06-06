@@ -26,8 +26,8 @@ abstract class DbModel extends Model
             }
             $statement->execute();
             $statement = null;
-        } catch (Exception) {
-            return false;
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
         return true;
     }

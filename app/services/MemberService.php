@@ -62,7 +62,7 @@ class MemberService
         if ($res = $member->save()) {
             $teacher->save();
         }
-        return $res ? 'success' : false;
+        return $res ? $res : false;
     }
     /* #endregion */
 
