@@ -163,11 +163,9 @@ class UserController extends Controller
     public function destroyTeacher(Request $request)
     {
         if ($request->isDelete()) {
-            $result = $this->memberService->deleteTeacher($request->getBody()['id'] ?? '0');
-            if ($result == 'success') {
-                return $this->sendResponse($result, '刪除成功');
-            }
-            return $this->sendError($result);
+            $data = $request->getBody();
+            $result = $this->memberService->deleteTeacher($data['id'] ?? '0');
+            return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
         throw new MethodNotAllowException();
     }
@@ -175,11 +173,14 @@ class UserController extends Controller
     public function destroy(Request $request)
     {
         if ($request->isDelete()) {
-            $result = $this->memberService->delete($request->getBody()['id'] ?? '0');
-            if ($result == 'success') {
-                return $this->sendResponse($result, '刪除成功');
+            $data = $request->getBody();
+            $USER_ID = $this->memberService->getAccount($data['USER'])['Id'] ?? '0';
+            if(!in_array($USER_ID, $data['id'] ?? [])){
+                $result = $this->memberService->delete($data['id']);
+            }else{
+                $result = "不可刪除自己！";
             }
-            return $this->sendError($result);
+            return ($result == 'success') ? $this->sendResponse($result, 'success') : $this->sendError($result);
         }
         throw new MethodNotAllowException();
     }

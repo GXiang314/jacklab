@@ -399,6 +399,7 @@ class MemberService
             $account = $this->addSlashes($account);
             $statement = DbModel::prepare("         
             SELECT
+            CASE s.`Id` WHEN s.`Id` THEN s.`Id` ELSE t.Id END as Id,		
                 m.*,
                 CASE s.`Name` WHEN s.`Name` THEN s.`Name` ELSE t.NAME END as Name		
             FROM
