@@ -64,7 +64,7 @@ class MeetController extends Controller
             $requestModel = new AddMeeting();
             $requestModel->loadData($data);
             if ($requestModel->validate()) {
-                if(!in_array($request['USER'], $requestModel->Member)) return $this->sendError("不要排擠自己");
+                if(!in_array($data['USER'], $requestModel->Member)) return $this->sendError("不要排擠自己");
                 $res = $this->meetService->add($data, $requestModel->Files ?? null, $requestModel->Tag ?? null);
                 return ($res == 'success') ? $this->sendResponse($res, '新增成功') : $this->sendError($res);
             } else {
