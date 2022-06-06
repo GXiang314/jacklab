@@ -196,6 +196,7 @@ class MemberService
             if (isset($data['Account'])) {
                 Application::$app->db->pdo->exec("
                     delete from game_member where Student_Id = '{$id}';
+                    delete from proj_member where Account = '{$data['Account']}';
                     delete from meeting_member where Account = '{$data['Account']}';
                     delete from member_role where Account = '{$data['Account']}';
                     delete from student where Account = '{$data['Account']}';
@@ -213,7 +214,7 @@ class MemberService
             $data = $this->getTeacherData($id);
             if (isset($data['Account'])) {
                 Application::$app->db->pdo->exec("
-                    delete from game_member where Student_Id = '{$id}';
+                    delete from proj_member where Account = '{$data['Account']}';
                     delete from meeting_member where Account = '{$data['Account']}';
                     delete from member_role where Account = '{$data['Account']}';
                     delete from teacher where Account = '{$data['Account']}';
