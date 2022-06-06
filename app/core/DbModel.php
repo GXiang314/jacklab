@@ -69,10 +69,9 @@ abstract class DbModel extends Model
                     $statement->bindValue(":$key", $value);
                 }
             }
-
             $statement->execute();
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            return false;
         }
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -87,8 +86,8 @@ abstract class DbModel extends Model
                 $statement->bindValue(":$key", $value);
             }
             $statement->execute();
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (Exception) {
+            return false;
         }
         return $statement->fetch(\PDO::FETCH_ASSOC);
     }
@@ -133,14 +132,18 @@ abstract class DbModel extends Model
     }
 
     public static function count($tableName, array $where = []){
-        $statement = self::prepare("select count(*) as c from $tableName;");
-        $whereKey = array_keys($where);
-        $where_sql = ($where) ? ' where ' . implode(' and ', array_map(fn ($attr) => "$attr = :$attr", $whereKey)) : '';
-            $statement = self::prepare("select count(*) as c from $tableName $where_sql;");
-            foreach ($where as $key => $value) {
-                $statement->bindValue(":$key", $value);
-            }
-        $statement->execute();
+        try{
+            $statement = self::prepare("select count(*) as c from $tableName;");
+            $whereKey = array_keys($where);
+            $where_sql = ($where) ? ' where ' . implode(' and ', array_map(fn ($attr) => "$attr = :$attr", $whereKey)) : '';
+                $statement = self::prepare("select count(*) as c from $tableName $where_sql;");
+                foreach ($where as $key => $value) {
+                    $statement->bindValue(":$key", $value);
+                }
+            $statement->execute();
+        } catch (Exception) {
+            return false;
+        }
         return $statement->fetch(\PDO::FETCH_ASSOC)['c'];
     }
 
