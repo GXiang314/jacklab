@@ -303,6 +303,7 @@ class MeetService
     public function update($id, $request, $files = null, $tags = null, $isClearOldList = [])
     {
         try {
+            if ($this->isDeleteCreater($id, $request['Member'])) return "不可刪除上傳者";
             $meeting = meeting::findOne('meeting', [
                 'Id' => $id
             ]);
@@ -434,6 +435,16 @@ class MeetService
     //     }
     //     return 'success';
     // }
+    private function isDeleteCreater($proj_id, $member)
+    {
+        $data = meeting::findOne('meeting', [
+            'Id' => $proj_id
+        ]);
+        if($data){
+            return in_array($data['Uploader'], $member);
+        }
+        return false;
+    }
 
     private function newId()
     {

@@ -390,6 +390,7 @@ class ProjectRecordService
     {
         try {
             if ($this->tagUploadValidate($tags ?? [])) return "最多上傳五個標籤";
+            if ($this->isDeleteCreater($id, $request['Member'])) return "不可刪除建立者";
             project::update('project', [
                 'Name' => $request['Name'],
                 'Description' => $request['Description'],
@@ -504,6 +505,17 @@ class ProjectRecordService
             throw new InternalServerErrorException();
         }
         return 'success';
+    }
+
+    private function isDeleteCreater($proj_id, $member)
+    {
+        $data = project::findOne('project', [
+            'Id' => $proj_id
+        ]);
+        if($data){
+            return in_array($data['Creater'], $member);
+        }
+        return false;
     }
 
     // public function forceDelete($idList)
