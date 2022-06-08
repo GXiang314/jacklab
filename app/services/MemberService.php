@@ -846,8 +846,8 @@ class MemberService
     {
         $member = new member();
         $data = [
-            'Account' => 'jacklab',
-            'Password' => '0921730662',
+            'Account' => $_ENV['ADMIN_ACCOUNT'],
+            'Password' => $_ENV['ADMIN_PASSWORD'],
             'AuthToken' => '',
             'IsAdmin' => 1,
             'Name' => '姜琇森',
