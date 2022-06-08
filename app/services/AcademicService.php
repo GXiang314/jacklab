@@ -77,7 +77,7 @@ class AcademicService
     {
         try {
             $statement = academic::prepare("
-                ect Id from academic order by Id desc limit 1;
+                select Id from academic order by Id desc limit 1;
             ");
             $statement->execute();
             $id = $statement->fetch();
