@@ -13,7 +13,6 @@ https://www.getpostman.com/collections/d5e74fe839abf336754c
 
 ## 安裝前提
 * [WAMP PHP 8.1↑, MySQL 8.0↑](https://www.wampserver.com/en/download-wampserver-64bits/)
-* [MySQL 8.0](https://dev.mysql.com/doc/relnotes/mysql/8.0/en/)
 * [Composer](https://getcomposer.org/)
 
 ## 如何安裝
@@ -38,4 +37,25 @@ MySQL 匯入資料庫
 
 [web.zip](https://github.com/GXiang314/jacklab/files/8858135/web.zip)
 
+Apache 設定 virtualhost
+```
+<VirtualHost *:80>
+  ServerName localhost
+  DocumentRoot "${INSTALL_DIR}/www/jacklab/public"
+  <Directory "${INSTALL_DIR}/www/jacklab/public">
+    Options +Indexes +Includes +FollowSymLinks +MultiViews
+    AllowOverride All
+    Require all granted
+  </Directory>
+</VirtualHost>
+```
+
+## 啟動伺服器
+開啟 Wampserver
+![wamp](https://user-images.githubusercontent.com/57283718/172529276-6689a840-bee5-46bc-b217-a830cf4b286d.png)
+
+當 Wamp 工作列圖示轉為綠色時，輸入網址即可使用 API 
+```
+http://localhost/api/?
+```
 
