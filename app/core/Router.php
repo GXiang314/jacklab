@@ -54,7 +54,7 @@ class Router
                 $this->request = $middleware->execute($this->request);
             }
         }
-        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Origin: ".$_ENV['ALLOW_ORIGIN']);
         header('Access-Control-Max-Age: 86400');    // cache for 1 dayself::setStatusCode($status);
         header("Access-Control-Allow-Headers:Origin,Content-Type, access-control-allow-origin, Authorization, X-Requested-With");
         if($_SERVER['REQUEST_METHOD'] == 'OPTIONS'){
