@@ -34,7 +34,7 @@ copy .env.example .env
 
 MySQL 匯入資料庫
 
-[web.zip](https://github.com/GXiang314/jacklab/files/8858135/web.zip)
+
 
 Apache 設定 virtualhost
 ```
